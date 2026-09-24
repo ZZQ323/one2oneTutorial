@@ -1,0 +1,15 @@
+{"id":"P1","topic":"Stop-and-Wait 链路利用率","formula":"U = 1/(1+2a), a = T_prop/T_frame","source":"L2","priority":"high","type":"calculation","status":"pending"}
+{"id":"P2","topic":"Sliding Window 链路利用率","formula":"N≥2a+1 时 U=1；N<2a+1 时 U=N/(1+2a)","source":"L2","priority":"high","type":"calculation","status":"pending"}
+{"id":"P3","topic":"最小窗口大小反推","formula":"给吞吐量要求 U_min，求最小 N = ceil(U_min × (1+2a))","source":"L2","priority":"high","type":"calculation","status":"pending"}
+{"id":"P4","topic":"CRC 计算","formula":"D×2^r mod 2 除以 G，余数 R","source":"L2","priority":"high","type":"calculation","status":"pending"}
+{"id":"P5","topic":"CSMA/CD 最小帧长","formula":"帧长 ≥ 2×端到端传播时延 × 带宽","source":"L2","priority":"high","type":"calculation","status":"pending"}
+{"id":"P6","topic":"网络可用性计算","formula":"串联: r = r1×r2；并联: b = b1×b2；混合: 路径分解","source":"L1","priority":"high","type":"calculation","status":"pending"}
+{"id":"P7","topic":"OSI 7层 vs TCP/IP 5层","formula":"各层功能、对应关系、为什么 Internet 不用 OSI","source":"L1","priority":"medium","type":"concept","status":"pending"}
+{"id":"P8","topic":"封装与解封装","formula":"数据从应用层到物理层的封装过程","source":"L1","priority":"medium","type":"concept","status":"pending"}
+{"id":"P9","topic":"Go-Back-N vs Selective Repeat","formula":"窗口大小、重传策略、缓冲区管理对比","source":"L2","priority":"medium","type":"concept","status":"pending"}
+{"id":"P10","topic":"MAC 协议分类对比","formula":"TDMA/FDMA vs ALOHA vs CSMA/CD vs CSMA/CA","source":"L2","priority":"medium","type":"concept","status":"pending"}
+{"id":"P11","topic":"隐藏终端问题 + CSMA/CA","formula":"RTS/CTS、DIFS/SIFS、binary backoff","source":"L3","priority":"medium","type":"concept","status":"pending"}
+{"id":"P12","topic":"WLAN 架构","formula":"STA/AP、BSS/ESS、Infrastructure vs Ad Hoc","source":"L3","priority":"medium","type":"concept","status":"pending"}
+{"id":"P13","topic":"差错检测 vs 纠错","formula":"Parity / 2D Parity / FEC vs ARQ","source":"L2","priority":"low","type":"concept","status":"pending"}
+{"id":"P14","topic":"以太网帧结构","formula":"preamble、MAC地址、type、CRC","source":"L2","priority":"low","type":"concept","status":"pending"}
+{"id":"P15","topic":"802.11 帧的4个地址字段","formula":"各字段含义","source":"L3","priority":"low","type":"concept","status":"pending"}
