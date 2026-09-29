@@ -1,0 +1,163 @@
+{
+  "table_of_contents": [
+    {
+      "title": "Programming homework on hidden Markov model",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          71.419921875,
+          73.08984375
+        ],
+        [
+          334.3327941894531,
+          73.08984375
+        ],
+        [
+          334.3327941894531,
+          85.3814697265625
+        ],
+        [
+          71.419921875,
+          85.3814697265625
+        ]
+      ]
+    },
+    {
+      "title": "Implementation and application of the Viterbi algorithm",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          71.71875,
+          295.3814392089844
+        ],
+        [
+          361.9967956542969,
+          294.29296875
+        ],
+        [
+          361.9967956542969,
+          307.3814392089844
+        ],
+        [
+          70.5234375,
+          307.44140625
+        ]
+      ]
+    },
+    {
+      "title": "Viterbi parsing",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          71.12109375,
+          576.2109375
+        ],
+        [
+          160.08038330078125,
+          574.6640625
+        ],
+        [
+          160.08038330078125,
+          589.9024047851562
+        ],
+        [
+          71.12109375,
+          590.1328125
+        ]
+      ]
+    },
+    {
+      "title": "format.:",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          72.0,
+          616.7941131591797
+        ],
+        [
+          110.1907730102539,
+          616.7941131591797
+        ],
+        [
+          110.1907730102539,
+          627.8341064453125
+        ],
+        [
+          70.822265625,
+          627.8341064453125
+        ]
+      ]
+    }
+  ],
+  "page_stats": [
+    {
+      "page_id": 0,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          99
+        ],
+        [
+          "Line",
+          41
+        ],
+        [
+          "Text",
+          16
+        ],
+        [
+          "SectionHeader",
+          4
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 1,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          75
+        ],
+        [
+          "Line",
+          25
+        ],
+        [
+          "Text",
+          8
+        ],
+        [
+          "ListItem",
+          4
+        ],
+        [
+          "ListGroup",
+          2
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    }
+  ],
+  "debug_data_path": "debug_data/hw1"
+}
