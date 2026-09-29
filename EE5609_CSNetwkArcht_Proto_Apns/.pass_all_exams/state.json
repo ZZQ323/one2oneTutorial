@@ -2,18 +2,18 @@
   "course": "EE5609_计算机网络",
   "slug": "EE5609",
   "created_at": "2026-09-21",
-  "updated_at": "2026-09-22",
+  "updated_at": "2026-09-29",
   "mode": "compact",
   "stage": "map",
   "exam_type": "闭卷，论述/计算/大题为主",
   "exam_date": "一周内",
   "counts": {
-    "points_total": 15,
+    "points_total": 30,
     "points_done": 0,
     "errors": 0,
     "stubborn": 0,
     "cards": 0,
-    "materials": 3
+    "materials": 4
   },
   "points": {
     "P1": {"topic": "Stop-and-Wait 链路利用率", "formula": "U = 1/(1+2a), a = T_prop/T_frame", "source": "L2", "priority": "high", "type": "calculation", "status": "pending"},
@@ -30,11 +30,27 @@
     "P12": {"topic": "WLAN 架构", "formula": "STA/AP、BSS/ESS、Infrastructure vs Ad Hoc", "source": "L3", "priority": "medium", "type": "concept", "status": "pending"},
     "P13": {"topic": "差错检测 vs 纠错", "formula": "Parity / 2D Parity / FEC vs ARQ", "source": "L2", "priority": "low", "type": "concept", "status": "pending"},
     "P14": {"topic": "以太网帧结构", "formula": "preamble、MAC地址、type、CRC", "source": "L2", "priority": "low", "type": "concept", "status": "pending"},
-    "P15": {"topic": "802.11 帧的4个地址字段", "formula": "各字段含义", "source": "L3", "priority": "low", "type": "concept", "status": "pending"}
+    "P15": {"topic": "802.11 帧的4个地址字段", "formula": "各字段含义", "source": "L3", "priority": "low", "type": "concept", "status": "pending"},
+    "P16": {"topic": "子网计算（CIDR）", "formula": "给定 IP/前缀，求网络地址、广播地址、可用主机范围", "source": "L4", "priority": "high", "type": "calculation", "status": "pending"},
+    "P17": {"topic": "VLSM 子网划分", "formula": "根据主机数需求分配不同大小的子网", "source": "L4", "priority": "high", "type": "calculation", "status": "pending"},
+    "P18": {"topic": "传输延迟与传播延迟", "formula": "T_trans = L/R, T_prop = d/s", "source": "L4", "priority": "high", "type": "calculation", "status": "pending"},
+    "P19": {"topic": "分组交换流水线延迟", "formula": "总延迟 = k×(Tx+d) + ( packets-1)×Tx", "source": "L4", "priority": "high", "type": "calculation", "status": "pending"},
+    "P20": {"topic": "电路交换 vs 分组交换延迟对比", "formula": "电路: s + x/b + kd；分组: k×(p/b+d) + (x/p-1)×p/b", "source": "L4", "priority": "high", "type": "calculation", "status": "pending"},
+    "P21": {"topic": "IP 分片计算", "formula": "Offset = 字节位置/8, MF 标志, 分片数量", "source": "L4", "priority": "high", "type": "calculation", "status": "pending"},
+    "P22": {"topic": "电路交换 vs 分组交换特性", "formula": "资源分配、连接建立、适用场景对比", "source": "L4", "priority": "medium", "type": "concept", "status": "pending"},
+    "P23": {"topic": "Datagram vs Virtual Circuit", "formula": "独立路由 vs 预建路径，Internet vs X.25/ATM", "source": "L4", "priority": "medium", "type": "concept", "status": "pending"},
+    "P24": {"topic": "DHCP 工作流程", "formula": "Discover→Offer→Request→ACK 四步交互", "source": "L4", "priority": "medium", "type": "concept", "status": "pending"},
+    "P25": {"topic": "NAT 网络地址转换", "formula": "私网↔公网地址转换，端口映射表维护", "source": "L4", "priority": "medium", "type": "concept", "status": "pending"},
+    "P26": {"topic": "ARP 地址解析协议", "formula": "IP→MAC 映射，广播请求，单播响应，ARP缓存", "source": "L4", "priority": "medium", "type": "concept", "status": "pending"},
+    "P27": {"topic": "最长前缀匹配路由", "formula": "路由表查找时使用匹配的最长前缀", "source": "L4", "priority": "medium", "type": "concept", "status": "pending"},
+    "P28": {"topic": "IP 数据报格式", "formula": "各字段含义：TTL、Protocol、Checksum、Flags、Offset", "source": "L4", "priority": "medium", "type": "concept", "status": "pending"},
+    "P29": {"topic": "IPv4 vs IPv6 对比", "formula": "地址长度、头部格式、分片、过渡机制", "source": "L4", "priority": "low", "type": "concept", "status": "pending"},
+    "P30": {"topic": "ICMP 协议", "formula": "错误报告、ping/echo、消息类型", "source": "L4", "priority": "low", "type": "concept", "status": "pending"}
   },
   "materials": [
     {"id": "L1", "path": "materials/L1-NetworkLayer.md", "source": "/workspace/ProjectStore/test-pre/EE5609_CSNetwkArcht_Proto_Apns/EE5609_L1_extracted.txt"},
     {"id": "L2", "path": "materials/L2-DataLinkLayer.md", "source": "/workspace/ProjectStore/test-pre/EE5609_CSNetwkArcht_Proto_Apns/EE5609_L2.md"},
-    {"id": "L3", "path": "materials/L3-WLAN.md", "source": "/workspace/ProjectStore/test-pre/EE5609_CSNetwkArcht_Proto_Apns/L3/EE5609_L3.md"}
+    {"id": "L3", "path": "materials/L3-WLAN.md", "source": "/workspace/ProjectStore/test-pre/EE5609_CSNetwkArcht_Proto_Apns/L3/EE5609_L3.md"},
+    {"id": "L4", "path": "materials/L4-NetworkLayerPart1.md", "source": "/mnt/d/ProjectStore/CityuTest/EE5609_CSNetwkArcht_Proto_Apns/EE5609_L4.md"}
   ]
 }
