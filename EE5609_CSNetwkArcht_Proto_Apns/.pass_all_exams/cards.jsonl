@@ -1,0 +1,26 @@
+{"id": "C1", "point": "P6", "q": "网络可用性：串联/并联/混合各用什么量相乘？6个9的年允许停机时间是多少？", "a": "串联用 r（可用率）连乘；并联用 b=1-r（失效概率）连乘；混合先分解路径。6个9 → b=1e-6 → 31.5 秒/年", "due": "2026-10-03", "status": "new"}
+{"id": "C2", "point": "P6", "q": "可用性计算两大防错点？", "a": "①b×b结果必小于任一b（量级检查）②独立事件写P(A)×P(B)，不写条件概率符号", "due": "2026-10-03", "status": "new"}
+{"id": "C3", "point": "P17", "q": "/30 的 4 个槽位分别是什么？'2台主机'对应块大小几？", "a": "[网络][主机1][主机2][广播]；块=4=2^(32-30)。规则：块 ≥ 主机数+2 的最小2的幂", "due": "2026-10-03", "status": "new"}
+{"id": "C4", "point": "P17", "q": "VLSM 大题防丢分两查？", "a": "①逐问核对题目分配了几个子网(防漏答) ②下一块起点=上块终点+1且是块大小整数倍", "due": "2026-10-03", "status": "new"}
+{"id": "C5", "point": "P21", "q": "IP分片三规则 + 4000B/MTU1500 三片的Offset？", "a": "①每片数据是8的倍数 ②Offset=原始payload起始字节÷8 ③MF末片=0其余=1，ID全同。4000B题：0/185/370", "due": "2026-10-05", "status": "new"}
+{"id": "C6", "point": "P21", "q": "分片在哪里重组？每片独立路由吗？", "a": "只在目的主机重组；每片是完整IP数据报，独立路由，可能乱序到达，靠Offset排序", "due": "2026-10-05", "status": "new"}
+{"id": "C7", "point": "P9", "q": "GBN帧2丢失：接收方对帧3,4做什么？发送方做什么？", "a": "接收方丢弃3,4并重发累积ACK1(水位线)；发送方超时后从帧2起(不是帧1)重传2,3,4", "due": "2026-10-05", "status": "new"}
+{"id": "C8", "point": "P9", "q": "为什么GBN序号空间≥N+1、SR≥2N？", "a": "防ACK全丢后新旧帧歧义：GBN接收窗=1躲1步；SR接收窗=N要躲整个窗口，两窗不重叠", "due": "2026-10-05", "status": "new"}
+{"id": "C9", "point": "P10", "q": "S=G·e^(-2G)：G*=？S_max=？e^(-2G)的含义？", "a": "G*=1/2, S_max=1/(2e)≈18%。e^(-2G)=2帧长碰撞窗口内无人发送的概率(二项极限)", "due": "2026-10-05", "status": "new"}
+{"id": "C10", "point": "P10", "q": "WiFi完整时序（从信道空闲到ACK）？", "a": "空闲→DIFS→退避倒数(忙冻结)→[RTS⇄CTS]→数据→SIFS→ACK；无ACK=判碰撞重传", "due": "2026-10-05", "status": "new"}
+{"id": "C11", "point": "P11", "q": "隐藏终端4步成因链？B为何无法反向通知？", "a": "①A,C互听不见→②各自监听都'空闲'→③同发,碰撞在B处→④A,C不知情。B收到叠加乱码,帧头不可解码,不知道谁撞了", "due": "2026-10-05", "status": "new"}
+{"id": "C12", "point": "P11", "q": "RTS/CTS靠什么字段让C沉默？是编码分离吗？", "a": "duration时长字段(时间预约)，C听到B的CTS后沉默T；与CDMA编码无关", "due": "2026-10-05", "status": "new"}
+{"id": "C13", "point": "P12", "q": "WLAN层级链+各核心构件？ESS是互联网吗？", "a": "STA→BSS(1个AP+覆盖内STA)→ESS(多BSS,AP经有线分配系统DS互联)→路由器→Internet。ESS仍是WLAN,E=Extended", "due": "2026-10-05", "status": "new"}
+{"id": "C14", "point": "P22/P23", "q": "电路/VC/数据报三者用'资源预留×路径'两维区分？", "a": "电路=预留+固定路径；VC=不预留+固定路径；数据报=不预留+每包自选路", "due": "2026-10-05", "status": "new"}
+{"id": "C15", "point": "P23", "q": "VC转发表表项格式？链路断后VC怎么办？", "a": "(入接口,入VCI)→(出接口,出VCI)；连接作废,须端系统重新建连,不自动重建", "due": "2026-10-05", "status": "new"}
+{"id": "C16", "point": "P24", "q": "DORA四步+Discover三层地址？", "a": "Discover/Offer/Request/ACK；MAC=FF×6, IP 0.0.0.0→255.255.255.255, UDP 68→67；记得上次地址可跳过①②", "due": "2026-10-05", "status": "new"}
+{"id": "C17", "point": "P25", "q": "NAT表项两个方向？外部为何无法主动连入？", "a": "出:(内IP,内port)→(公网IP,新port)记表；回:按(公网IP,port)查表还原。表项被动建立,无表项入包即丢", "due": "2026-10-05", "status": "new"}
+{"id": "C18", "point": "P26", "q": "跨子网ping三句结论？网关转发前三件事？", "a": "①IP端到端不变②MAC每跳换③跨子网ARP问的是网关。网关:拆帧→查路由定下一跳→在目的子网ARP→重建帧(源MAC=网关出口,目的MAC=下一跳)", "due": "2026-10-05", "status": "new"}
+{"id": "C19", "point": "P27", "q": "多条前缀都匹配时听谁的？为什么Internet靠它支持客户换ISP？", "a": "最长(最具体)前缀；聚合大路由兜底+新ISP小路由纠偏,最长匹配保证走新家", "due": "2026-10-05", "status": "new"}
+{"id": "C20", "point": "P28", "q": "IPv4头:HL字段填几(无Options)?哪些字段每跳被改?", "a": "HL=5(单位4字节字);每跳改:TTL和Header Checksum;目的IP不变。checksum只盖头,TTL变所以每跳重算", "due": "2026-10-05", "status": "new"}
+{"id": "C21", "point": "P29", "q": "IPv6砍掉IPv4哪三样？PMTUD路由器两个动作？tunneling谁装进谁？", "a": "checksum/路由器分片/options；①丢包②回ICMP附MTU；IPv6包装进IPv4信封(谁过河谁装信封)", "due": "2026-10-05", "status": "new"}
+{"id": "C22", "point": "P30", "q": "ICMP=ping吗？差错消息带原始头前8字节为何？traceroute用哪个消息？", "a": "不是,ping只是查询类应用,还有差错类(3/x,11/0,3/4)；前8字节含端口可定位进程；11/0 TTL expired,TTL=1,2,3逐跳钓路由器", "due": "2026-10-05", "status": "new"}
+{"id": "C23", "point": "P7/P8", "q": "四PDU顺序？L1/L2/L3设备各看什么？OSI哪两层被应用层吸收？", "a": "message/segment/datagram/frame；集线器比特/交换机目的MAC/路由器目的IP；Presentation(TLS加密)+Session(连接管理)", "due": "2026-10-05", "status": "new"}
+{"id": "C24", "point": "P8", "q": "路由器逐跳处理五步？", "a": "①TTL-1+checksum重算②最长前缀选下一跳③MTU检查/分片④ARP下一跳MAC⑤重建帧(源MAC=出口,目的=下一跳)", "due": "2026-10-05", "status": "new"}
+{"id": "C25", "point": "P13/14/15", "q": "二维奇偶vs CRC谁纠错？以太网帧6字段顺序+Preamble/SFD作用？802.11四地址？", "a": "二维奇偶纠单比特错, CRC只检不纠(以太网/WiFi);Preamble同步时钟,末字节SFD=开始标志;Data下限46(凑最小帧64=14头+46+4CRC);A1收方A2发方A3路由器口A4仅AdHoc", "due": "2026-10-05", "status": "new"}
+{"id": "C26", "point": "P14", "q": "CSMA/CD和CDMA全称+区别？AP和路由器区别？", "a": "CSMA/CD=Carrier Sense Multiple Access/Collision Detection(随机接入);CDMA=Code Division Multiple Access码分多址(信道划分);AP=L2无线桥接翻译帧不跨子网,路由器=L3查IP跨子网转发", "due": "2026-10-05", "status": "new"}

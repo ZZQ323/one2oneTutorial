@@ -1,0 +1,18 @@
+{"ts": "2026-10-03", "stage": "teach", "point": "P6", "note": "复习状态已恢复：9/30 done；高优先计算题剩 P6/P17/P21；本次教 P6 网络可用性计算 (L1 p43-48)"}
+{"ts": "2026-10-03", "stage": "drill+repair", "point": "P6", "note": "结构全对，算术错位一次，近迁移通过，P6 done"}
+{"ts": "2026-10-03", "stage": "drill+repair", "point": "P17", "note": "前缀选择全对；块大小vs可用主机数混淆反复出现；A/B/C大块范围全对，仅小块(/30)出错"}
+{"ts": "2026-10-04", "stage": "repair-pass", "point": "P17", "note": "微重测三行全对，P17 done；高优先计算题只剩 P21 IP分片"}
+{"ts": "2026-10-05", "stage": "drill", "point": "P21", "note": "3200B/MTU800 分片题：5片的前缀/总长/Offset/MF全对，仅片5数据范围笔误(3199→3179)；高优先计算题P6/P17/P21全部完成", "extra": "学生提问'分片在干什么'——已用路由器切包+目的端重组图解释"}
+{"ts": "2026-10-05", "stage": "teach+drill", "point": "P9", "note": "(a)漏答接收方行为(丢弃3,4+重发ACK1)且重传起点误写为帧1；(b)(c)对。追问N+1/2N推导与NAK/累积ACK水位线，已详解。对比表+两问答案已落盘笔记.md"}
+{"ts": "2026-10-05", "stage": "teach+repair", "point": "P10", "note": "学生要求深度讲解而非简略答案：MAC三大类+ALOHA完整推导+CD/CA设计+802编号已全部落盘笔记.md；重测G=2通过"}
+{"ts": "2026-10-05", "stage": "drill+repair", "point": "P11", "note": "(b)(d)对；(a)漏监听空闲+碰撞在B；(c)理由2误写'反向通知信道'→纠正为'叠加乱码源头不可解析'；曾误说'B对A,C面临隐藏终端'（反转，已纠正：隐藏只在A↔C间）；协议名误写CDMA/CA；微重测有线vs无线现场检测全对通过。笔记已落盘"}
+{"ts": "2026-10-05", "stage": "drill+repair", "point": "P12", "note": "初测误把ESS说成'互联网'(实为仍是WLAN,AP经有线分配系统DS互联)；(b)漏答Infrastructure；微重测层级链全对。P12 done 16/30 过半"}
+{"ts": "2026-10-05", "stage": "teach+drill", "point": "P22+P23", "note": "合并教学；(c)判断VC不预留资源全对；对比表+VC转发表+故障对比+Internet选数据报哲学已落盘笔记.md"}
+{"ts": "2026-10-05", "stage": "teach+drill", "point": "P24+P25", "note": "DHCP+NAT合并教学；drill (a)(c)(d)对,(b)漏MAC层广播→微重测通过；追问NAT端到端破坏已详解并落盘"}
+{"ts": "2026-10-05", "stage": "drill", "point": "P26", "note": "(a)(b)(d)全对：首帧ARP问网关、IP端到端不变MAC每跳换、回程地址对；(c)缺网关二次ARP", "extra": "学生金句:IP永远不变,MAC是每跳导航"}
+{"ts": "2026-10-05", "stage": "repair-pass", "point": "P26", "note": "P26 done 21/30；ARP+两场景帧表讲解未单独落盘笔记(已在会话中,如需可补)"}
+{"ts": "2026-10-05", "stage": "drill", "point": "P27", "note": "最长前缀匹配4题全对(含/20边界31和三表项取最长陷阱)；P26错题闭环；ARP+LPM已落盘笔记.md"}
+{"ts": "2026-10-05", "stage": "drill", "point": "P28", "note": "4/4一次通过：HeaderLength=5、payload/应用数据500/480、TTL64→59+checksum每跳改、分层校验理由。已落盘笔记.md。剩7个概念点:P7 P8 P13 P14 P15 P29 P30"}
+{"ts": "2026-10-05", "stage": "teach+repair", "point": "P29+P30", "note": "合并教学；学生追问ICMP与ping关系、PMTUD定义→详解落盘；tunneling方向反转已纠正；25/30 剩P7 P8 P13 P14 P15"}
+{"ts": "2026-10-05", "stage": "teach+repair", "point": "P7+P8", "note": "OSI/TCP-IP对照+封装教学；学生主动问设备合一与网关概念已详解；分层知识地图(把27点挂到各层)已落盘笔记.md；27/30剩P13 P14 P15(均low)"}
+{"ts": "2026-10-05", "stage": "complete", "point": "P13+P14+P15", "note": "三点合并教学收官。CDMA全称第三次出错(CDMA/CA→Division Multiple Media)已纠正=Code Division Multiple Access；AP≠路由器(L2桥接 vs L3跨网)详解；30/30全部完成,stage→review"}
