@@ -4,31 +4,80 @@
   "created_at": "2026-10-20",
   "updated_at": "2026-10-20",
   "mode": "compact",
-  "stage": "map",
+  "stage": "teach",
   "exam_type": "闭卷，50分钟，计算题为主+分析小问，可打印老师PDF/PPT",
   "exam_date": "期中（具体日期待确认）",
   "exam_scope": "PPT 1-5（排除6-12），不考纯净数论计算题",
   "counts": {
-    "points_total": 0,
-    "points_done": 0,
+    "points_total": 41,
+    "points_done": 17,
     "errors": 0,
     "stubborn": 0,
     "cards": 0,
-    "materials": 0
+    "materials": 5
   },
-  "points": {},
-  "materials": [],
+  "points": {
+    "P25": {"status": "done", "note": "OTP XOR计算（hex）"},
+    "P26": {"status": "done", "note": "Stream Cipher已知明文攻击"},
+    "P27": {"status": "done", "note": "Shift Cipher频率分析"},
+    "P28": {"status": "done", "note": "CBC vs CTR错误传播"},
+    "P29": {"status": "done", "note": "CBC vs CTR块丢失"},
+    "P30": {"status": "done", "note": "CBC vs CTR数据库效率"},
+    "P31": {"status": "done", "note": "CTR做MAC不安全"},
+    "P32": {"status": "done", "note": "RSA签名计算(求d)"},
+    "P33": {"status": "done", "note": "离散对数问题DLP"},
+    "P34": {"status": "done", "note": "DLP破解ElGamal"},
+    "P35": {"status": "done", "note": "MAC不能不可否认"},
+    "P36": {"status": "done", "note": "RSA签名长度限制"},
+    "P37": {"status": "done", "note": "Hash验证文件相同"},
+    "P38": {"status": "done", "note": "完美保密vs计算安全"},
+    "P39": {"status": "done", "note": "Hash性质区分"},
+    "P40": {"status": "done", "note": "DES暴力破解复杂度"},
+    "P41": {"status": "done", "note": "生日攻击复杂度"}
+  },
+  "materials": [
+    {"id": "ps1", "type": "problem_set"},
+    {"id": "ex02", "type": "tutorial"},
+    {"id": "ex03", "type": "tutorial"},
+    {"id": "ex05", "type": "tutorial"},
+    {"id": "MT2025", "type": "past_exam"}
+  ],
   "user_background": {
     "number_theory": "有基础（欧几里得、幂等、中国剩余定理、欧拉公式都有印象）",
     "weak_points": [
-      "老师给的分析框架看不懂不会用",
-      "需要优先计算题练习"
+      "分析框架（威胁→服务→机制）正在建立",
+      "生日攻击原理已理解",
+      "CBC vs CTR对比已掌握"
+    ],
+    "strengths": [
+      "数论基础好",
+      "能快速理解算法流程"
     ]
   },
-  "key_references": {
-    "ps1": "Problem Set 1合集，期中考试重要参考",
-    "ex02_ex03": "对称加密tutorial（shift cipher, CBC, CTR）",
-    "ex04": "数论tutorial（可能不考）",
-    "ex05": "完整性tutorial（RSA, Hash, MAC）"
-  }
+  "sessions": [
+    {
+      "date": "2026-10-20",
+      "stage": "map",
+      "content": "创建复习框架、知识地图、考点清单",
+      "points_covered": []
+    },
+    {
+      "date": "2026-10-20",
+      "stage": "teach",
+      "content": "MT2025全卷讲解（Q1-Q5），算法框架与Q&A文档",
+      "points_covered": ["P25-P41"],
+      "key_learnings": [
+        "OTP XOR计算（学号后4位作密钥）",
+        "已知明文攻击：C' = C ⊕ P_old ⊕ P_new",
+        "频率分析：最频繁字母→'e'",
+        "CBC vs CTR对比（错误传播、效率、MAC安全性）",
+        "RSA签名：n=pq→φ(n)→求d→S=m^d",
+        "DLP：y=g^x mod p，求x困难",
+        "MAC不能不可否认（对称密钥）",
+        "完美保密≠计算安全",
+        "生日攻击2^(n/2)原理",
+        "Bitcoin=原像攻击（不是碰撞）"
+      ]
+    }
+  ]
 }
