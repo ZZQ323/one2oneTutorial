@@ -1,0 +1,41 @@
+{"id":"P1","topic":"安全服务与安全机制对应","formula":"威胁→服务→机制：Confidentiality→Encryption→AES/DES; Integrity→MAC/Signature→HMAC/RSA; Non-repudiation→Digital Signature→RSA/DSA","source":"PPT1/Ex1","priority":"medium","type":"concept","status":"pending"}
+{"id":"P2","topic":"CIA三要素","formula":"Confidentiality(加密)、Integrity(MAC/签名)、Availability(冗余/防DoS)","source":"PPT1/Ex1","priority":"medium","type":"concept","status":"pending"}
+{"id":"P3","topic":"认证类型","formula":"Entity Authentication(身份验证)、Origin Authentication(数据来源验证)、Access Control(授权)","source":"PPT1/Ex1","priority":"medium","type":"concept","status":"pending"}
+{"id":"P4","topic":"Shift Cipher计算","formula":"Ek(X) = (X + k) mod n，4-bit输入k=3时n=16","source":"PPT2/Ex2","priority":"high","type":"calculation","status":"pending"}
+{"id":"P5","topic":"CBC模式加密","formula":"Cᵢ = Ek(Pᵢ ⊕ Cᵢ₋₁)，C₀=IV；错误传播：1比特错影响2个明文块","source":"PPT4/ps1","priority":"high","type":"calculation","status":"pending"}
+{"id":"P6","topic":"CTR模式加密","formula":"Cᵢ = Pᵢ ⊕ Ek(Counterᵢ)，计数器递增；可并行、无错误传播","source":"PPT4/ps1","priority":"high","type":"calculation","status":"pending"}
+{"id":"P7","topic":"CBC错误分析","formula":"密文块错误：当前块解密乱+下一块对应位翻转；块丢失：当前块丢+下一块乱","source":"ps1/Ex3","priority":"high","type":"analysis","status":"pending"}
+{"id":"P8","topic":"Stream vs Block Cipher","formula":"Stream:快、无需可逆、需完整性检查；Block:需padding、CBC依赖前文、可逆","source":"Ex3","priority":"medium","type":"concept","status":"pending"}
+{"id":"P9","topic":"3DES密钥空间","formula":"C=DES_K1(DES^-K2(DES_K1(M)))，112位密钥，暴力破解平均2^111次","source":"Ex3","priority":"medium","type":"calculation","status":"pending"}
+{"id":"P10","topic":"DESX有效密钥长度","formula":"AESX-192: K1(128)+K2(192)+K3(128)=448位总密钥空间","source":"Ex3","priority":"medium","type":"calculation","status":"pending"}
+{"id":"P11","topic":"3AES vs AES-256","formula":"3AES(2×128位密钥)=256位密钥空间但30轮；AES-256=256位密钥14轮；AES-256更快","source":"Ex3","priority":"medium","type":"analysis","status":"pending"}
+{"id":"P12","topic":"欧几里得算法求GCD","formula":"y=qx+r迭代直到r=1；gcd(x,y)=1时存在逆元","source":"PPT6/Ex4","priority":"high","type":"calculation","status":"pending"}
+{"id":"P13","topic":"扩展欧几里得求逆元","formula":"回代求解 ax+by=1，x即为a模b的逆元","source":"PPT6/Ex4","priority":"high","type":"calculation","status":"pending"}
+{"id":"P14","topic":"快速幂模运算","formula":"Square-and-Multiply：指数转二进制，从高位到低位迭代平方+乘","source":"PPT6/ps1","priority":"high","type":"calculation","status":"pending"}
+{"id":"P15","topic":"欧拉函数φ(n)","formula":"φ(p)=p-1(素数)；φ(p₁p₂)=φ(p₁)φ(p₂)；φ(n)=n(1-1/p₁)(1-1/p₂)...","source":"PPT6/Ex4","priority":"high","type":"calculation","status":"pending"}
+{"id":"P16","topic":"费马小定理应用","formula":"a^(p-1)≡1(mod p)，用于简化大指数模运算","source":"PPT6/Ex4","priority":"high","type":"calculation","status":"pending"}
+{"id":"P17","topic":"ElGamal加密","formula":"y=g^x mod p(公钥)；加密(c1,c2)=(g^r, M·y^r) mod p；解密M=c2·(c1^x)^-1 mod p","source":"PPT5/ps1","priority":"high","type":"calculation","status":"pending"}
+{"id":"P18","topic":"Diffie-Hellman密钥交换","formula":"A=g^x mod p, B=g^y mod p；共享密钥K=B^x=A^y=g^xy mod p","source":"PPT5/ps1","priority":"high","type":"calculation","status":"pending"}
+{"id":"P19","topic":"DH中间人攻击防护","formula":"添加数字签名：Sign(A,B,timestamp)；需要CA证书或预共享公钥","source":"ps1","priority":"high","type":"analysis","status":"pending"}
+{"id":"P20","topic":"RSA加密签名","formula":"n=pq, φ(n)=(p-1)(q-1)；加密C=M^e mod n；签名S=M^d mod n；验证M=S^e mod n","source":"Ex5","priority":"high","type":"calculation","status":"pending"}
+{"id":"P21","topic":"Hash函数性质","formula":"单向性、抗碰撞；h(x)=g^x mod p不满足单向性（可用费马小定理找碰撞）","source":"Ex5","priority":"medium","type":"analysis","status":"pending"}
+{"id":"P22","topic":"Hash填充方案","formula":"128位分块，消息+填充到16字符倍数；填充必须总是应用（即使已满）","source":"Ex5","priority":"medium","type":"concept","status":"pending"}
+{"id":"P23","topic":"碰撞攻击复杂度","formula":"128位Hash，生日攻击找碰撞需约2^64次计算","source":"Ex5","priority":"medium","type":"calculation","status":"pending"}
+{"id":"P24","topic":"CBC-MAC伪造","formula":"已知M'=M0||M1的MAC T'和M''=M2||M3||M4的MAC T''；可构造M'''=M0||M1||X||M3||M4的MAC","source":"Ex5","priority":"high","type":"analysis","status":"pending"}
+{"id":"P25","topic":"OTP异或加密(hex)","formula":"C = P ⊕ K（按位XOR）；学号后4位作为密钥；结果转hex","source":"MT2025 Q1(a)","priority":"high","type":"calculation","status":"pending"}
+{"id":"P26","topic":"Stream Cipher已知明文攻击","formula":"已知部分明文→XOR密文得密钥流→修改密文改变明文：C' = C ⊕ P_old ⊕ P_new","source":"MT2025 Q1(b)","priority":"high","type":"calculation","status":"pending"}
+{"id":"P27","topic":"Shift Cipher频率分析","formula":"最频繁字母→对应'e'，推算密钥k；解密全部","source":"MT2025 Q1(c)","priority":"medium","type":"calculation","status":"pending"}
+{"id":"P28","topic":"CBC vs CTR对比(错误传播)","formula":"CBC: 1bit错→2块乱(当前+下一)；CTR: 1bit错→仅1块对应位翻转","source":"MT2025 Q2(b)","priority":"high","type":"analysis","status":"pending"}
+{"id":"P29","topic":"CBC vs CTR对比(块丢失)","formula":"CBC: 丢块→缺1块+下1块乱；CTR: 丢块→后续全乱(计数器失同步)","source":"MT2025 Q2(c)","priority":"high","type":"analysis","status":"pending"}
+{"id":"P30","topic":"CBC vs CTR对比(数据库效率)","formula":"CTR更优：更新记录只需改对应密文块；CBC需重加密后续所有块","source":"MT2025 Q2(d)","priority":"medium","type":"analysis","status":"pending"}
+{"id":"P31","topic":"CTR模式做MAC不安全","formula":"已知明文→可算出密钥流→修改P不改变MAC(C最终块)；或直接XOR新块到密钥流","source":"MT2025 Q2(e)","priority":"high","type":"analysis","status":"pending"}
+{"id":"P32","topic":"RSA签名计算(求d)","formula":"n=pq→φ(n)=(p-1)(q-1)→ed≡1(mod φ(n))→求d→S=m^d mod n","source":"MT2025 Q3(a)","priority":"high","type":"calculation","status":"pending"}
+{"id":"P33","topic":"离散对数问题(DLP)","formula":"已知a=b^c mod n，求c；ElGamal安全性依赖DLP困难性","source":"MT2025 Q3(b)","priority":"medium","type":"concept","status":"pending"}
+{"id":"P34","topic":"DLP破解ElGamal","formula":"从公钥y=g^x mod p求私钥x→可解密任意密文或伪造签名","source":"MT2025 Q3(b)","priority":"medium","type":"analysis","status":"pending"}
+{"id":"P35","topic":"MAC不能不可否认","formula":"对称密钥双方共享→任何人都能生成MAC→无法证明发送者","source":"MT2025 Q4(a)","priority":"medium","type":"analysis","status":"pending"}
+{"id":"P36","topic":"RSA签名长度限制+Hash","formula":"签名消息不能大于n；大消息→先Hash再签名","source":"MT2025 Q4(b)","priority":"medium","type":"concept","status":"pending"}
+{"id":"P37","topic":"Hash验证文件相同","formula":"计算两文件Hash/MAC，相同则文件相同","source":"MT2025 Q4(c)","priority":"low","type":"concept","status":"pending"}
+{"id":"P38","topic":"完美保密vs计算安全","formula":"完美保密：无限算力也破不了(OTP)；计算安全：实际算力破不了","source":"MT2025 Q5(b)","priority":"medium","type":"concept","status":"pending"}
+{"id":"P39","topic":"Hash性质区分","formula":"单向性(pre-image)：已知h(x)难找x；抗碰撞：难找x≠y使h(x)=h(y)；Bitcoin=单向性","source":"MT2025 Q5(c)","priority":"medium","type":"concept","status":"pending"}
+{"id":"P40","topic":"DES暴力破解复杂度","formula":"DES 56位密钥→平均2^55次(不是2^(N-1)=2^55，N=56)","source":"MT2025 Q5(d)","priority":"medium","type":"calculation","status":"pending"}
+{"id":"P41","topic":"生日攻击复杂度","formula":"n位Hash→碰撞复杂度2^(n/2)；SHA-1 160位→2^80","source":"MT2025 Q5(e)","priority":"medium","type":"calculation","status":"pending"}
