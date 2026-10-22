@@ -1,83 +1,72 @@
 {
-  "course": "CS5285_Introduction to Cybersecurity",
-  "slug": "CS5285",
-  "created_at": "2026-10-20",
-  "updated_at": "2026-10-20",
+  "course": "CS5285",
+  "exam_date": "2026-10-23",
+  "exam_type": "midterm",
   "mode": "compact",
-  "stage": "teach",
-  "exam_type": "闭卷，50分钟，计算题为主+分析小问，可打印老师PDF/PPT",
-  "exam_date": "期中（具体日期待确认）",
-  "exam_scope": "PPT 1-5（排除6-12），不考纯净数论计算题",
-  "counts": {
-    "points_total": 41,
-    "points_done": 17,
-    "errors": 0,
-    "stubborn": 0,
-    "cards": 0,
-    "materials": 5
-  },
-  "points": {
-    "P25": {"status": "done", "note": "OTP XOR计算（hex）"},
-    "P26": {"status": "done", "note": "Stream Cipher已知明文攻击"},
-    "P27": {"status": "done", "note": "Shift Cipher频率分析"},
-    "P28": {"status": "done", "note": "CBC vs CTR错误传播"},
-    "P29": {"status": "done", "note": "CBC vs CTR块丢失"},
-    "P30": {"status": "done", "note": "CBC vs CTR数据库效率"},
-    "P31": {"status": "done", "note": "CTR做MAC不安全"},
-    "P32": {"status": "done", "note": "RSA签名计算(求d)"},
-    "P33": {"status": "done", "note": "离散对数问题DLP"},
-    "P34": {"status": "done", "note": "DLP破解ElGamal"},
-    "P35": {"status": "done", "note": "MAC不能不可否认"},
-    "P36": {"status": "done", "note": "RSA签名长度限制"},
-    "P37": {"status": "done", "note": "Hash验证文件相同"},
-    "P38": {"status": "done", "note": "完美保密vs计算安全"},
-    "P39": {"status": "done", "note": "Hash性质区分"},
-    "P40": {"status": "done", "note": "DES暴力破解复杂度"},
-    "P41": {"status": "done", "note": "生日攻击复杂度"}
-  },
   "materials": [
-    {"id": "ps1", "type": "problem_set"},
-    {"id": "ex02", "type": "tutorial"},
-    {"id": "ex03", "type": "tutorial"},
-    {"id": "ex05", "type": "tutorial"},
-    {"id": "MT2025", "type": "past_exam"}
+    "MT2025_题目.md",
+    "Midterm Solutions 2025.pdf",
+    "CS5285 Midterm solutions 2023.pdf",
+    "ps1/ps1_2026_HK.pdf",
+    "1. Introductory Concepts of Security (Tutorial 1 + Reading)/Exercise 1.pdf",
+    "2. Symmetric Encryption (Tutorial 2+3)/ex02.pdf",
+    "2. Symmetric Encryption (Tutorial 2+3)/ex03.pdf",
+    "5. Integrity (Tutorial 5)/ex05.pdf"
   ],
-  "user_background": {
-    "number_theory": "有基础（欧几里得、幂等、中国剩余定理、欧拉公式都有印象）",
-    "weak_points": [
-      "分析框架（威胁→服务→机制）正在建立",
-      "生日攻击原理已理解",
-      "CBC vs CTR对比已掌握"
-    ],
-    "strengths": [
-      "数论基础好",
-      "能快速理解算法流程"
-    ]
+  "points": {
+    "P01": {"status": "done", "mastery": 0.95, "note": "CBC/CTR加密解密、错误传播、块丢失 - 计算题完成"},
+    "P02": {"status": "done", "mastery": 0.95, "note": "RSA密钥生成、加密、签名 - 计算题完成"},
+    "P03": {"status": "done", "mastery": 0.95, "note": "ElGamal加密解密 - 计算题完成"},
+    "P04": {"status": "done", "mastery": 0.95, "note": "DH密钥交换 - 计算题完成"},
+    "P05": {"status": "done", "mastery": 0.95, "note": "数论计算：快速幂、GCD、逆元、φ(n) - 计算题完成"},
+    "P06": {"status": "done", "mastery": 0.95, "note": "古典密码：Caesar、Substitution、OTP - 计算题完成"},
+    "P07": {"status": "done", "mastery": 0.95, "note": "密钥空间：3DES、DESX、3AES vs AES-256 - 计算题完成"},
+    "P08": {"status": "done", "mastery": 0.95, "note": "Hash计算：单向性、碰撞、填充攻击 - 计算题完成"},
+    "P09": {"status": "done", "mastery": 0.95, "note": "CBC-MAC伪造 - 计算题完成"},
+    "P10": {"status": "done", "mastery": 0.85, "note": "简答题：CBC vs CTR对比（英文表述）- 已练习，需复习拼写"},
+    "P11": {"status": "done", "mastery": 0.85, "note": "简答题：MAC不可否认性（英文表述）- 已练习，需复习拼写"},
+    "P12": {"status": "done", "mastery": 0.70, "note": "简答题：认证协议分析（freshness + data origin auth）- 已练习，需复习"},
+    "P13": {"status": "done", "mastery": 0.85, "note": "简答题：RSA签名长度限制（英文表述）- 已练习"},
+    "P14": {"status": "done", "mastery": 0.85, "note": "简答题：Hash验证文件相同（英文表述）- 已练习"},
+    "P15": {"status": "done", "mastery": 0.90, "note": "简答题：威胁→服务→机制框架 - ex01例题已添加"},
+    "P16": {"status": "done", "mastery": 0.75, "note": "简答题：完美保密 vs 计算安全 - 已练习，概念理解有偏差，需复习"},
+    "P17": {"status": "done", "mastery": 0.90, "note": "简答题：Hash性质区分（pre-image vs collision）- 已练习"},
+    "P18": {"status": "done", "mastery": 0.90, "note": "简答题：DES暴力破解复杂度 - 已练习"},
+    "P19": {"status": "done", "mastery": 0.90, "note": "简答题：生日攻击复杂度 - 已练习"},
+    "P20": {"status": "done", "mastery": 0.90, "note": "简答题：CTR做MAC不安全 - 已练习"},
+    "P21": {"status": "done", "mastery": 0.90, "note": "简答题：DH中间人攻击防护 - 已练习"}
   },
   "sessions": [
     {
-      "date": "2026-10-20",
-      "stage": "map",
-      "content": "创建复习框架、知识地图、考点清单",
+      "date": "2026-10-22",
+      "stage": "teach",
+      "content": "创建简答题PPT速查表，从老师PPT提取标准英文表述",
       "points_covered": []
     },
     {
-      "date": "2026-10-20",
-      "stage": "teach",
-      "content": "MT2025全卷讲解（Q1-Q5），算法框架与Q&A文档",
-      "points_covered": ["P25-P41"],
-      "key_learnings": [
-        "OTP XOR计算（学号后4位作密钥）",
-        "已知明文攻击：C' = C ⊕ P_old ⊕ P_new",
-        "频率分析：最频繁字母→'e'",
-        "CBC vs CTR对比（错误传播、效率、MAC安全性）",
-        "RSA签名：n=pq→φ(n)→求d→S=m^d",
-        "DLP：y=g^x mod p，求x困难",
-        "MAC不能不可否认（对称密钥）",
-        "完美保密≠计算安全",
-        "生日攻击2^(n/2)原理",
-        "Bitcoin=原像攻击（不是碰撞）"
+      "date": "2026-10-22",
+      "stage": "drill",
+      "content": "完成所有计算题：ps1 Q2-Q5, ex02 Q1-Q4, ex03 Q2-Q4, ex05 Q1-Q4",
+      "points_covered": ["P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09"]
+    },
+    {
+      "date": "2026-10-22",
+      "stage": "drill",
+      "content": "简答题练习8道：CBC/CTR错误传播、MAC不可否认性、RSA签名长度、Hash验证文件、认证协议分析、威胁→服务→机制、完美保密vs计算安全",
+      "points_covered": ["P10", "P11", "P12", "P13", "P14", "P15", "P16", "P17", "P18", "P19", "P20", "P21"],
+      "errors": [
+        "完美保密vs计算安全（概念理解偏差：'any information'应为'no information'）",
+        "认证协议分析（需要补充解释，不能只列关键词）",
+        "拼写错误：bloack→block, correspongding→corresponding, calcluate→calculate, infomatino→information"
       ]
+    },
+    {
+      "date": "2026-10-22",
+      "stage": "drill",
+      "content": "ex01场景分析题：Q1填表、Q2a Availability、Q3在线报纸场景、Q4a软件完整性、Q4b不可否认性、Q5使用标准",
+      "points_covered": ["P15"],
+      "notes": "所有例题已添加到简答题PPT速查表"
     }
-  ]
+  ],
+  "next_action": "复习薄弱点：1)完美保密vs计算安全 2)认证协议分析 3)拼写检查"
 }
