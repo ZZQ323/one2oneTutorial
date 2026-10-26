@@ -42,7 +42,7 @@
 
 ## 二、对称加密详解
 
-### 2.1 [DES（Data Encryption Standard）](https://blog.csdn.net/Demonslzh/article/details/129129493)
+### 2.1 DES（Data Encryption Standard）
 
 **基本信息**：
 - 密钥：56 bit（64 bit 含 8 bit 奇偶校验）
@@ -66,7 +66,7 @@
 
 ---
 
-### 2.2 [AES（Advanced Encryption Standard）](https://blog.csdn.net/qq_28205153/article/details/55798628)
+### 2.2 AES（Advanced Encryption Standard）
 
 **基本信息**：
 - 密钥：128/192/256 bit（可选）
