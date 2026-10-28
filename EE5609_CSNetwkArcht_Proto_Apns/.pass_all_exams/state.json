@@ -2,13 +2,13 @@
   "course": "EE5609_计算机网络",
   "slug": "EE5609",
   "created_at": "2026-09-21",
-  "updated_at": "2026-10-05",
+  "updated_at": "2026-10-28",
   "mode": "compact",
   "stage": "review",
   "exam_type": "闭卷，论述/计算/大题为主",
   "exam_date": "一周内",
   "counts": {
-    "points_total": 30,
+    "points_total": 42,
     "points_done": 30,
     "errors": 10,
     "stubborn": 0,
@@ -255,28 +255,139 @@
       "priority": "low",
       "type": "concept",
       "status": "done"
+    },
+    "P31": {
+      "topic": "Dijkstra算法计算",
+      "formula": "从源节点计算到所有节点的最短路径，维护D(v)和N'",
+      "source": "L5",
+      "priority": "high",
+      "type": "calculation",
+      "status": "pending"
+    },
+    "P32": {
+      "topic": "Distance Vector算法",
+      "formula": "Bellman-Ford: Dx(y) = min_v{c(x,v) + Dv(y)}",
+      "source": "L5",
+      "priority": "high",
+      "type": "calculation",
+      "status": "pending"
+    },
+    "P33": {
+      "topic": "Count-to-infinity问题",
+      "formula": "链路成本增加时DV算法的收敛问题和解决方案",
+      "source": "L5",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P34": {
+      "topic": "OSPF vs RIP vs BGP",
+      "formula": "链路状态vs距离向量，域内vs域间，策略驱动",
+      "source": "L5",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P35": {
+      "topic": "TCP三次握手",
+      "formula": "SYN(x) -> SYN+ACK(y,x+1) -> ACK(y+1)，ISN的作用",
+      "source": "L6",
+      "priority": "high",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P36": {
+      "topic": "TCP序号和确认号",
+      "formula": "SN=段首字节，AN=期望下一字节（累积确认）",
+      "source": "L6",
+      "priority": "high",
+      "type": "calculation",
+      "status": "pending"
+    },
+    "P37": {
+      "topic": "TCP流控机制",
+      "formula": "rwnd通告空闲缓冲区，发送方限制未确认数据<=rwnd",
+      "source": "L6",
+      "priority": "high",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P38": {
+      "topic": "TCP拥塞控制",
+      "formula": "cwnd+rwnd，慢启动/拥塞避免/快速重传",
+      "source": "L6",
+      "priority": "high",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P39": {
+      "topic": "UDP vs TCP对比",
+      "formula": "无连接vs面向连接，不可靠vs可靠，无拥塞控制vs有",
+      "source": "L6",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P40": {
+      "topic": "DNS查询方式",
+      "formula": "递归vs迭代，A/AAAA/CNAME/MX记录",
+      "source": "L7",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P41": {
+      "topic": "HTTP版本演进",
+      "formula": "1.0短连接->1.1持久->2多路复用->3 QUIC",
+      "source": "L7",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P42": {
+      "topic": "CDN和Web缓存",
+      "formula": "内容分发策略，条件GET（If-Modified-Since）",
+      "source": "L7",
+      "priority": "low",
+      "type": "concept",
+      "status": "pending"
     }
   },
   "materials": [
     {
       "id": "L1",
       "path": "materials/L1-NetworkLayer.md",
-      "source": "/workspace/ProjectStore/test-pre/EE5609_CSNetwkArcht_Proto_Apns/EE5609_L1_extracted.txt"
+      "source": "EE5609_L1_extracted.txt"
     },
     {
       "id": "L2",
       "path": "materials/L2-DataLinkLayer.md",
-      "source": "/workspace/ProjectStore/test-pre/EE5609_CSNetwkArcht_Proto_Apns/EE5609_L2.md"
+      "source": "EE5609_L2.md"
     },
     {
       "id": "L3",
       "path": "materials/L3-WLAN.md",
-      "source": "/workspace/ProjectStore/test-pre/EE5609_CSNetwkArcht_Proto_Apns/L3/EE5609_L3.md"
+      "source": "EE5609_L3.md"
     },
     {
       "id": "L4",
       "path": "materials/L4-NetworkLayerPart1.md",
-      "source": "/mnt/d/ProjectStore/CityuTest/EE5609_CSNetwkArcht_Proto_Apns/EE5609_L4.md"
+      "source": "EE5609_L4.md"
+    },
+    {
+      "id": "L5",
+      "path": "materials/L5-Routing.md",
+      "source": "EE5609_L5_extracted.txt"
+    },
+    {
+      "id": "L6",
+      "path": "materials/L6-TransportTCP.md",
+      "source": "EE5609_L6_extracted.txt"
+    },
+    {
+      "id": "L7",
+      "path": "materials/L7-ApplicationLayer.md",
+      "source": "EE5609_L7_extracted.txt"
     }
   ]
 }
