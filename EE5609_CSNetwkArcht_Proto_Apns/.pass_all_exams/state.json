@@ -2,14 +2,14 @@
   "course": "EE5609_计算机网络",
   "slug": "EE5609",
   "created_at": "2026-09-21",
-  "updated_at": "2026-10-28",
+  "updated_at": "2026-10-29",
   "mode": "compact",
   "stage": "review",
   "exam_type": "闭卷，论述/计算/大题为主",
   "exam_date": "一周内",
   "counts": {
     "points_total": 42,
-    "points_done": 30,
+    "points_done": 42,
     "errors": 10,
     "stubborn": 0,
     "cards": 0,
@@ -262,7 +262,7 @@
       "source": "L5",
       "priority": "high",
       "type": "calculation",
-      "status": "pending"
+      "status": "done"
     },
     "P32": {
       "topic": "Distance Vector算法",
@@ -270,7 +270,7 @@
       "source": "L5",
       "priority": "high",
       "type": "calculation",
-      "status": "pending"
+      "status": "done"
     },
     "P33": {
       "topic": "Count-to-infinity问题",
@@ -278,7 +278,7 @@
       "source": "L5",
       "priority": "medium",
       "type": "concept",
-      "status": "pending"
+      "status": "done"
     },
     "P34": {
       "topic": "OSPF vs RIP vs BGP",
@@ -286,7 +286,7 @@
       "source": "L5",
       "priority": "medium",
       "type": "concept",
-      "status": "pending"
+      "status": "done"
     },
     "P35": {
       "topic": "TCP三次握手",
@@ -294,7 +294,7 @@
       "source": "L6",
       "priority": "high",
       "type": "concept",
-      "status": "pending"
+      "status": "done"
     },
     "P36": {
       "topic": "TCP序号和确认号",
@@ -302,7 +302,7 @@
       "source": "L6",
       "priority": "high",
       "type": "calculation",
-      "status": "pending"
+      "status": "done"
     },
     "P37": {
       "topic": "TCP流控机制",
@@ -310,7 +310,7 @@
       "source": "L6",
       "priority": "high",
       "type": "concept",
-      "status": "pending"
+      "status": "done"
     },
     "P38": {
       "topic": "TCP拥塞控制",
@@ -318,7 +318,7 @@
       "source": "L6",
       "priority": "high",
       "type": "concept",
-      "status": "pending"
+      "status": "done"
     },
     "P39": {
       "topic": "UDP vs TCP对比",
@@ -326,7 +326,7 @@
       "source": "L6",
       "priority": "medium",
       "type": "concept",
-      "status": "pending"
+      "status": "done"
     },
     "P40": {
       "topic": "DNS查询方式",
@@ -334,7 +334,7 @@
       "source": "L7",
       "priority": "medium",
       "type": "concept",
-      "status": "pending"
+      "status": "done"
     },
     "P41": {
       "topic": "HTTP版本演进",
@@ -342,7 +342,7 @@
       "source": "L7",
       "priority": "medium",
       "type": "concept",
-      "status": "pending"
+      "status": "done"
     },
     "P42": {
       "topic": "CDN和Web缓存",
@@ -350,7 +350,7 @@
       "source": "L7",
       "priority": "low",
       "type": "concept",
-      "status": "pending"
+      "status": "done"
     }
   },
   "materials": [
