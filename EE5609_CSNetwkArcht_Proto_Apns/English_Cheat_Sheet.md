@@ -118,6 +118,64 @@
 
 ---
 
+### 8. Routing (L5)
+| English | 中文 | Note |
+|---|---|---|
+| routing algorithm: link-state vs distance-vector | 链路状态 vs 距离向量 | |
+| Dijkstra's algorithm, shortest path | Dijkstra算法，最短路径 | global info |
+| Bellman-Ford equation | Bellman-Ford方程 | distributed |
+| Distance Vector (DV), routing table | 距离向量，路由表 | |
+| count-to-infinity problem | 无穷计数问题 | DV flaw |
+| poisoned reverse | 毒性反转 | break loop, 2 rounds |
+| OSPF (Open Shortest Path First) | | link-state, area-based |
+| BGP (Border Gateway Protocol) | | path-vector, inter-AS |
+| eBGP / iBGP | 外部/内部BGP | |
+| AS_PATH, NEXT_HOP, LOCAL_PREF | BGP属性 | |
+| split-horizon rule (iBGP) | iBGP水平分割 | iBGP learned route NOT advertised to other iBGP peers |
+| route aggregation, prefix summarization | 路由聚合 | reduce table size |
+| intra-AS routing (IGP) vs inter-AS routing (EGP) | 域内 vs 域间 | OSPF/RIP vs BGP |
+
+### 9. Transport Layer (L6)
+| English | 中文 | Note |
+|---|---|---|
+| multiplexing / demultiplexing | 复用/解复用 | port-based |
+| TCP: reliable, in-order, byte-stream | 可靠、有序、字节流 | |
+| UDP: unreliable, connectionless, no congestion control | 不可靠、无连接、无拥塞控制 | |
+| three-way handshake | 三次握手 | SYN -> SYN+ACK -> ACK |
+| ISN (Initial Sequence Number) | 初始序号 | random, anti-spoof |
+| sequence number (SN), acknowledgement number (AN) | 序号、确认号 | SN=first byte, AN=next expected |
+| cumulative ACK | 累积确认 | ACK N = all bytes < N received |
+| receive window (rwnd) | 接收窗口 | flow control |
+| congestion window (cwnd) | 拥塞窗口 | congestion control |
+| slow start, congestion avoidance, fast retransmit | 慢启动、拥塞避免、快速重传 | |
+| ssthresh (slow start threshold) | 慢启动阈值 | cwnd/2 after loss |
+| MSS (Maximum Segment Size) | 最大段大小 | |
+| RTT, SRTT, RTO | 往返时延、平滑RTT、重传超时 | |
+| fast recovery | 快速恢复 | 3 dup ACKs, cwnd=ssthresh |
+| TIME_WAIT, 2×MSL | | ensure ACK received |
+| FIN, SYN, RST, ACK flags | 标志位 | |
+| SYN consumes 1 seq#, FIN consumes 1 seq#, pure ACK consumes 0 | SYN/FIN消耗序号，纯ACK不消耗 | |
+
+### 10. Application Layer (L7)
+| English | 中文 | Note |
+|---|---|---|
+| DHCP: Discover, Offer, Request, Ack | 四步 | UDP 67/68, broadcast |
+| DNS: recursive vs iterative query | 递归 vs 迭代 | |
+| DNS records: A, AAAA, CNAME, MX | | |
+| root DNS server, TLD server, authoritative server, local DNS | 根/TLD/权威/本地 | hierarchy |
+| HTTP methods: GET, POST, PUT, HEAD, DELETE | | |
+| HTTP status codes: 200 OK, 301 Moved, 404 Not Found, 304 Not Modified | | |
+| persistent connection, pipelining | 持久连接、管线化 | HTTP/1.1 |
+| multiplexing (HTTP/2), frame interleaving | 多路复用、帧交错 | HTTP/2 |
+| head-of-line (HOL) blocking | 队头阻塞 | TCP problem |
+| QUIC, 0-RTT, 1-RTT handshake | | HTTP/3, over UDP |
+| CDN: enter deep vs bring home | 进入深网 vs 进入浅网 | Akamai vs Limelight |
+| DASH (Dynamic Adaptive Streaming over HTTP) | | manifest, adaptive bitrate |
+| Web cache, conditional GET, If-Modified-Since | Web缓存、条件GET | 304 Not Modified |
+| TLS (Transport Layer Security), HTTPS | | encryption + authentication |
+
+---
+
 ## SIDE B: Formulas + Essay Skeletons (write IN ENGLISH)
 
 ### Formulas (English variable names as they appear in exam questions)
