@@ -1,4 +1,0 @@
-{{userMessage}}
-
-Answer using the following information:
-{{contents}}
