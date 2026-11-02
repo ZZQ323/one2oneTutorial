@@ -1,138 +1,594 @@
-# L6 - Transport Layer: TCP and UDP
+# EE5609 Computer Networks - Lecture 6
 
-## 传输层服务
-- 提供应用进程之间的逻辑通信
-- 发送方：将应用消息分成段（segment），传给网络层
-- 接收方：重组段成消息，传给应用层
-- **复用/解复用**：根据端口号将段交付到正确的socket
-  - 复用：发送方给段加上源/目的端口
-  - 解复用：接收方根据端口交付到对应进程
-- **端口**：单个传输层支持多个应用进程
+## Transport Layer: TCP and UDP
 
-## UDP（User Datagram Protocol）
-- **无连接**：无需握手
-- **不可靠**：段可能丢失或乱序
-- **无拥塞控制**：可以尽可能快地发送
-- **优点**：
-  - 无连接建立延迟（适合实时应用）
-  - 无连接状态
-  - 头部小（8字节）
-  - 可在拥塞下工作（不会被限速）
-- **UDP头部**：源端口(16) | 目的端口(16) | 长度(16) | 校验和(16)
-- **应用**：DNS、流媒体、SNMP、HTTP/3、在线游戏
-- **可靠传输 over UDP**：应用层实现（如QUIC）
+### Learning Objectives
 
-## TCP（Transmission Control Protocol）
-- **面向连接**：需要三次握手建立连接
-- **可靠传输**：有序、无差错、无丢失
-- **点对点**：一个发送方，一个接收方
-- **全双工**：双向数据流
-- **字节流**：无消息边界（MSS限制段大小）
-- **累积ACK**：确认已收到的字节
-- **流水线**：允许同时有多个未确认段
-- **四大功能**：
-  - Connection management：建立、使用、关闭连接
-  - Flow control：保持在接收方容量内
-  - Error control：检测丢失数据并恢复
-  - Congestion control：调整发送到网络的负载
+- Explain and compare UDP with TCP.
+- Describe TCP connection establishment and termination.
+- Interpret TCP sequence numbers and acknowledgements.
+- Explain TCP retransmission, flow control, and basic congestion control.
+- Analyse a TCP exchange using sequence numbers, ACKs, and window limits.
 
-## TCP 段结构
-- **Sequence Number (SN)**：段的第一个字节的序号
-  - 每个连接从ISN开始
-  - 字节流位置从ISN+1开始标记
-  - SN指示段中第一个字节的位置
-- **Acknowledgement Number (AN)**：期望收到的下一个字节序号（累积确认）
-  - 暗示AN-1之前的所有字节都已正确接收
-- **rwnd**：接收窗口大小（流控）
-  - 从AN开始，接收方准备接受的字节数
-- **cwnd**：拥塞窗口（拥塞控制）
-- **标志位**：
-  - SYN：连接建立
-  - FIN：连接关闭
-  - RST：重置连接
-  - ACK：确认有效
-  - PSH：推送数据
-  - URG：紧急数据
-  - C/E：拥塞通知
-- **Header Length**：TCP头长度（单位4字节，无options=5）
-- **Checksum**：覆盖头+数据+伪首部
-- **Options**：可变长，如MSS协商、时间戳、窗口缩放
+---
 
-## TCP 连接管理
-### 三次握手（建立连接）
-1. Client -> Server: SYN (SN=x)
-2. Server -> Client: SYN+ACK (SN=y, AN=x+1)
-3. Client -> Server: ACK (AN=y+1)
-- **为什么三次**：防止half-open连接（旧的SYN延迟到达导致服务器误以为新连接）
-- **ISN选择**：随机生成，防止旧连接的段被新连接接收
-- **状态机**：
-  - Client: CLOSED → SYN_SENT → ESTABLISHED
-  - Server: LISTEN → SYN_RCVD → ESTABLISHED
+## 1. Transport Services and Protocols
 
-### 四次挥手（关闭连接）
-1. 一方发送 FIN（SN=x）
-2. 另一方 ACK（AN=x+1）
-3. 另一方发送 FIN（SN=y）
-4. 发起方 ACK（AN=y+1）
-- **状态机**：
-  - 主动关闭方：ESTABLISHED → FIN_WAIT_1 → FIN_WAIT_2 → TIME_WAIT → CLOSED
-  - 被动关闭方：ESTABLISHED → CLOSE_WAIT → LAST_ACK → CLOSED
-- **TIME_WAIT**：等待2×MSL（Maximum Segment Lifetime），确保对方收到ACK，让旧段消失
-- **可合并**：FIN+ACK可合并为一个消息
+### Overview
 
-## TCP 流控
-- 接收方在TCP头部的rwnd字段通告空闲缓冲区大小
-- rwnd = 缓冲区总大小 - 已占用
-- 发送方限制：LastByteSent - LastByteAcked <= rwnd
-- 防止发送方淹没接收方
-- **rwnd上限**：≤ 接收缓冲区总大小，不是累加值
-- RcvBuffer默认4096字节，可通过socket选项设置
+- Provide **logical communication** between application processes running on different hosts.
+- Transport protocols actions in end systems:
+  - **Sender**: breaks application messages into segments, passes to network layer
+  - **Receiver**: reassembles segments into messages, passes to application layer
+- Two widely used Internet transport protocols: **TCP** and **UDP**
 
-## TCP 错误控制
-- **为什么**：即使IP不可靠，也保证可靠服务
-- **错误类型**：
-  - 乱序：基于SN检测，重排并ACK
-  - 重复：基于SN检测，丢弃并ACK
-  - 损坏：基于checksum检测，丢弃等待超时重传
-  - 丢失：等待超时重传
-- **超时重传**：
-  - RTT：发送数据到收到ACK的时间
-  - SRTT：平滑RTT（指数加权移动平均）
-  - RTO（Retransmission Timeout）：基于SRTT计算，通常 RTO = SRTT + 4×RTTVAR
-  - RTO太短：不必要重传
-  - RTO太长：丢失恢复慢
-- **快速重传**：收到3个重复ACK时立即重传，不等超时
+### Network Stack Context
 
-## TCP 拥塞控制
-- 发送方限制：LastByteSent - LastByteAcked <= min(cwnd, rwnd)
-- **慢启动**：
-  - 连接开始时，cwnd = 1 MSS
-  - 每收到一个ACK，cwnd += 1（指数增长：每RTT翻倍）
-  - 直到cwnd >= ssthresh 或丢包
-- **拥塞避免**：
-  - cwnd >= ssthresh后进入
-  - 每个RTT增加1 MSS（线性增长）
-  - 直到丢包
-- **快速重传**：收到3个重复ACK时立即重传
-- **丢包后**：
-  - ssthresh = cwnd / 2
-  - cwnd = 1 MSS（重新慢启动）或 cwnd = ssthresh（快速恢复，仅3个重复ACK时）
+```
+application
+transport
+network
+data link
+physical
+```
 
-## TCP 序号空间
-- SYN消耗一个序号
-- FIN消耗一个序号
-- 纯ACK不消耗序号
-- SYN+ACK消耗一个序号
+Hosts connect via: home network → enterprise network → regional ISP → global ISP → datacenter network → content provider network → mobile network.
 
-## MSS（Maximum Segment Size）
-- TCP段数据部分的最大长度
-- 通常在三次握手时协商
-- 典型值：536字节（IPv4）或1460字节（以太网）
+---
 
-## 综合练习题
-- 给定ISN、MSS、rwnd，计算TCP交互的段数、SN/AN
-- 分析拥塞控制图中cwnd变化
-- **示例**：ISN_client=100, ISN_server=600, rwnd=2048, MSS=536, 初始cwnd=1 MSS
-  - 三次握手：SYN(SN=100) → SYN+ACK(SN=600,AN=101) → ACK(AN=601)
-  - 数据传输：考虑cwnd限制和MSS分片
-  - 连接关闭：FIN序列
+## 2. Transport Layer: Ports
+
+A single transport layer is used to support multiple application processes through the use of **ports**.
+
+---
+
+## 3. Multiplexing / Demultiplexing
+
+### Demultiplexing (Receiver Side)
+
+- Use header info to deliver received segments to the correct socket
+- Handle data from multiple sockets, add transport header (later used for demultiplexing)
+
+### Multiplexing (Sender Side)
+
+- Handle data from multiple application processes
+- Add transport header for later demultiplexing at receiver
+
+### Example: HTTP Server and Client
+
+```
+client                          HTTP server
+  |  HTTP msg (Ht)                |
+  |------------------------------>|
+  |  HTTP msg (Ht, Hn)            |
+  |<------------------------------|
+```
+
+**Q:** How did transport layer know to deliver message to Firefox browser process rather than Netflix process or Skype process?
+
+→ Through **port numbers** (demultiplexing).
+
+---
+
+## 4. Transport Protocols in the Internet
+
+| Protocol | Features |
+|----------|----------|
+| **TCP** (Transmission Control Protocol) | Reliable, in-order delivery; congestion control; flow control; connection setup |
+| **UDP** (User Datagram Protocol) | Unreliable, unordered delivery; no-frills extension of "best-effort" IP |
+
+**Services NOT available:**
+- Delay guarantees
+- Bandwidth guarantees
+
+---
+
+## 5. UDP: Connectionless Transport
+
+### Characteristics
+
+- **"Best effort"** service — UDP segments may be:
+  - Lost
+  - Delivered out-of-order to app
+- **Connectionless**: no handshaking between UDP sender and receiver
+- Each UDP segment handled independently of others
+- No connection establishment (which can add RTT delay)
+- Simple: no connection state at sender, receiver
+- Small header size
+- No congestion control
+- UDP can blast away as fast as desired!
+- Can function in the face of congestion
+
+### Why is there a UDP?
+
+- Streaming multimedia apps (loss tolerant, rate sensitive)
+- DNS
+- SNMP
+- HTTP/3
+- If reliable transfer needed over UDP (e.g., HTTP/3):
+  - Add needed reliability at application layer
+  - Add congestion control at application layer
+
+### UDP: Transport Layer Actions
+
+```
+SNMP client                        SNMP server
+  application                         application
+  transport (UDP)                     transport (UDP)
+  network (IP)                        network (IP)
+  link                                link
+  physical                            physical
+```
+
+**UDP sender actions:**
+- Is passed an application-layer message
+- Determines UDP segment header fields values
+- Creates UDP segment
+- Passes segment to IP
+
+### UDP Segment Format
+
+| Field | Size | Description |
+|-------|------|-------------|
+| Source port # | 16 bits | Source port |
+| Dest port # | 16 bits | Destination port |
+| Length | 16 bits | Length in bytes of UDP segment, including header |
+| Checksum | 16 bits | Error detection |
+| Application data (payload) | variable | Data to/from application layer |
+
+```
++----------+----------+
+| src port | dst port |  ← 32 bits total
++----------+----------+
+|  length  | checksum |
++----------+----------+
+|                    |
+|   application      |
+|      data          |
+|   (payload)        |
+|                    |
++--------------------+
+```
+
+---
+
+## 6. TCP: Connection-Oriented Transport
+
+### Key Features
+
+- **Reliable, in-order byte stream**: no "message boundaries"
+- **Full duplex data**: bi-directional data flow in same connection
+- **Point-to-point**: one sender, one receiver
+- **MSS**: maximum segment size
+- **Cumulative ACKs**
+- **Pipelining**: TCP congestion and flow control set window size
+- **Connection-oriented**: handshaking (exchange of control messages) initializes sender, receiver state before data exchange
+- **Flow controlled**: sender will not overwhelm receiver
+
+### Transmission Control Protocol
+
+- **Flow control**: keep within the receiver's capacity
+- **Error control**: detect missing data and recover it
+- **Congestion control**: adjust the load sent into the network
+- **Connection management**: establish, use, and close the connection
+
+---
+
+## 7. TCP Segment Structure
+
+```
++----------+----------+
+| src port | dst port |
++----------+----------+
+|     sequence number      |
++--------------------------+
+|   acknowledgement number |
++------+---+---------------+
+| rwnd | H |  checksum    |
++------+---+---------------+
+| U A P R S F |            |
++-------------+------------+
+|   urgent     |  options  |
+|   pointer    | (variable)|
++--------------+-----------+
+|     application data (variable length)     |
++--------------------------------------------+
+```
+
+### TCP Header Fields
+
+| Field | Description |
+|-------|-------------|
+| Source port # | Source port |
+| Dest port # | Destination port |
+| Sequence number | Counting bytes of data into bytestream (not segments!) |
+| Acknowledgement number | ACK: seq # of next expected byte; A bit: this is an ACK |
+| Receive window (rwnd) | Flow control: # bytes receiver willing to accept |
+| Checksum | Internet checksum |
+| RST, SYN, FIN | Connection management flags |
+| C, E | Congestion notification |
+| Options (variable) | TCP options |
+| Header length | Length of TCP header |
+
+---
+
+## 8. TCP Header Format: SN, AN, Window
+
+### Sequence Number (SN)
+
+- Each TCP connection starts with an SN called **Initial Sequence Number (ISN)**
+- The position of each data byte in the byte stream is labelled from ISN+1
+- SN indicates the position of the 1st byte in each segment
+
+### Acknowledgement Number (AN)
+
+- AN of the next data byte expected from sender
+- Implies all bytes up to AN-1 have been received correctly
+
+### Window Size (W)
+
+- The number of bytes counted from AN that the receiver is ready to accept
+
+---
+
+## 9. TCP Sequence Numbers and ACKs
+
+### Sequence Numbers (SN)
+
+- Byte stream "number" of 1st byte in segment's data
+
+```
+        sent       sent, not-     usable       not
+       ACKed       yet ACKed      but not      usable
+                  ("in-flight")   yet sent
+
+|------|------------|-------------|-----------|
+       ^            ^             ^
+    ACKed        last sent    window edge
+                              (window size = N)
+```
+
+### Acknowledgements (AN)
+
+- Seq # of next byte expected from other side
+- **Cumulative ACK**
+
+---
+
+## 10. TCP Connection Management
+
+### Connection Establishment
+
+- Ensure both ends are ready to communicate
+- Establish initial sequence number (ISN)
+- Exchange parameters, e.g., window size (in bytes)
+- Allocate resources, e.g., buffer space, to support connection
+- Connection establishment starts with a synchronization (**SYN**) request
+
+---
+
+## 11. TCP: Connection Establishment (Three-Way Handshake)
+
+```
+Client                          Server
+  |                                |
+  |  SYN bit=1, SN=x               |  (choose ISN=x, send TCP SYN msg)
+  |------------------------------->|
+  |                                |  Client state: SYN_SENT → ESTAB
+  |  SYN bit=1, SN=y               |  Server state: LISTEN → SYN_RCVD
+  |  ACK bit=1, AN=x+1             |  (choose ISN=y, send TCP SYNACK, acking SYN)
+  |<-------------------------------|
+  |                                |  Server state: SYN_RCVD → ESTAB
+  |  ACK bit=1, AN=y+1             |  (received SYNACK(x) indicates server is live;
+  |------------------------------->|   send ACK for SYNACK; this segment may contain
+  |                                |   client-to-server data)
+  |                                |  Client state: SYN_SENT → ESTAB
+```
+
+### Socket Code
+
+```python
+# Client
+clientSocket = socket(AF_INET, SOCK_STREAM)
+clientSocket.connect((serverName, serverPort))
+
+# Server
+serverSocket = socket(AF_INET, SOCK_STREAM)
+serverSocket.bind(('', serverPort))
+serverSocket.listen(1)
+connectionSocket, addr = serverSocket.accept()
+```
+
+### Why Not Just 2-Way Handshake?
+
+```
+client                          server
+  |                                |
+  |  req_conn(x)                   |
+  |------------------------------->|
+  |                                |  acc_conn(x) → ESTAB
+  |  (client terminates)           |
+  |                                |  req_conn(x) retransmit → ESTAB
+  |                                |
+  Problem: half-open connection! (no client)
+```
+
+→ Three-way handshake prevents stale connection requests from creating half-open connections.
+
+### Why Three Handshake Messages?
+
+To ensure both sides agree on initial sequence numbers and both are alive before data transfer.
+
+---
+
+## 12. TCP: Connection Termination
+
+```
+Client                          Server
+  |                                |
+  |  FIN bit=1, SN=x               |  (clientSocket.close())
+  |------------------------------->|
+  |                                |  Client: ESTAB → FIN_WAIT_1
+  |  ACK bit=1, AN=x+1             |  Server: ESTAB → CLOSE_WAIT
+  |<-------------------------------|
+  |                                |  (can still send data)
+  |  Client: FIN_WAIT_1 → FIN_WAIT_2
+  |                                |
+  |  FIN bit=1, SN=y               |  (server close)
+  |<-------------------------------|  Server: CLOSE_WAIT → LAST_ACK
+  |  ACK bit=1, AN=y+1             |
+  |------------------------------->|  Client: FIN_WAIT_2 → TIME_WAIT
+  |                                |  (timed wait for 2×max segment lifetime)
+  |  Client: TIME_WAIT → CLOSED    |  Server: LAST_ACK → CLOSED
+```
+
+---
+
+## 13. A Data-Transfer Trace
+
+```
+Host A                          Host B
+  |                                |
+  |  SN=42, AN=79, data = 'C'      |  (User types 'C')
+  |------------------------------->|
+  |                                |  Host B ACKs receipt of 'C', echoes back 'C'
+  |  SN=79, AN=43, data = 'C'      |
+  |<-------------------------------|
+  |                                |  Host A ACKs receipt of echoed 'C'
+  |  SN=43, AN=80                  |
+  |------------------------------->|
+```
+
+---
+
+## 14. TCP Flow Control
+
+### The Problem
+
+**Q:** What happens if network layer delivers data faster than application layer removes data from socket buffers?
+
+```
+from sender →  [ IP code → TCP socket buffers → receiver buffers ]  → application process
+```
+
+### The Solution: Receive Window
+
+- Receiver controls sender, so sender won't overflow receiver's buffer by transmitting too much, too fast
+- TCP receiver "advertises" free buffer space in **rwnd** field in TCP header
+  - `RcvBuffer` size set via socket options (typical default is 4096 bytes)
+  - Many operating systems auto-adjust RcvBuffer
+- Sender limits amount of unACKed ("in-flight") data to received rwnd
+- Guarantees receive buffer will not overflow
+
+```
++------------------------------------------+
+| RcvBuffer                                |
+| [buffered data][  free buffer space  ]   |
+|                |← rwnd →|                |
++------------------------------------------+
+```
+
+---
+
+## 15. TCP Error Control
+
+### Why?
+
+So that TCP can guarantee reliable service to application layer even when IP is unreliable.
+
+### Error Types
+
+| Error Type | Detection | Recovery |
+|------------|-----------|----------|
+| Segments arriving out of order | Based on SN in TCP header | Re-order and ACK |
+| Segments duplicated | Based on SN | Discard and ACK |
+| Segments corrupted | Based on checksum in TCP header | Discard and wait for timeout retransmission |
+| Segments loss | — | Wait for timeout retransmission |
+
+---
+
+## 16. Timeout Retransmission
+
+### Lost ACK Scenario
+
+```
+Host A                          Host B
+  |                                |
+  |  Seq=92, 8 bytes of data       |
+  |------------------------------->|
+  |                                |
+  |  ACK=100                       |
+  |<-------------------------------|
+  |          X (lost)              |
+  |                                |
+  |  timeout                       |
+  |  Seq=92, 8 bytes of data       |  (retransmit)
+  |------------------------------->|
+  |                                |
+  |  ACK=100                       |
+  |<-------------------------------|
+```
+
+### How Long Should TCP Wait for the ACK?
+
+| Term | Definition |
+|------|-----------|
+| **RTT** (measured) | Time from sending data to receiving its ACK |
+| **SRTT** (smoothed) | A smoothed estimate from multiple RTT samples |
+| **RTO** (waiting limit) | How long TCP waits before a timeout retransmission |
+
+- Too short → unnecessary retransmissions
+- Too long → slow recovery from segment loss
+
+**Solution:** Measure Round Trip Time (RTT) and compute smoothed RTT (SRTT). The Retransmission TimeOut (RTO) is then derived from SRTT.
+
+---
+
+## 17. Congestion in the Network
+
+### Congestion
+
+- Informally: "too many sources sending too much data too fast for network to handle"
+- Manifestations:
+  - Long delays (queueing in router buffers)
+  - Packet loss (buffer overflow at routers)
+
+### Congestion Control vs Flow Control
+
+| | Scope |
+|---|-------|
+| **Congestion control** | Too many senders, sending too fast (network-wide) |
+| **Flow control** | One sender too fast for one receiver (end-to-end) |
+
+---
+
+## 18. The Congestion Window
+
+### TCP Sender Limits Transmission
+
+$$\text{LastByteSent} - \text{LastByteAcked} \leq \min(\text{cwnd}, \text{rwnd})$$
+
+- **cwnd** (congestion window) is dynamically adjusted in response to observed network congestion (implementing TCP congestion control)
+
+```
+        last byte    last byte
+         ACKed        sent
+           |           |
+           v           v
+|----------|===========|----------|
+           |←  cwnd  →|
+           | available |
+           | but not   |
+           | used      |
+```
+
+### TCP Sending Behavior
+
+- Roughly: send cwnd bytes, wait RTT for ACKs, then send more bytes
+- TCP rate ≈ `cwnd / RTT` bytes/sec
+
+---
+
+## 19. TCP Slow Start
+
+- When connection begins, increase rate **exponentially** until first loss event:
+  - Initially `cwnd = 1 MSS`
+  - Double cwnd every RTT
+  - Done by incrementing cwnd for every ACK received
+
+```
+cwnd
+  |                          /
+  |                        /
+  |                      /
+  |                    /
+  |                  /
+  |                /
+  |              /
+  |            /
+  |          /
+  |        /
+  |      /
+  |    /
+  |  /
+  |/
+  +--------------------------------→ time (RTT)
+```
+
+- Summary: initial rate is slow, but ramps up exponentially fast
+
+---
+
+## 20. TCP Exercise
+
+### Exercise Statement
+
+Figure Q1 shows an extract of a Client program and a Server program (in pseudo code) interacting with their TCP layers. Fill in the minimum number of TCP segments that must be exchanged between the Client TCP and Server TCP, in an ideal communication situation without error retransmission. Indicate clearly the Sequence Number (SN) and the Acknowledgement Number (AN) in each segment. Include SYN or FIN flags if they are set.
+
+**Assumptions:**
+- ISN for Client TCP = **100**
+- ISN for Server TCP = **600**
+- Both window sizes fixed at **2048 bytes**
+- Maximum Segment Size (MSS) = **536 bytes**
+- Initial congestion window size = **1 MSS**
+
+### Pseudo Code
+
+```
+Client TCP                          Server TCP
+c = new Socket()                    svr = new ServerSocket()
+c.write(30 bytes)                   s = svr.accept()
+c.read(3000 bytes)                  s.read(30 bytes)
+c.close()                           s.write(3000 bytes)
+                                    s.close()
+```
+
+### Phase 1: Connection Establishment
+
+```
+Client (ISN=100)                   Server (ISN=600)
+  |                                    |
+  |  SYN: SN=100                       |
+  |----------------------------------->|
+  |  SYN+ACK: SN=600, AN=101           |
+  |<-----------------------------------|
+  |  ACK: AN=601                       |
+  |----------------------------------->|
+```
+
+### Phase 2: Data Transfer (Flow & Congestion Control)
+
+**Client writes 30 bytes → Server reads 30 bytes:**
+- Client sends 1 data segment: SN=101, 30 bytes of data, AN=601
+- Server ACKs: SN=601, AN=131
+
+**Server writes 3000 bytes → Client reads 3000 bytes:**
+- MSS = 536 bytes, so 3000 bytes = ⌈3000/536⌉ = 6 segments
+- Initial cwnd = 1 MSS = 536 bytes
+- Slow start: cwnd = 1 → 2 → 4 → ...
+- Round 1: send 1 segment (536 bytes), receive 1 ACK → cwnd = 2
+- Round 2: send 2 segments (1072 bytes), receive 2 ACKs → cwnd = 4
+- Round 3: send 3 segments (remaining 3000 - 536 - 1072 = 1392 bytes → 3 segments of 536, 536, 320)
+
+**Window size constraint:** rwnd = 2048 bytes, so at most 2048 bytes can be in flight.
+
+### Phase 3: Connection Termination
+
+```
+Client                              Server
+  |                                    |
+  |  FIN: SN=131, AN=3601              |  (c.close())
+  |----------------------------------->|
+  |  ACK: SN=3601, AN=132              |
+  |<-----------------------------------|
+  |  FIN: SN=3601, AN=132              |  (s.close())
+  |<-----------------------------------|  (or combined FIN+ACK above)
+  |  ACK: SN=132, AN=3602              |
+  |----------------------------------->|
+```
+
+### Notes
+
+- A SYN and FIN segment does not carry data but **consumes one sequence number**
+- A SYN+ACK, FIN+ACK does not carry data but **consumes one sequence number**
+- ACK segment, carrying no data, **does not consume any sequence number**

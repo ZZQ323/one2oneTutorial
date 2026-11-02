@@ -1,0 +1,2302 @@
+
+============================================================
+第 1 页
+============================================================
+1
+EE5609 Computer Networks
+
+============================================================
+第 2 页
+============================================================
+2
+The Network Layer – Part II
+
+============================================================
+第 3 页
+============================================================
+Learning objectives
+• Run Dijkstra’s algorithm and derive next-hop forwarding entries.
+• Apply distance-vector updates and explain count to infinity.
+• Explain how OSPF, eBGP and iBGP support Internet routing.
+• Distinguish forwarding from routing and explain distributed control.
+3
+
+============================================================
+第 4 页
+============================================================
+4
+Network-Layer Functions
+▪forwarding: move packets from router’s 
+input to appropriate router output
+data plane
+control plane
+▪routing: determine route taken by 
+packets from source to destination
+
+============================================================
+第 5 页
+============================================================
+5
+Individual routing algorithm components in each and every 
+router interact in the control plane
+Routing
+Algorithm
+data
+plane
+control
+plane
+1
+2
+0111
+values in arriving 
+packet header
+3
+
+============================================================
+第 6 页
+============================================================
+6
+Routing protocols
+Routing protocol goal: determine 
+“good” paths (equivalently, routes), 
+from sending hosts to receiving host, 
+through network of routers
+• path: sequence of routers packets 
+traverse from given initial source host 
+to final destination host
+• “good”: least “cost”, “fastest”, “least 
+congested”
+• routing: a “top-10” networking 
+challenge!
+mobile network
+enterprise
+          network
+national or global ISP
+datacenter 
+network
+application
+transport
+network
+link
+physical
+application
+transport
+network
+link
+physical
+network
+link
+physical
+network
+link
+physical
+network
+link
+physical
+network
+link
+physical
+network
+link
+physical
+
+============================================================
+第 7 页
+============================================================
+7
+Routing as a graph problem
+u
+y
+x
+w
+v
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+graph: G = (N,E)
+ca,b: cost of direct link connecting a and b
+             e.g., cw,z = 5, cu,z = ∞
+cost defined by network operator: 
+could always be 1, or inversely related 
+to bandwidth, or inversely related to 
+congestion
+N: set of routers = { u, v, w, x, y, z }
+E: set of links ={ (u,v), (u,x), (v,x), (v,w), (x,w), (x,y), (w,y), (w,z), (y,z) }
+
+============================================================
+第 8 页
+============================================================
+8
+global or decentralized information?
+global: all routers have complete 
+topology, link cost info
+• “link state” algorithms
+decentralized: iterative process of 
+computation, exchange of info with neighbors
+• routers initially only know link costs to 
+attached neighbors
+• “distance vector” algorithms
+How fast 
+do routes 
+change?
+dynamic: routes change 
+more quickly
+• periodic updates or in 
+response to link cost 
+changes
+static: routes change 
+slowly over time
+Routing algorithm classification
+
+============================================================
+第 9 页
+============================================================
+9
+▪centralized: network topology, link 
+costs known to all nodes
+• accomplished via “link state 
+broadcast” 
+• all nodes have same info
+▪computes least cost paths from one 
+node (“source”) to all other nodes
+• gives forwarding table for that node
+▪iterative: after k iterations, know 
+least cost path to k destinations
+▪cx,y: direct link cost from 
+node x to y;  = ∞ if not direct 
+neighbors
+▪D(v): current estimate of cost 
+of least-cost-path from source 
+to destination v
+▪p(v): predecessor node along 
+path from source to v
+▪N': set of nodes whose least-
+cost-path definitively known
+notation
+Dijkstra’s link-state routing algorithm
+
+============================================================
+第 10 页
+============================================================
+10
+Dijkstra’s link-state routing algorithm
+1  Initialization: 
+2   N' = {u}                               /* compute least cost path from u to all other nodes */
+3    for all nodes v 
+4      if v adjacent to u            /* u initially knows direct-path-cost only to  direct neighbors    */
+5          then D(v) = cu,v      
+/* but may not be minimum cost!                                                    */
+6      else D(v) = ∞ 
+7 
+8   Loop 
+9     
+10    
+11
+12
+13
+14
+15  until all nodes in N' 
+find w not in N' such that D(w) is a minimum 
+add w to N' 
+update D(v) for all v adjacent to w and not in N' : 
+     D(v) = min ( D(v),  D(w) + cw,v  ) 
+/* new least-path-cost to v is either old least-cost-path to v or known 
+least-cost-path to w plus direct-cost from w to v */ 
+
+============================================================
+第 11 页
+============================================================
+11
+Dijkstra’s algorithm: an example
+Step
+0
+1
+2
+3
+4
+5
+N'
+D(v),p(v)
+D(x),p(x)
+D(y),p(y)
+D(z),p(z)
+u
+y
+x
+w
+v
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+D(w),p(w)
+5,u
+∞
+∞
+1,u
+2,u
+u
+v
+w
+x
+y
+z
+Initialization (step 0): 
+      For all a: if a adjacent to u then D(a) = cu,a 
+
+============================================================
+第 12 页
+============================================================
+12
+Dijkstra’s algorithm: an example
+Step
+0
+1
+2
+3
+4
+5
+N'
+D(v),p(v)
+D(x),p(x)
+D(y),p(y)
+D(z),p(z)
+D(w),p(w)
+5,u
+∞
+∞
+1,u
+2,u
+u
+8   Loop 
+9     
+10    
+ find a not in N' such that D(a) is a minimum 
+ add a to N' 
+ux
+v
+w
+x
+y
+z
+u
+y
+x
+w
+v
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+
+============================================================
+第 13 页
+============================================================
+13
+Dijkstra’s algorithm: an example
+Step
+0
+1
+2
+3
+4
+5
+N'
+D(v),p(v)
+D(x),p(x)
+D(y),p(y)
+D(z),p(z)
+D(w),p(w)
+5,u
+∞
+∞
+1,u
+2,u
+u
+8   Loop 
+9     
+10
+11    
+ find a not in N' such that D(a) is a minimum 
+ add a to N' 
+ux
+v
+w
+x
+y
+z
+u
+y
+x
+w
+v
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+update D(b) for all b adjacent to a and not in N' : 
+     D(b) = min ( D(b), D(a) + ca,b ) 
+∞
+2,x
+4,x
+2,u
+D(v) = min ( D(v), D(x) + cx,v ) = min(2, 1+2) = 2 
+D(w) = min ( D(w), D(x) + cx,w ) = min (5, 1+3) = 4 
+D(y) = min ( D(y), D(x) + cx,y ) = min(inf,1+1) = 2  
+
+============================================================
+第 14 页
+============================================================
+14
+Dijkstra’s algorithm: an example
+Step
+0
+1
+2
+3
+4
+5
+N'
+D(v),p(v)
+D(x),p(x)
+D(y),p(y)
+D(z),p(z)
+D(w),p(w)
+5,u
+∞
+∞
+1,u
+2,u
+u
+8   Loop 
+9     
+10
+    
+ find a not in N' such that D(a) is a minimum 
+ add a to N' 
+ux
+v
+w
+x
+y
+z
+u
+y
+x
+w
+v
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+∞
+2,x
+4,x
+2,u
+uxy
+
+============================================================
+第 15 页
+============================================================
+15
+Dijkstra’s algorithm: an example
+Step
+0
+1
+2
+3
+4
+5
+N'
+D(v),p(v)
+D(x),p(x)
+D(y),p(y)
+D(z),p(z)
+D(w),p(w)
+5,u
+∞
+∞
+1,u
+2,u
+u
+8   Loop 
+9     
+10
+11
+    
+ find a not in N' such that D(a) is a minimum 
+ add a to N' 
+ux
+v
+w
+x
+y
+z
+u
+y
+x
+w
+v
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+∞
+2,x
+4,x
+2,u
+uxy
+update D(b) for all b adjacent to a and not in N' : 
+     D(b) = min ( D(b), D(a) + ca,b ) 
+4,y
+3,y
+2,u
+D(w) = min ( D(w), D(y) + cy,w ) = min (4, 2+1) = 3 
+D(z) = min ( D(z), D(y) + cy,z ) = min(inf,2+2) = 4  
+
+============================================================
+第 16 页
+============================================================
+16
+Dijkstra’s algorithm: an example
+Step
+0
+1
+2
+3
+4
+5
+N'
+D(v),p(v)
+D(x),p(x)
+D(y),p(y)
+D(z),p(z)
+D(w),p(w)
+5,u
+∞
+∞
+1,u
+2,u
+u
+8   Loop 
+9     
+10
+    
+ find a not in N' such that D(a) is a minimum 
+ add a to N' 
+ux
+v
+w
+x
+y
+z
+u
+y
+x
+w
+v
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+∞
+2,x
+4,x
+2,u
+uxy
+4,y
+3,y
+2,u
+uxyv
+
+============================================================
+第 17 页
+============================================================
+17
+Dijkstra’s algorithm: an example
+update D(b) for all b adjacent to a and not in N' : 
+     D(b) = min ( D(b), D(a) + ca,b ) 
+D(w) = min ( D(w), D(v) + cv,w ) = min (3, 2+3) = 3 
+Step
+0
+1
+2
+3
+4
+5
+N'
+D(v),p(v)
+D(x),p(x)
+D(y),p(y)
+D(z),p(z)
+D(w),p(w)
+5,u
+∞
+∞
+1,u
+2,u
+u
+8   Loop 
+9     
+10
+11
+    
+ find a not in N' such that D(a) is a minimum 
+ add a to N' 
+ux
+v
+w
+x
+y
+z
+u
+y
+x
+w
+v
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+∞
+2,x
+4,x
+2,u
+uxy
+4,y
+3,y
+2,u
+uxyv
+4,y
+3,y
+
+============================================================
+第 18 页
+============================================================
+18
+Dijkstra’s algorithm: an example
+Step
+0
+1
+2
+3
+4
+5
+N'
+D(v),p(v)
+D(x),p(x)
+D(y),p(y)
+D(z),p(z)
+D(w),p(w)
+5,u
+∞
+∞
+1,u
+2,u
+u
+8   Loop 
+9     
+10
+    
+ find a not in N' such that D(a) is a minimum 
+ add a to N' 
+ux
+v
+w
+x
+y
+z
+u
+y
+x
+w
+v
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+∞
+2,x
+4,x
+2,u
+uxy
+4,y
+3,y
+2,u
+uxyv
+4,y
+3,y
+uxyvw
+
+============================================================
+第 19 页
+============================================================
+19
+Dijkstra’s algorithm: an example
+update D(b) for all b adjacent to a and not in N' : 
+     D(b) = min ( D(b), D(a) + ca,b ) 
+D(z) = min ( D(z), D(w) + cw,z ) = min (4, 3+5) = 4 
+Step
+0
+1
+2
+3
+4
+5
+N'
+D(v),p(v)
+D(x),p(x)
+D(y),p(y)
+D(z),p(z)
+D(w),p(w)
+5,u
+∞
+∞
+1,u
+2,u
+u
+8   Loop 
+9     
+10
+11
+    
+ find a not in N' such that D(a) is a minimum 
+ add a to N' 
+ux
+v
+w
+x
+y
+z
+u
+y
+x
+w
+v
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+∞
+2,x
+4,x
+2,u
+uxy
+4,y
+3,y
+2,u
+uxyv
+4,y
+3,y
+uxyvw
+4,y
+
+============================================================
+第 20 页
+============================================================
+20
+Dijkstra’s algorithm: an example
+Step
+0
+1
+2
+3
+4
+5
+N'
+D(v),p(v)
+D(x),p(x)
+D(y),p(y)
+D(z),p(z)
+D(w),p(w)
+5,u
+∞
+∞
+1,u
+2,u
+u
+8   Loop 
+9     
+10
+    
+ find a not in N' such that D(a) is a minimum 
+ add a to N' 
+ux
+v
+w
+x
+y
+z
+u
+y
+x
+w
+v
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+∞
+2,x
+4,x
+2,u
+uxy
+4,y
+3,y
+2,u
+uxyv
+4,y
+3,y
+uxyvw
+4,y
+uxyvwz
+
+============================================================
+第 21 页
+============================================================
+21
+Dijkstra’s algorithm: an example
+Step
+0
+1
+2
+3
+4
+5
+N'
+D(v),p(v)
+D(x),p(x)
+D(y),p(y)
+D(z),p(z)
+D(w),p(w)
+5,u
+∞
+∞
+1,u
+2,u
+u
+8   Loop 
+9     
+10
+11
+    
+ find a not in N' such that D(a) is a minimum 
+ add a to N' 
+ux
+v
+w
+x
+y
+z
+u
+y
+x
+w
+v
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+∞
+2,x
+4,x
+2,u
+uxy
+4,y
+3,y
+2,u
+uxyv
+4,y
+3,y
+uxyvw
+4,y
+uxyvwz
+update D(b) for all b adjacent to a and not in N' : 
+     D(b) = min ( D(b), D(a) + ca,b ) 
+
+============================================================
+第 22 页
+============================================================
+22
+Dijkstra’s algorithm: an example
+u
+y
+x
+w
+v
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+u
+y
+x
+w
+v
+z
+resulting least-cost-path tree from u:
+resulting forwarding table in u:
+v
+x
+y
+w
+x
+(u,v)
+(u,x)
+(u,x)
+(u,x)
+(u,x)
+destination
+outgoing link
+route from u to v directly
+route from u to all 
+other destinations 
+via x 
+
+============================================================
+第 23 页
+============================================================
+23
+Based on Bellman-Ford (BF) equation (dynamic programming):
+Let Dx(y): cost of least-cost path from x to y.
+Then:
+   Dx(y) = minv { cx,v + Dv(y) }
+   
+Bellman-Ford equation
+min taken over all neighbors v of x
+v’s estimated least-cost-path cost to y
+direct cost of link from x to v
+Distance vector algorithm 
+
+============================================================
+第 24 页
+============================================================
+24
+u
+y
+z
+2
+2
+1
+3
+1
+1
+2
+5
+3
+5
+Suppose that u’s neighboring nodes, x,v,w, know that for destination z:
+Du(z) = min { cu,v + Dv(z),
+                    cu,x + Dx(z),
+                    cu,w + Dw(z) }
+Bellman-Ford equation says:
+Dv(z) = 5
+v
+Dw(z) = 3
+w
+Dx(z) = 3
+x
+= min {2 + 5,
+           1 + 3,
+           5 + 3}  = 4
+node achieving minimum (x) is 
+next hop on estimated least-
+cost path to destination (z)
+Bellman-Ford Example
+
+============================================================
+第 25 页
+============================================================
+25
+Distance vector algorithm 
+key idea: 
+▪from time-to-time, each node sends its own distance vector estimate 
+to neighbors
+▪under minor, natural conditions, the estimate Dx(y) converge to the 
+actual least cost dx(y) 
+Dx(y) ← minv{cx,v + Dv(y)}  for each node y ∊ N
+▪when x receives new DV estimate from any neighbor, it updates its 
+own DV using B-F equation:
+
+============================================================
+第 26 页
+============================================================
+26
+Distance vector algorithm 
+iterative, asynchronous: each local 
+iteration caused by: 
+▪local link cost change 
+▪DV update message from neighbor
+wait for (change in local link 
+cost or msg from neighbor)
+each node:
+distributed, self-stopping: each 
+node notifies neighbors only when 
+its DV changes
+▪neighbors then notify their 
+neighbors – only if necessary
+▪no notification received, no 
+actions taken!
+recompute DV estimates using 
+DV received from neighbor
+if DV to any destination has 
+changed, notify neighbors 
+
+============================================================
+第 27 页
+============================================================
+DV in a: 
+Da(a)=0
+Da(b) = 8
+Da(c) = ∞
+Da(d) = 1
+Da(e) = ∞
+Da(f) = ∞
+Da(g) = ∞
+Da(h) = ∞
+Da(i) = ∞
+Distance vector: example
+g
+h
+i
+1
+1
+1
+1
+1
+1
+1
+1
+1
+8
+1
+t=0
+▪All nodes have 
+distance estimates 
+to nearest 
+neighbors (only)
+A few asymmetries:
+▪missing link
+▪larger cost
+d
+e
+f
+a
+b
+c
+▪All nodes send 
+their local 
+distance vector to 
+their neighbors
+27
+
+============================================================
+第 28 页
+============================================================
+Distance vector example: iteration
+All nodes:
+▪receive distance 
+vectors from 
+neighbors
+▪compute their new 
+local  distance 
+vector
+▪send their new 
+local distance 
+vector to neighbors
+t=1
+g
+h
+i
+1
+1
+1
+1
+1
+1
+1
+1
+1
+8
+1
+d
+e
+f
+a
+b
+c
+28
+
+============================================================
+第 29 页
+============================================================
+Distance vector example: iteration
+g
+h
+i
+1
+1
+1
+1
+1
+1
+1
+1
+1
+8
+1
+d
+e
+f
+a
+b
+c
+All nodes:
+▪receive distance 
+vectors from 
+neighbors
+▪compute their new 
+local  distance 
+vector
+▪send their new 
+local distance 
+vector to neighbors
+t=1
+compute
+compute
+compute
+compute
+compute
+compute
+compute
+compute
+compute
+29
+
+============================================================
+第 30 页
+============================================================
+Distance vector example: iteration
+g
+h
+i
+1
+1
+1
+1
+1
+1
+1
+1
+1
+8
+1
+d
+e
+f
+a
+b
+c
+All nodes:
+▪receive distance 
+vectors from 
+neighbors
+▪compute their new 
+local  distance 
+vector
+▪send their new 
+local distance 
+vector to neighbors
+t=1
+30
+
+============================================================
+第 31 页
+============================================================
+Distance vector example: iteration
+g
+h
+i
+1
+1
+1
+1
+1
+1
+1
+1
+1
+8
+1
+d
+e
+f
+a
+b
+c
+All nodes:
+▪receive distance 
+vectors from 
+neighbors
+▪compute their new 
+local  distance 
+vector
+▪send their new 
+local distance 
+vector to neighbors
+t=2
+31
+
+============================================================
+第 32 页
+============================================================
+Distance vector example: iteration
+g
+h
+i
+1
+1
+1
+1
+1
+1
+1
+8
+1
+2
+1
+d
+e
+f
+a
+b
+c
+All nodes:
+▪receive distance 
+vectors from 
+neighbors
+▪compute their new 
+local  distance 
+vector
+▪send their new 
+local distance 
+vector to neighbors
+t=2
+compute
+compute
+compute
+compute
+compute
+compute
+compute
+compute
+compute
+32
+
+============================================================
+第 33 页
+============================================================
+Distance vector example: iteration
+g
+h
+i
+1
+1
+1
+1
+1
+1
+1
+1
+1
+8
+1
+d
+e
+f
+a
+b
+c
+All nodes:
+▪receive distance 
+vectors from 
+neighbors
+▪compute their new 
+local  distance 
+vector
+▪send their new 
+local distance 
+vector to neighbors
+t=2
+33
+
+============================================================
+第 34 页
+============================================================
+Distance vector example: iteration
+…. and so on
+Let’s next take a look at the iterative computations at nodes
+34
+
+============================================================
+第 35 页
+============================================================
+DV in a: 
+Da(a)=0
+Da(b) = 8
+Da(c) = ∞
+Da(d) = 1
+Da(e) = ∞
+Da(f) = ∞
+Da(g) = ∞
+Da(h) = ∞
+Da(i) = ∞
+Distance vector example: computation
+g
+h
+i
+1
+1
+1
+1
+1
+1
+1
+1
+1
+8
+1
+t=1
+DV in b:
+Db(f) = ∞
+Db(g) = ∞
+Db(h) = ∞
+Db(i) = ∞
+Db(a) = 8
+Db(c) = 1
+Db(d) = ∞
+Db(e) = 1
+▪b receives DVs 
+from a, c, e
+a
+b
+c
+d
+e
+f
+DV in c:
+Dc(a) = ∞
+Dc(b) = 1
+Dc(c) = 0
+Dc(d) = ∞
+Dc(e) = ∞
+Dc(f) = ∞
+Dc(g) = ∞
+Dc(h) = ∞
+Dc(i) = ∞
+DV in e:
+De(a) = ∞
+De(b) = 1
+De(c) = ∞
+De(d) = 1
+De(e) = 0
+De(f) = 1
+De(g) = ∞
+De(h) = 1
+De(i) = ∞
+35
+
+============================================================
+第 36 页
+============================================================
+Distance vector example: computation
+DV in a: 
+Da(a)=0
+Da(b) = 8
+Da(c) = ∞
+Da(d) = 1
+Da(e) = ∞
+Da(f) = ∞
+Da(g) = ∞
+Da(h) = ∞
+Da(i) = ∞
+DV in b:
+Db(f) = ∞
+Db(g) = ∞
+Db(h) = ∞
+Db(i) = ∞
+Db(a) = 8
+Db(c) = 1
+Db(d) = ∞
+Db(e) = 1
+DV in c:
+Dc(a) = ∞
+Dc(b) = 1
+Dc(c) = 0
+Dc(d) = ∞
+Dc(e) = ∞
+Dc(f) = ∞
+Dc(g) = ∞
+Dc(h) = ∞
+Dc(i) = ∞
+DV in e:
+De(a) = ∞
+De(b) = 1
+De(c) = ∞
+De(d) = 1
+De(e) = 0
+De(f) = 1
+De(g) = ∞
+De(h) = 1
+De(i) = ∞
+g
+h
+i
+1
+1
+1
+1
+1
+1
+1
+1
+1
+8
+1
+t=1
+▪b receives DVs 
+from a, c, e, 
+computes:
+a
+b
+c
+d
+e
+f
+DV in b:
+Db(f) =2
+Db(g) = ∞
+Db(h) = 2
+Db(i) = ∞
+Db(a) = 8
+Db(c) = 1
+Db(d) = 2
+Db(e) = 1
+e
+compute
+b
+Db(a) = min{cb,a+Da(a), cb,c +Dc(a), cb,e+De(a)}  = min{8,∞,∞} = 8 
+Db(c) = min{cb,a+Da(c), cb,c +Dc(c), c b,e +De(c)}  = min{∞,1,∞} = 1 
+Db(d) = min{cb,a+Da(d), cb,c +Dc(d), c b,e +De(d)}  = min{9,∞,2} = 2 
+Db(f) = min{cb,a+Da(f), cb,c +Dc(f), c b,e +De(f)}  = min{∞,∞,2} = 2 
+Db(i) = min{cb,a+Da(i), cb,c +Dc(i), c b,e+De(i)}  = min{∞, ∞, ∞} = ∞ 
+Db(h) = min{cb,a+Da(h), cb,c +Dc(h), c b,e+De(h)}  = min{∞, ∞, 2} = 2 
+Db(e) = min{cb,a+Da(e), cb,c +Dc(e), c b,e +De(e)}  = min{∞,∞,1} = 1 
+Db(g) = min{cb,a+Da(g), cb,c +Dc(g), c b,e+De(g)}  = min{∞, ∞, ∞} = ∞ 
+36
+
+============================================================
+第 37 页
+============================================================
+DV in a: 
+Da(a)=0
+Da(b) = 8
+Da(c) = ∞
+Da(d) = 1
+Da(e) = ∞
+Da(f) = ∞
+Da(g) = ∞
+Da(h) = ∞
+Da(i) = ∞
+Distance vector example: computation
+g
+h
+i
+1
+1
+1
+1
+1
+1
+1
+1
+1
+8
+1
+t=1
+DV in b:
+Db(f) = ∞
+Db(g) = ∞
+Db(h) = ∞
+Db(i) = ∞
+Db(a) = 8
+Db(c) = 1
+Db(d) = ∞
+Db(e) = 1
+▪c receives DVs 
+from b
+a
+b
+c
+d
+e
+f
+DV in c:
+Dc(a) = ∞
+Dc(b) = 1
+Dc(c) = 0
+Dc(d) = ∞
+Dc(e) = ∞
+Dc(f) = ∞
+Dc(g) = ∞
+Dc(h) = ∞
+Dc(i) = ∞
+DV in e:
+De(a) = ∞
+De(b) = 1
+De(c) = ∞
+De(d) = 1
+De(e) = 0
+De(f) = 1
+De(g) = ∞
+De(h) = 1
+De(i) = ∞
+37
+
+============================================================
+第 38 页
+============================================================
+Distance vector example: computation
+g
+h
+i
+1
+1
+8
+1
+t=1
+DV in b:
+Db(f) = ∞
+Db(g) = ∞
+Db(h) = ∞
+Db(i) = ∞
+Db(a) = 8
+Db(c) = 1
+Db(d) = ∞
+Db(e) = 1
+▪c receives DVs 
+from b computes:
+a
+b
+c
+d
+e
+f
+DV in c:
+Dc(a) = ∞
+Dc(b) = 1
+Dc(c) = 0
+Dc(d) = ∞
+Dc(e) = ∞
+Dc(f) = ∞
+Dc(g) = ∞
+Dc(h) = ∞
+Dc(i) = ∞
+Dc(a) = min{cc,b+Db(a}} = 1 + 8 = 9 
+Dc(b) = min{cc,b+Db(b)} = 1 + 0 = 1
+Dc(d) = min{cc,b+Db(d)} = 1+ ∞ = ∞ 
+Dc(e) = min{cc,b+Db(e)} = 1 + 1 = 2
+Dc(f) = min{cc,b+Db(f)} = 1+ ∞ = ∞ 
+Dc(g) = min{cc,b+Db(g)} = 1+ ∞ = ∞ 
+Dc(i) = min{cc,b+Db(i)} = 1+ ∞ = ∞ 
+Dc(h) = min{cbc,b+Db(h)} = 1+ ∞ = ∞ 
+DV in c:
+Dc(a) = 9
+Dc(b) = 1
+Dc(c) = 0
+Dc(d) = 2
+Dc(e) = ∞
+Dc(f) = ∞
+Dc(g) = ∞
+Dc(h) = ∞
+Dc(i) = ∞
+compute
+38
+
+============================================================
+第 39 页
+============================================================
+Distance vector example: computation
+1
+1
+1
+1
+1
+1
+1
+1
+1
+8
+1
+t=1
+DV in b:
+Db(f) = ∞
+Db(g) = ∞
+Db(h) = ∞
+Db(i) = ∞
+Db(a) = 8
+Db(c) = 1
+Db(d) = ∞
+Db(e) = 1
+▪e receives DVs 
+from b, d, f, h
+a
+b
+c
+DV in f:
+Dc(a) = ∞
+Dc(b) = ∞
+Dc(c) = ∞
+Dc(d) = ∞
+Dc(e) = 1
+Dc(f) = 0
+Dc(g) = ∞
+Dc(h) = ∞
+Dc(i) = 1
+DV in e:
+De(a) = ∞
+De(b) = 1
+De(c) = ∞
+De(d) = 1
+De(e) = 0
+De(f) = 1
+De(g) = ∞
+De(h) = 1
+De(i) = ∞
+DV in h:
+Dc(a) = ∞
+Dc(b) = ∞
+Dc(c) = ∞
+Dc(d) = ∞
+Dc(e) = 1
+Dc(f) = ∞
+Dc(g) = 1
+Dc(h) = 0
+Dc(i) = 1
+DV in d:
+Dc(a) = 1
+Dc(b) = ∞
+Dc(c) = ∞
+Dc(d) = 0
+Dc(e) = 1
+Dc(f) = ∞ 
+Dc(g) = 1
+Dc(h) = ∞
+Dc(i) = ∞
+d
+e
+f
+g
+h
+i
+Q: what is new DV computed in e at 
+t=1?
+compute
+39
+
+============================================================
+第 40 页
+============================================================
+Distance vector: state information diffusion
+t=0
+c’s state at t=0 is at c only
+g
+h
+i
+1
+1
+1
+1
+1
+1
+1
+1
+1
+8
+1
+d
+e
+f
+a
+b
+c
+c’s state at t=0 has propagated to b, and 
+may influence distance vector computations 
+up to 1 hop away, i.e., at b
+t=1
+c’s state at t=0 may now influence distance 
+vector computations up to 2 hops away, i.e., 
+at b and now at a, e as well
+t=2
+c’s state at t=0 may influence distance vector 
+computations up to 3 hops away, i.e., at d, f, h
+t=3
+c’s state at t=0 may influence distance vector 
+computations up to 4 hops away, i.e., at g, i
+t=4
+Iterative communication, computation steps diffuses information through network: 
+t=1 
+t=2 
+t=3 
+t=4 
+40
+
+============================================================
+第 41 页
+============================================================
+Distance vector: link cost changes
+“good news 
+travels fast”
+t0 : y detects link-cost change, updates its DV, informs its neighbors.
+t1 : z receives update from y, updates its DV, computes new least cost 
+to x , sends its neighbors its DV.
+t2 : y receives z’s update, updates its DV.  y’s least costs do not 
+change, so y does not send a message to z. 
+link cost changes:
+▪node detects local link cost change 
+▪updates routing info, recalculates local DV
+▪if DV changes, notify neighbors 
+x
+z
+1
+4
+50
+y
+1
+41
+
+============================================================
+第 42 页
+============================================================
+Distance vector: link cost changes
+link cost changes:
+▪node detects local link cost change 
+▪“bad news travels slow” – count-to-infinity 
+problem:
+x
+z
+1
+4
+50
+y
+60
+• y sees direct link to x has new cost 60, but z has said it has a path at cost of 5. So 
+y computes “my new cost to x will be 6, via z); notifies z of new cost of 6 to x.
+• z learns that path to x via y has new cost 6, so z  computes “my new cost to 
+x will be 7 via y), notifies y of new cost of 7 to x.
+• y learns that path to x via z has new cost 7, so y  computes “my new cost to 
+x will be 8 via y), notifies z of new cost of 8 to x.
+• z learns that path to x via y has new cost 8, so z  computes “my new cost to 
+x will be 9 via y), notifies y of new cost of 9 to x.
+…
+▪Distributed algorithms are tricky!
+42
+
+============================================================
+第 43 页
+============================================================
+Comparison of LS and DV algorithms
+message complexity
+LS: n routers, O(n2) messages sent  
+DV: exchange between neighbors; 
+convergence time varies
+speed of convergence
+LS: O(n2) algorithm, O(n2) messages
+• may have oscillations
+DV: convergence time varies
+• may have routing loops
+• count-to-infinity problem
+robustness: what happens if router 
+malfunctions, or is compromised?
+LS: 
+• router can advertise incorrect link cost
+• each router computes only its own 
+table
+DV:
+• DV router can advertise incorrect path 
+cost (“I have a really low-cost path to 
+everywhere”): black-holing
+• each router’s DV is used by others: 
+error propagate thru network
+43
+
+============================================================
+第 44 页
+============================================================
+44
+Making routing scalable
+our routing study thus far - idealized 
+• all routers identical
+• network “flat”
+… not true in practice
+scale: billions of destinations:
+▪can’t store all destinations in 
+routing tables!
+▪routing table exchange would 
+swamp links! 
+administrative autonomy:
+▪Internet: a network of networks
+▪each network admin may want to 
+control routing in its own network
+
+============================================================
+第 45 页
+============================================================
+45
+Routing in the Internet
+
+============================================================
+第 46 页
+============================================================
+46
+Internet approach to scalable routing
+Aggregate routers into regions known as “autonomous 
+systems” (AS) (a.k.a. “domains”)
+intra-AS (aka “intra-domain”): 
+routing among routers within same 
+AS (“network”)
+▪all routers in AS must run same intra-
+domain protocol
+▪routers in different AS can run different 
+intra-domain routing protocols
+▪gateway router: at “edge” of its own AS, 
+has link(s) to router(s) in other AS’es
+inter-AS (aka “inter-domain”): 
+routing among AS’es
+▪gateways perform inter-domain 
+routing (as well as intra-domain 
+routing)
+
+============================================================
+第 47 页
+============================================================
+Interconnected ASes
+3b
+1d
+3a
+1c
+2a
+AS3
+AS1
+AS2
+1a
+2c
+2b
+1b
+3c
+intra-AS
+routing
+intra-AS
+routing
+intra-AS
+routing
+inter-AS routing
+forwarding
+table
+forwarding table  configured by intra- 
+and inter-AS routing algorithms
+Intra-AS
+Routing 
+Inter-AS
+Routing 
+▪intra-AS routing determine entries for 
+destinations within AS
+▪inter-AS & intra-AS determine entries 
+for external destinations
+47
+
+============================================================
+第 48 页
+============================================================
+Inter-AS routing:  a role in intradomain forwarding
+3b
+1d
+3a
+1c
+2a
+AS3
+AS1
+AS2
+1a
+2c
+2b
+1b
+3c
+other
+networks
+other
+networks
+▪suppose router in AS1 receives 
+datagram destined outside of AS1:
+AS1 inter-domain routing must:
+1. learn which destinations reachable 
+through AS2, which through AS3
+2. propagate this reachability info to all 
+routers in AS1
+• router should forward packet to 
+gateway router in AS1, but which 
+one?
+48
+
+============================================================
+第 49 页
+============================================================
+Intra-AS routing:  routing within an AS
+most common intra-AS routing protocols:
+▪RIP: Routing Information Protocol [RFC 1723]
+• classic DV: DVs exchanged every 30 secs
+• no longer widely used
+▪EIGRP: Enhanced Interior Gateway Routing Protocol
+• DV based
+• formerly Cisco-proprietary for decades (became open in 2013 [RFC 7868])
+▪ OSPF: Open Shortest Path First  [RFC 2328]
+• link-state routing
+• IS-IS protocol (ISO standard, not RFC standard)
+49
+
+============================================================
+第 50 页
+============================================================
+OSPF (Open Shortest Path First) routing
+▪“open”: publicly available
+▪classic link-state 
+• each router floods OSPF link-state advertisements (directly over IP 
+rather than using TCP/UDP) to all other routers in entire AS
+• multiple link costs metrics possible: bandwidth, delay
+• each router has full topology, uses Dijkstra’s algorithm to compute 
+forwarding table
+▪security: all OSPF messages authenticated (to prevent malicious 
+intrusion) 
+50
+
+============================================================
+第 51 页
+============================================================
+Hierarchical OSPF
+▪two-level hierarchy: local area, backbone.
+• link-state advertisements flooded only in area, or backbone
+• each node has detailed area topology; only knows direction to reach 
+other destinations
+area border routers: 
+“summarize” distances  to 
+destinations in own area, 
+advertise in backbone
+area 1
+area 2
+area 3
+backbone
+internal
+routers
+backbone router: 
+runs OSPF limited 
+to backbone
+boundary router: 
+connects to other ASes
+local routers: 
+• flood LS in area only
+• compute routing within 
+area
+• forward packets to outside 
+via area border router
+51
+
+============================================================
+第 52 页
+============================================================
+Interconnected ASes
+3b
+1d
+3a
+1c
+2a
+AS3
+AS1
+AS2
+1a
+2c
+2b
+1b
+3c
+intra-AS
+routing
+intra-AS
+routing
+intra-AS
+routing
+inter-AS routing
+intra-AS (aka “intra-domain”): routing among routers within same 
+AS (“network”)
+inter-AS (aka “inter-domain”): routing among AS’es
+52
+
+============================================================
+第 53 页
+============================================================
+▪BGP (Border Gateway Protocol): the de facto inter-domain routing 
+protocol
+• “glue that holds the Internet together”
+▪allows subnet to advertise its existence, and the destinations it can 
+reach, to rest of Internet: “I am here, here is who I can reach, and how”
+▪BGP provides each AS a means to:
+• obtain destination network reachability info from neighboring ASes 
+(eBGP)
+• determine routes to other networks based on reachability information 
+and policy
+• propagate reachability information to all AS-internal routers (iBGP)
+• advertise (to neighboring networks) destination reachability info
+Internet inter-AS routing: BGP
+53
+
+============================================================
+第 54 页
+============================================================
+eBGP, iBGP connections
+eBGP connectivity
+logical iBGP connectivity
+1b
+1d
+1c
+1a
+2b
+2d
+2c
+2a
+3b
+3d
+3c
+3a
+AS 2
+AS 3
+AS 1
+1c
+∂
+∂
+gateway routers run both eBGP and iBGP protocols
+54
+
+============================================================
+第 55 页
+============================================================
+BGP basics
+▪when AS3 gateway 3a advertises path AS3,X to AS2 gateway 2c:
+• AS3 promises to AS2 it will forward datagrams towards X
+▪BGP session: two BGP routers (“peers”) exchange BGP messages over 
+semi-permanent TCP connection:
+• advertising paths to different destination network prefixes (BGP  is a “path 
+vector” protocol)
+2b
+2d
+2c
+2a
+AS 2
+3b
+3d
+3c
+3a
+AS 3
+1b
+1d
+1c
+1a
+AS 1
+X
+BGP advertisement:
+AS3, X
+55
+
+============================================================
+第 56 页
+============================================================
+BGP protocol messages
+▪BGP messages exchanged between peers over TCP connection
+▪BGP messages [RFC 4371]:
+• OPEN: opens TCP connection to remote BGP peer and authenticates 
+sending BGP peer
+• UPDATE: advertises new path (or withdraws old)
+• KEEPALIVE: keeps connection alive in absence of UPDATES; also ACKs 
+OPEN request
+• NOTIFICATION: reports errors in previous msg; also used to close 
+connection
+56
+
+============================================================
+第 57 页
+============================================================
+Path attributes and BGP routes
+▪BGP advertised route:  prefix + attributes 
+• prefix: destination being advertised
+• two important attributes:
+• AS-PATH: list of ASes through which prefix advertisement has passed
+• NEXT-HOP: indicates specific internal-AS router to next-hop AS
+▪policy-based routing:
+• gateway receiving route advertisement uses import policy to 
+accept/decline path (e.g., never route through AS Y).
+• AS policy also determines whether to advertise path to other other 
+neighboring ASes
+57
+
+============================================================
+第 58 页
+============================================================
+2b
+2d
+2c
+2a
+AS 2
+3b
+3d
+3c
+3a
+AS 3
+1b
+1d
+1c
+1a
+AS 1
+X
+BGP path advertisement
+▪based on AS2 policy, AS2 router 2c accepts path AS3,X, propagates (via iBGP) to all 
+AS2 routers
+AS2,AS3,X 
+▪AS2 router 2c receives path advertisement AS3,X (via eBGP) from AS3 router 3a
+▪based on AS2 policy,  AS2 router 2a advertises (via eBGP)  path AS2, AS3, X  to 
+AS1 router 1c
+AS3, X
+58
+
+============================================================
+第 59 页
+============================================================
+AS2,AS3,X 
+▪AS1 gateway router 1c learns path AS2,AS3,X from 2a
+gateway router may learn about multiple paths to destination:
+AS3,X
+▪AS1 gateway router 1c learns path AS3,X from 3a
+▪based on policy, AS1 gateway router 1c chooses path AS3,X and advertises path 
+within AS1 via iBGP
+AS3, X
+2b
+2d
+2c
+2a
+AS 2
+3b
+3d
+3c
+3a
+AS 3
+1b
+1d
+1c
+1a
+AS 1
+X
+AS3,X
+AS3,X
+AS3,X
+BGP path advertisement: multiple paths
+59
+
+============================================================
+第 60 页
+============================================================
+2b
+2d
+2c
+2a
+AS 2
+3b
+3d
+3c
+3a
+AS 3
+1b
+1d
+1c
+1a
+AS 1
+X
+BGP: populating forwarding tables 
+AS2,AS3,X 
+AS3,X
+AS3, X
+▪recall: 1a, 1b, 1d learn via iBGP from 1c: “path to X goes through 1c”
+▪at 1d: OSPF intra-domain routing: to get to 1c, use  interface 1
+1
+2
+1
+2
+dest
+interface
+…
+…
+…
+…
+local link 
+interfaces
+at 1a, 1d
+▪at 1d: to get to X, use  interface 1
+1c
+1
+X
+1
+AS3,X
+AS3,X
+AS3,X
+60
+
+============================================================
+第 61 页
+============================================================
+2b
+2d
+2c
+2a
+AS 2
+3b
+3d
+3c
+3a
+AS 3
+1b
+1d
+1c
+1a
+AS 1
+X
+BGP: populating forwarding tables 
+▪recall: 1a, 1b, 1d learn via iBGP from 1c: “path to X goes through 1c”
+▪at 1d: OSPF intra-domain routing: to get to 1c, use  interface 1
+1
+2
+▪at 1d: to get to X, use  interface 1
+dest
+interface
+…
+…
+…
+…
+1c
+2
+X
+2
+▪at 1a: OSPF intra-domain routing: to get to 1c, use  interface 2
+▪at 1a: to get to X, use  interface 2
+61
+
+============================================================
+第 62 页
+============================================================
+Why different Intra-, Inter-AS routing ? 
+policy: 
+▪inter-AS: admin wants control over how its traffic routed, who 
+routes through its network 
+▪intra-AS: single admin, so policy less of an issue
+scale:
+▪hierarchical routing saves table size, reduced update traffic
+performance: 
+▪intra-AS: can focus on performance
+▪inter-AS: policy dominates over performance
+62
