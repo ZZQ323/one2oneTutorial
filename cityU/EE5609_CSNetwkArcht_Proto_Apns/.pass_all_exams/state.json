@@ -8,12 +8,12 @@
   "exam_type": "闭卷，论述/计算/大题为主",
   "exam_date": "一周内",
   "counts": {
-    "points_total": 42,
+    "points_total": 65,
     "points_done": 42,
     "errors": 10,
     "stubborn": 0,
     "cards": 0,
-    "materials": 4
+    "materials": 7
   },
   "points": {
     "P1": {
@@ -351,6 +351,190 @@
       "priority": "low",
       "type": "concept",
       "status": "done"
+    },
+    "P43": {
+      "topic": "Forwarding vs Routing 区别",
+      "formula": "Forwarding: 数据平面，包从输入到输出；Routing: 控制平面，确定路径",
+      "source": "L5",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P44": {
+      "topic": "路由算法分类",
+      "formula": "Global/Link-State vs Decentralized/DV; Static vs Dynamic",
+      "source": "L5",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P45": {
+      "topic": "DV算法迭代过程与信息扩散",
+      "formula": "t时刻状态可影响t+hops距离的节点；异步、自停止",
+      "source": "L5",
+      "priority": "high",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P46": {
+      "topic": "Link cost变化：Good news vs Bad news",
+      "formula": "Good news travels fast; Bad news travels slow (count-to-infinity)",
+      "source": "L5",
+      "priority": "high",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P47": {
+      "topic": "LS vs DV算法对比",
+      "formula": "消息复杂度O(n²) vs 邻居交换；收敛速度；鲁棒性（错误传播）",
+      "source": "L5",
+      "priority": "high",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P48": {
+      "topic": "AS层次化路由：Intra-AS vs Inter-AS",
+      "formula": "AS内同协议，AS间BGP；gateway router连接不同AS",
+      "source": "L5",
+      "priority": "high",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P49": {
+      "topic": "BGP协议消息类型",
+      "formula": "OPEN/UPDATE/KEEPALIVE/NOTIFICATION；TCP端口179",
+      "source": "L5",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P50": {
+      "topic": "BGP路径属性与策略路由",
+      "formula": "AS-PATH, NEXT-HOP；import policy决定接受/拒绝路径",
+      "source": "L5",
+      "priority": "high",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P51": {
+      "topic": "BGP填充转发表",
+      "formula": "iBGP学习路径→OSPF确定到gateway的内部路径→最终转发表项",
+      "source": "L5",
+      "priority": "high",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P52": {
+      "topic": "端口与复用/解复用",
+      "formula": "复用：加端口头；解复用：根据端口交付到正确socket",
+      "source": "L6",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P53": {
+      "topic": "UDP详细特性与应用场景",
+      "formula": "无连接、无拥塞控制、可快速发送；DNS/流媒体/SNMP/HTTP3",
+      "source": "L6",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P54": {
+      "topic": "TCP连接终止状态机",
+      "formula": "FIN_WAIT_1/2, TIME_WAIT(2×MSL), CLOSE_WAIT, LAST_ACK",
+      "source": "L6",
+      "priority": "high",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P55": {
+      "topic": "RTT/SRTT/RTO计算",
+      "formula": "RTT测量→SRTT平滑→RTO=SRTT+4×RTTVAR",
+      "source": "L6",
+      "priority": "high",
+      "type": "calculation",
+      "status": "pending"
+    },
+    "P56": {
+      "topic": "TCP综合练习题（ISN/MSS/rwnd）",
+      "formula": "给定ISN=100/600, MSS=536, rwnd=2048，计算完整TCP交互",
+      "source": "L6",
+      "priority": "high",
+      "type": "calculation",
+      "status": "pending"
+    },
+    "P57": {
+      "topic": "TCP注意事项：序号消耗规则",
+      "formula": "SYN/FIN消耗1序号；纯ACK不消耗；SYN+ACK消耗1序号",
+      "source": "L6",
+      "priority": "high",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P58": {
+      "topic": "DHCP详细流程与消息字段",
+      "formula": "Discover/Offer/Request/ACK的IP/端口细节；broadcast flag",
+      "source": "L7",
+      "priority": "high",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P59": {
+      "topic": "DNS层次结构与服务器类型",
+      "formula": "根(13个)→TLD→权威→本地DNS；缓存与TTL",
+      "source": "L7",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P60": {
+      "topic": "DNS资源记录格式",
+      "formula": "RR格式：name, type, class, TTL, value；A/AAAA/CNAME/MX",
+      "source": "L7",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P61": {
+      "topic": "HTTP请求方法与状态码",
+      "formula": "GET/POST/HEAD/PUT；200/301/400/404/505",
+      "source": "L7",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P62": {
+      "topic": "ADSL综合练习题",
+      "formula": "Modem角色(DHCP/DNS/Gateway/NAT)；访问网页帧序列(ARP→DNS→TCP→HTTP)",
+      "source": "L7",
+      "priority": "high",
+      "type": "calculation",
+      "status": "pending"
+    },
+    "P63": {
+      "topic": "HTTP/2详细：HOL blocking与帧化",
+      "formula": "FCFS→优先级；对象分帧交错传输；服务器推送",
+      "source": "L7",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P64": {
+      "topic": "QUIC连接建立：1-RTT与0-RTT",
+      "formula": "TCP+TLS=2+多次握手；QUIC 1-RTT合并；session ticket实现0-RTT",
+      "source": "L7",
+      "priority": "high",
+      "type": "concept",
+      "status": "pending"
+    },
+    "P65": {
+      "topic": "DASH流媒体",
+      "formula": "视频分chunk多码率编码；manifest文件；客户端自适应选择",
+      "source": "L7",
+      "priority": "medium",
+      "type": "concept",
+      "status": "pending"
     }
   },
   "materials": [

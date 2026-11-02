@@ -16,7 +16,7 @@
      - 源IP: 0.0.0.0（尚未确认）
      - 包含选中的服务器标识
   4. **DHCP Acknowledge**：服务器确认
-     - 单播或广播
+     - 单播或广播（基于broadcast flag）
      - 客户端开始使用IP
 - **租约时间**：IP地址的使用期限
 - **续租**：重复Request/Ack过程
@@ -27,8 +27,8 @@
 - **功能**：将域名转换为IP地址
 - **运行在UDP或TCP上**：端口53
 - **分布式数据库**：层次化结构
-  - 根DNS服务器（13个逻辑根，全球分布）
-  - 顶级域（TLD）服务器：.com, .org, .edu, .cn等
+  - 根DNS服务器（13个逻辑根，全球分布，ICANN管理）
+  - 顶级域（TLD）服务器：.com(Network Solutions), .org, .edu(Educause), .cn等
   - 权威DNS服务器：组织的DNS服务器
   - 本地DNS服务器：ISP的DNS，缓存查询结果
 - **记录类型**：
@@ -36,12 +36,14 @@
   - AAAA记录：域名 -> IPv6地址
   - CNAME：别名 -> 规范名（canonical name）
   - MX：邮件交换服务器
+- **RR格式**：name, type, class, TTL, value
+  - TTL：指定RR可缓存的时间（秒）
 - **查询方式**：
   - **递归查询**：客户端->本地DNS->根->TLD->权威（本地DNS承担全部解析负担）
   - **迭代查询**：每一级返回下一级的引用（客户端逐级查询）
 - **缓存**：DNS响应可缓存（TTL指定缓存时间），减少查询延迟
 - **DNS消息格式**：
-  - Header：identification, flags(query/reply, recursion desired/available)
+  - Header：identification(16bit), flags(query/reply, recursion desired/available, authoritative)
   - Questions：查询的问题
   - Answers：回答的RR
   - Authority：权威服务器的RR
@@ -53,13 +55,13 @@
 - **客户端/服务器模型**：浏览器请求，服务器响应
 - **无状态**：服务器不维护客户端状态
 - **HTTP请求方法**：
-  - GET：请求资源
-  - POST：提交表单数据（数据在body）
+  - GET：请求资源（发送数据在URL中，?后）
+  - POST：提交表单数据（数据在entity body）
   - HEAD：只请求头部（用于检查）
-  - PUT：上传/替换文件
+  - PUT：上传/替换文件（完全替换）
   - DELETE：删除资源
 - **HTTP响应状态码**：
-  - 200 OK：请求成功
+  - 200 OK：请求成功，对象在消息中
   - 301 Moved Permanently：资源已移动，新位置在Location头
   - 400 Bad Request：请求格式错误
   - 404 Not Found：资源不存在
@@ -70,11 +72,13 @@
 - **HTTP/1.1**：持久连接（keep-alive），管线化（pipelining）
   - 管线化：连续发送请求，不等响应（解决请求连续发送）
   - 持久连接：连接复用（解决连接建立开销）
+  - 问题：FCFS响应，HOL blocking（小对象等待大对象）
 - **HTTP/2**：
   - 多路复用：一个TCP连接上并行传输多个请求/响应
   - 优先级：按客户端指定优先级发送（非FCFS）
   - 服务器推送：主动推送未请求的资源
-  - 帧化：对象分成帧，交错传输，缓解队头阻塞
+  - 帧化：对象分成帧，交错传输，缓解HOL blocking
+  - 问题：TCP层丢包仍阻塞所有传输
 - **HTTP/3**：基于QUIC（UDP）
   - 解决TCP队头阻塞
   - 每对象独立的错误和拥塞控制
@@ -93,7 +97,7 @@
 - 合并TCP+TLS功能到一个握手
 - **连接建立**：
   - TCP+TLS：2次握手（TCP）+ 多次握手（TLS）= 高延迟
-  - QUIC 1-RTT：一次握手完成连接建立+安全
+  - QUIC 1-RTT：一次握手完成连接建立+安全+可靠性+拥塞控制
   - QUIC 0-RTT：使用缓存的session ticket，首次即可发数据
 - 部署：Google服务器、Chrome、YouTube
 
@@ -131,6 +135,8 @@
   - 选择当前带宽支持的最高码率
   - 可动态切换码率和服务器
 - **智能在客户端**：决定何时请求、请求什么码率、从哪里请求
+  - 避免buffer starvation或overflow
+  - 带宽多时请求高质量
 
 ## Web缓存（代理服务器）
 - **功能**：缓存频繁请求的对象
@@ -156,7 +162,7 @@
   - 默认网关：转发到外部网络
   - NAT：私有IP <-> 公网IP转换
 - **访问网页的帧序列**：
-  1. ARP请求网关MAC（广播）
+  1. ARP请求网关MAC（广播，目的MAC=FF-FF-FF-FF-FF-FF）
   2. ARP回复（单播）
   3. DNS请求（目的IP=网关，UDP）
   4. DNS回复（目的IP=主机，UDP）
@@ -172,3 +178,12 @@
 | Network | 跨网络移动包 | IP, 路由 |
 | Data Link | 一跳内移动帧 | Ethernet, WiFi, MAC |
 | Physical | 发送比特信号 | 电、光、无线电 |
+
+## Socket编程示例
+- TCP Socket：创建连接，发送HTTP请求，接收响应
+- 关键步骤：
+  1. 创建Socket连接到服务器端口
+  2. 手写HTTP请求（GET, Host, Connection: close）
+  3. 读取响应直到EOF
+  4. 分离header和body（\r\n\r\n标记）
+  5. 解码并显示
