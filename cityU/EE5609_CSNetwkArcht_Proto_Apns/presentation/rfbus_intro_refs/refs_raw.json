@@ -1,0 +1,76 @@
+{
+  "parent_doi": "",
+  "parent_title": "Custom batch — RFBus Intro综述关键论文",
+  "extracted_at": "2026-11-04T10:00:00",
+  "total": 6,
+  "with_doi": 6,
+  "without_doi": 0,
+  "references": [
+    {
+      "id": 1,
+      "doi": "10.1109/ISCA.2005.32",
+      "key": "",
+      "unstructured": "",
+      "author": "",
+      "year": "",
+      "journal": "",
+      "volume": "",
+      "first_page": ""
+    },
+    {
+      "id": 2,
+      "doi": "10.1145/2491172.2491198",
+      "key": "",
+      "unstructured": "",
+      "author": "",
+      "year": "",
+      "journal": "",
+      "volume": "",
+      "first_page": ""
+    },
+    {
+      "id": 3,
+      "doi": "10.1145/3372224.3419193",
+      "key": "",
+      "unstructured": "",
+      "author": "",
+      "year": "",
+      "journal": "",
+      "volume": "",
+      "first_page": ""
+    },
+    {
+      "id": 4,
+      "doi": "10.1145/3532185",
+      "key": "",
+      "unstructured": "",
+      "author": "",
+      "year": "",
+      "journal": "",
+      "volume": "",
+      "first_page": ""
+    },
+    {
+      "id": 5,
+      "doi": "10.1145/3582010.3582044",
+      "key": "",
+      "unstructured": "",
+      "author": "",
+      "year": "",
+      "journal": "",
+      "volume": "",
+      "first_page": ""
+    },
+    {
+      "id": 6,
+      "doi": "10.1145/3666025.3699333",
+      "key": "",
+      "unstructured": "",
+      "author": "",
+      "year": "",
+      "journal": "",
+      "volume": "",
+      "first_page": ""
+    }
+  ]
+}

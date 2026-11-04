@@ -1,0 +1,81 @@
+{
+  "parent_doi": "",
+  "parent_title": "Custom batch — RFBus Intro综述关键论文",
+  "validated_at": "2026-11-04T09:53:01",
+  "summary": {
+    "total": 6,
+    "verified": 4,
+    "failed": 2,
+    "no_doi": 0
+  },
+  "references": [
+    {
+      "id": 1,
+      "doi": "10.1109/ISCA.2005.32",
+      "status": "verified",
+      "label": "Hines2005_ISOCA",
+      "title": "Improving Program Efficiency by Packing Instructions into Registers",
+      "authors": "Hines S., Green J., Tyson G., Whalley D.",
+      "year": 2005,
+      "journal": "32nd International Symposium on Computer Architecture (ISCA'05)",
+      "publisher": "ieee"
+    },
+    {
+      "id": 2,
+      "doi": "10.1145/2491172.2491198",
+      "status": "failed",
+      "label": "Ref02_UnverifiedDOI",
+      "title": "",
+      "authors": "",
+      "year": 0,
+      "journal": "",
+      "publisher": "unknown",
+      "error": "DOI not found in Crossref: 10.1145/2491172.2491198"
+    },
+    {
+      "id": 3,
+      "doi": "10.1145/3372224.3419193",
+      "status": "verified",
+      "label": "Liu2020_POTAICOMCA",
+      "title": "Nephalai",
+      "authors": "Liu Jun, Xu Weitao, Jha Sanjay, Hu Wen",
+      "year": 2020,
+      "journal": "Proceedings of the 26th Annual International Conference on Mobile Computing and Networking",
+      "publisher": "unknown"
+    },
+    {
+      "id": 4,
+      "doi": "10.1145/3532185",
+      "status": "verified",
+      "label": "Siddhu2022_ATOAACO",
+      "title": "CoMeT: An Integrated Interval Thermal Simulation Toolchain for 2D, 2.5D, and 3D Processor-Memory Systems",
+      "authors": "Siddhu Lokesh, Kedia Rajesh, Pandey Shailja, Rapp Martin, Pathania Anuj ... (+2 more)",
+      "year": 2022,
+      "journal": "ACM Transactions on Architecture and Code Optimization",
+      "publisher": "unknown"
+    },
+    {
+      "id": 5,
+      "doi": "10.1145/3582010.3582044",
+      "status": "failed",
+      "label": "Ref05_UnverifiedDOI",
+      "title": "",
+      "authors": "",
+      "year": 0,
+      "journal": "",
+      "publisher": "unknown",
+      "error": "DOI not found in Crossref: 10.1145/3582010.3582044"
+    },
+    {
+      "id": 6,
+      "doi": "10.1145/3666025.3699333",
+      "status": "verified",
+      "label": "Meng2024_POTACOENSS",
+      "title": "Processor-Sharing Internet of Things Architecture for Large-scale Deployment",
+      "authors": "Meng Qianhe, Wang Han, Zhang Chong, Song Yihang, Li Songfan ... (+2 more)",
+      "year": 2024,
+      "journal": "Proceedings of the 22nd ACM Conference on Embedded Networked Sensor Systems",
+      "publisher": "unknown"
+    }
+  ]
+}
