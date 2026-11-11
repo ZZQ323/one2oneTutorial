@@ -1,7 +1,7 @@
 # CS5285 Problem Set 2 - Solutions
 
-**Student ID**: _______________  
-**Name**: _______________  
+**Student ID**: 60209978 
+**Name**: Zhuang Zhanquan 
 **Date**: November 2026
 
 ---
@@ -460,34 +460,34 @@ hashcat -m 20 -a 3 -D 1 file2.txt -1 ?l?u?d ?1?1?1?1?1
 
 **Note:** Use `-D 1` for CPU, `-D 2` for GPU. Press `[s]` during execution to see status.
 
+![alt text](file1.png)
+![alt text](file2.png)
+
 ### (b) Recover passwords in file3
 
 **File3 (8-bit salt, 6-character passwords):**
 
 **Hashcat Command:**
 ```bash
-# Check available processors
-hashcat -I
-
-# File3: 6-character passwords, various salts
-hashcat -m 20 -a 3 -D 1 file3.txt -1 ?l?u?d ?1?1?1?1?1?1
+hashcat -m 20 -a 3 -D 2 file3.txt -1 ?l?u?d ?1?1?1?1?1?1
 ```
 
-**Search space:** 62^6 = 56,800,235,584 combinations (约568亿)
+**Results:**
 
-**预计时间：** 
-- 使用 GPU：约30分钟-2小时
-- 使用 CPU：约5-10小时
+| Hash | Salt | Password |
+|------|------|----------|
+| 6dd7c592e5f0e3c7aa395c0d7414f1d7 | 101 | **CS5285** |
+| 50783d64b460b95b52e7a9167252cbe6 | 56 | **Abc123** |
+| 2d144a7652fd59acf6c2e107ede58be3 | 236 | **SEEDCS** |
+| 395c5632a08bc4e125d91161e6411f7b | 10 | **mYfIsH** |
+| c8f64a023db5eb10649e58a839498eb8 | 180 | **SemA25** |
+| 0283bf583eb9ed783bd7cdb84140f205 | 99 | **PWoRds** |
 
-**操作步骤：**
-1. 在 Windows 上下载并解压 hashcat
-2. 打开命令提示符，进入 hashcat 目录
-3. 将 file3.txt 复制到 hashcat 目录
-4. 运行上述命令
-5. 按 `[s]` 查看进度
-6. 完成后截图保存结果
+**Verification:** All passwords verified correct ✓
 
-**注意：** 由于搜索空间巨大，建议使用 GPU 加速（`-D 2`）。如果使用 CPU，可能需要数小时。
+**Search space:** 62^6 = 56,800,235,584 combinations
+
+![alt text](file3.png)
 
 ### (c) Time comparison: file2 vs file1
 
@@ -501,19 +501,15 @@ hashcat -m 20 -a 3 -D 1 file3.txt -1 ?l?u?d ?1?1?1?1?1?1
 - File2: 6 × 62^5 computations (one pass per unique salt)
 - **Theoretical ratio: File2 should take ~6× longer than File1**
 
-**Actual results:**
-- File1: ~6 minutes (single-threaded Python) / ~1-2 minutes (hashcat with GPU)
-- File2: ~10 minutes (single-threaded Python) / ~2-5 minutes (hashcat with GPU)
-- **Actual ratio: ~1.5-2× longer**
+**Actual results (RTX 4070 Ti GPU):**
+- File1: 2 seconds (7179.7 MH/s)
+- File2: 2 seconds (16262.8 MH/s)
+- **Actual ratio: 1:1** (both completed in ~2 seconds)
 
 **Explanation:**
-The actual ratio is less than 6× because:
-1. Hashcat optimizes by computing multiple hashes in parallel
-2. Modern CPUs/GPUs can compute multiple MD5(salt+password) values efficiently
-3. The salt is just prepended to the password, so the computation overhead is minimal
-4. Hashcat's optimized implementation reduces the per-hash overhead
+The actual ratio is 1:1 because the RTX 4070 Ti GPU is extremely fast (16,000+ MH/s). Both file1 and file2 completed in approximately 2 seconds, which is below the measurement resolution. The theoretical 6× difference exists but is too small to measure with such high-performance hardware.
 
-**Conclusion:** File2 takes longer than File1, but not 6× longer due to hashcat's optimizations.
+**Conclusion:** File2 should theoretically take ~6× longer than File1 due to different salts, but with modern GPU acceleration, both complete in ~2 seconds.
 
 ### (d) Time for 6-character passwords (file3)
 
@@ -524,57 +520,42 @@ The actual ratio is less than 6× because:
 - **Ratio**: 62^6 / 62^5 = 62× longer
 
 **Expected time:**
-- If File2 takes ~5 minutes, File3 should take ~5 × 62 = **310 minutes ≈ 5.2 hours**
+- If File2 takes ~2 seconds, File3 should take ~2 × 62 = **124 seconds ≈ 2 minutes**
 
-**Actual results:**
-- Run hashcat on file3 and record the actual time
-- The result should support the theory: 6-character passwords take ~62× longer than 5-character passwords
+**Actual results (RTX 4070 Ti GPU):**
+- File2: 2 seconds (16262.8 MH/s)
+- File3: 6 seconds (22399.7 MH/s)
+- **Actual ratio: 3:1** (File3 took 3× longer than File2)
+
+**Explanation:**
+The actual ratio (3:1) is much lower than the theoretical ratio (62:1) because:
+1. **Early termination**: Hashcat stops as soon as all passwords are found. File3 passwords were found at 65.39% progress, not 100%
+2. **Higher GPU speed**: File3 achieved 22399.7 MH/s vs File2's 16262.8 MH/s (37% faster)
+3. **Hashcat optimizations**: Advanced parallelization and memory access patterns reduce the per-hash overhead
 
 **Conclusion:**
-Adding one character to the password increases the search space by a factor of 62 (the size of the character set), making brute-force attacks significantly more expensive.
+Adding one character increases the search space by 62×, but with modern GPU acceleration and hashcat optimizations, the actual time increase is much smaller (3× in this case). The passwords were found early in the search process, demonstrating that brute-force attacks on 6-character passwords are feasible with high-end GPUs.
+
+
 
 ---
 
 ## Question 7: PGP Email (15 points)
 
-**Note:** This question requires manual setup and must be completed by you. The points are awarded only when you successfully complete task (c).
+**Status:** ✅ Completed
 
-### Setup Instructions
+### (a) Create PGP keypair (5 points)
+✅ Created OpenPGP keypair in Thunderbird
 
-**Step 1: Install Thunderbird**
-1. Download Thunderbird from https://www.thunderbird.net/
-2. Install version 78 or later (has built-in PGP support, no plugin needed)
+### (b) Import course public key (5 points)
+✅ Imported `tsgexercise_cert.asc` successfully
 
-**Step 2: Configure Email Account**
-1. Open Thunderbird
-2. Set up your email account (CityU email or personal email)
-3. Ensure you can send/receive emails
-
-### (a) Create your own PGP keypair (5 points)
-
-**Steps:**
-1. In Thunderbird, go to **Tools → OpenPGP Key Manager** (or **Account Settings → End-To-End Encryption**)
-2. Click **Add Key → Create a new OpenPGP key**
-3. Enter your name and email address
-4. Set a strong passphrase
-5. Click **Continue → Create Key**
-6. **Backup your key**: Export your public key (File → Export Public Key(s) to File)
-
-**Result:** You now have a PGP keypair (public + private key)
-
-### (b) Import the course public PGP key (5 points)
-
-**Steps:**
-1. Download `tsgexercise_cert.asc` from Canvas
-2. In Thunderbird, go to **Tools → OpenPGP Key Manager**
-3. Click **File → Import Public Key(s) from File**
-4. Select `tsgexercise_cert.asc`
-5. Verify the key is imported (you should see "tsgexercise@gmail.com" in the key list)
-
-**Alternative:** You can also import via command line:
-```bash
-gpg --import tsgexercise_cert.asc
-```
+### (c) Send encrypted and signed email (5 points)
+✅ Sent encrypted email to tsgexercise@gmail.com
+- Subject: CS5285 PS2 EncryptedMail 60209978
+- Encryption: Enabled
+- Signature: Enabled
+- Public key: Attached
 
 ### (c) Send encrypted and signed email (5 points)
 
@@ -607,14 +588,4 @@ gpg --import tsgexercise_cert.asc
 - Your public key attached
 - The subject line with your student ID
 
----
-
-## Submission Checklist
-
-- [ ] Q1-Q6: Upload electronic copy (this PDF/markdown) to Canvas
-- [ ] Q7: Send encrypted email to tsgexercise@gmail.com
-- [ ] Q6: Include hashcat screenshots showing password cracking
-- [ ] Verify all answers are complete
-- [ ] Submit before November 29, 18:00
-
-**Good luck!**
+![alt text](PixPin_2026-11-11_19-37-51.png)
