@@ -1,0 +1,3071 @@
+Overview
+My name is Yanni Sun. We will return to some basic probabistic models first, and then Transformer, and finally unsupervsised learning
+Data
+Probabilistic models and their application in biological sequence annotation
+Transformer and its application in biological data
+Unsupervised learning and its application 
+How to compute the posterior probability
+S2:
+ CCGCGCGC
+P(
+in
+side|S2) = P(in |CCGCGCGC)
+=
+P(in) is the prior probability, reflecting the fraction of 
+CpG
+ islands. Usually P(in) < P(out). P(in): the probability that the input sequence is inside a 
+CpG
+ island. P(out): the probability that the input sequence is outside a 
+CpG
+ island.
+To focus on the interpretation of Markov chain model, we will assume that P(in) is equal to P(out). Thus
+P(inside|S2) and P(outside|S2)’ ranking is determined by
+P(in|S2) and P(out|S2) 
+Q: how to compute 
+ from the training data?
+ 
+Let P(
+x
+) be the probability of sequence 
+x
+ as assigned by the model
+P( 
+x 
+) = P( 
+x
+k
+, 
+x
+k-1
+, ... 
+x
+1
+ )
+Sequence models
+Joint probability of all sequence items appearing as they do
+ (
+order matters
+)
+To estimate P(
+x
+), count # times 
+x
+ appears in the training set labeled 
+inside
+ divided by 
+total
+ # times 
+x
+ appears in training set
+But for sufficiently long 
+k
+, we might not see 
+any
+ occurrences of 
+x
+, or very few.  Joint probabilities for rare events are hard to estimate well.
+Re-write with conditional probability:
+= P( 
+x
+k
+ | 
+x
+k-1
+, ... 
+x
+1
+ ) P( 
+x
+k-1
+, ... 
+x
+1
+ )
+= P( 
+x
+k
+ | 
+x
+k-1
+, ... 
+x
+1
+ ) P( 
+x
+k-1
+ | 
+x
+k-2
+, ... 
+x
+1
+ ) P( 
+x
+k-2
+, ... 
+x
+1
+ )
+(etc)
+Sequence models
+Add a 
+simplifying assumption: 
+to know the probability of having a particular item 
+x
+k
+, we only have to know the previous item
+: 
+x
+k
+-1
+P( 
+x 
+) = P( 
+x
+k
+, 
+x
+k-1
+, ... 
+x
+1
+ )
+Formally: random variable 
+x
+k
+ is 
+conditionally independent
+ 
+of 
+x
+1
+...
+ x
+k
+-2
+ given 
+x
+k
+-1
+Informally: ”the future is independent of the past given the present”
+X
+1
+X
+2
+X
+3
+X
+k
+Bayes Belief
+ network for 1
+st
+-order Markov model
+= P( 
+x
+k
+ | 
+x
+k-1
+, ... 
+x
+1
+ ) P( 
+x
+k-1
+, ... 
+x
+1
+ )
+= P( 
+x
+k
+ | 
+x
+k-1
+, ... 
+x
+1
+ ) P( 
+x
+k-1
+ | 
+x
+k-2
+, ... 
+x
+1
+ ) P( 
+x
+k-2
+, ... 
+x
+1
+ )
+(etc)
+Sequence models
+A
+ 
+simplifying assumption: 
+to know the probability of having a particular item 
+x
+k
+, we only have to know the previous item
+: 
+x
+k
+-1
+Markov property / Markov assumption
+It’s a big assumption, but it’s often reasonable and it makes the model much easier to work with
+P( 
+x 
+) = P( 
+x
+k
+, 
+x
+k-1
+, ... 
+x
+1
+ )
+≈
+ 
+P( 
+x
+k
+ | 
+x
+k-1
+) P( 
+x
+k-1
+ | 
+x
+k-2 
+) ... P( 
+x
+2
+ | 
+x
+1
+ ) P( 
+x
+1
+ )
+drop
+drop
+(bunch more drops once this is expanded)
+Markov chain
+Assigning a probability to a sequence using Markov property:
+P( 
+x 
+)    
+≈
+     P( 
+x
+k
+ | 
+x
+k-1 
+) P( 
+x
+k-1
+ | 
+x
+k-2 
+) ... P( 
+x
+2
+ | 
+x
+1
+ ) P( 
+x
+1
+ )
+Markov property
+Say 
+x
+ is a nucleotide 
+k
+-mer
+P( 
+x
+i
+ | 
+x
+i-1 
+)
+probability of seeing nucleotide 
+x
+i
+ in 
+i
+th
+ position given that previous nucleotide is 
+x
+i-1
+Shorthand: P( G | C ) = probability of G given previous is C
+Markov chain
+Say someone gives us the sequences of several CpG islands.  How do we estimate, say, P( G | C )?
+P( G | C ) = 
+# times CG occurs / # times C occurs
+Markov chain
+P( A | A ) = 
+P( C | A ) = 
+# times AC occurs / # times A occurs
+P( G | A ) = 
+# times AG occurs / # times A occurs
+P( T | A ) = 
+# times AT occurs / # times A occurs
+P( A | C ) = 
+# times CA occurs / # times C occurs
+(etc)
+Given CpG island sequences from human chromosome 1, count nucleotide and dinucleotide occurrences and estimate all 16 possible P(
+x
+i
+ | 
+x
+i-1
+):
+# times AA occurs / # times A occurs
+Markov chain
+ (1
+st
+ order)
+>>> iTab, nTab = islandTransitionTables(fn, ifn)
+>>> print iTab
+[[ 0.18544138  0.27640458  0.40091352  0.13724053]
+ [ 0.18958227  0.35905063  0.25324026  0.19812684]
+ [ 0.17268916  0.33011349  0.35610656  0.14109079]
+ [ 0.09410222  0.34163592  0.37686698  0.18739488]]
+Rows sum to 1
+A
+C
+G
+T
+A                             C                              G                              T
+P( T | G )
+x
+i
+x
+i-1
+Given 
+CpG
+ island sequences from human chromosome 1, count nucleotide and dinucleotide occurrences and estimate all 16 possible P(
+x
+i
+ | 
+x
+i-1
+):
+Markov chain
+We can do the same for dinucleotides 
+outside
+ of CpG islands
+Notice anything interesting about the outside conditional probabilities?
+>>> iTab, nTab = islandTransitionTables(fn, ifn)
+>>> print iTab
+[[ 0.18544138  0.27640458  0.40091352  0.13724053]
+ [ 0.18958227  0.35905063  0.25324026  0.19812684]
+ [ 0.17268916  0.33011349  0.35610656  0.14109079]
+ [ 0.09410222  0.34163592  0.37686698  0.18739488]]
+>>> print nTab
+[[ 0.2948135   0.19467897  0.28696205  0.22354548]
+ [ 0.32681187  0.29415529  0.06172587  0.31730697]
+ [ 0.25713351  0.23354071  0.29423494  0.21509084]
+ [ 0.17956538  0.23250026  0.29462341  0.29331096]]
+Inside
+Outside
+P(G | C)
+ is low, matching our expectation that there are few CpGs outside islands
+A
+C
+G
+T
+A
+C
+G
+T
+A                         C                    G                              T
+Markov chain
+A
+C
+G
+T
+Markov chain
+ is a probabilistic automaton
+Each edge has a 
+transition probability
+: probability that edge’s destination is the next node visited after edge’s source
+P(G | G)
+P(T | T)
+P(A | A)
+P(C | C)
+P(C | A)
+P(A | C)
+P(G | C)
+P(C | G)
+P(C | T)
+P(A | G)
+P(G | A)
+P(T | C)
+P(T | G)
+P(G | T)
+P(A | T)
+P(T | A)
+Here, nodes labels are symbols and transition labels are conditional probabilities
+P( A | A ) = 
+P( C | A ) = 
+# times AC occurs / # times A occurs
+P( G | A ) = 
+# times AG occurs / # times A occurs
+# times AA occurs / # times A occurs
+Image credit: kids Health website
+My research: bioinformatics
+Use computer science methods/models to study problems in molecular biology
+Markov chain
+Recall how we assign a probability to a single string
+P( 
+x 
+)    
+≈
+     P( 
+x
+k
+ | 
+x
+k-1 
+) P( 
+x
+k-1
+ | 
+x
+k-2 
+) ... P( 
+x
+2
+ | 
+x
+1
+ ) P( 
+x
+1
+ )
+Markov property
+P( 
+x
+ ) now equals product of all the Markov chain edge weights on our string-driven walk through the chain
+For simplicity, 
+drop
+ P( 
+x
+1
+ )
+             
+ 
+     P( 
+x
+k
+ | 
+x
+k-1 
+) P( 
+x
+k-1
+ | 
+x
+k-2 
+) ... P( 
+x
+2
+ | 
+x
+1
+ ) P( 
+x
+1
+ )
+P( 
+x 
+)    
+≈
+     P( 
+x
+k
+ | 
+x
+k-1 
+) P( 
+x
+k-1
+ | 
+x
+k-2 
+) ... P( 
+x
+2
+ | 
+x
+1
+ )
+Markov chain
+C
+G
+>>> iTab, nTab = islandTransitionTables(fn, ifn)
+>>> print iTab
+[[ 0.18544138  0.27640458  0.40091352  0.13724053]
+ [ 0.18958227  0.35905063  0.25324026  0.19812684]
+ [ 0.17268916  0.33011349  0.35610656  0.14109079]
+ [ 0.09410222  0.34163592  0.37686698  0.18739488]]
+A
+C
+G
+T
+A                             C                              G                              T
+x
+i
+x
+i-1
+x
+ = GATC
+P( 
+x 
+) = 
+P(C | T)
+ 
+P(T | A)
+ 
+P(A | G)
+          =
+T
+A
+0.34163592
+ *
+0.13724053
+ *
+0.17268916
+          =
+0.00809675
+P( 
+x 
+) = P( 
+x
+4
+ | x
+3
+ 
+) P( 
+x
+3
+ | 
+x
+2
+ ) P( 
+x
+2
+ | 
+x
+1 
+)
+Markov chain
+log P( 
+x 
+)    
+≈
+    log [ P( 
+x
+k
+ | 
+x
+k-1 
+) P( 
+x
+k-1
+ | 
+x
+k-2 
+) ... P( 
+x
+2
+ | 
+x
+1
+ ) ]
+To avoid repeated multiplies yielding small numbers, we switch to log domain
+=
+   log P( 
+x
+k
+ | 
+x
+k-1 
+) + log P( 
+x
+k-1
+ | 
+x
+k-2 
+) + ... + log P( 
+x
+2
+ | 
+x
+1
+ )
+=
+   
+∑
+ log P( 
+x
+i
+ | 
+x
+i-1 
+)
+i=2
+k
+I’ll use base-2 logs
+Switching to log domain, multiplies become adds
+Markov chain
+C
+G
+>>> iTab, nTab = islandTransitionTables(fn, ifn)
+>>> print numpy.log2(iTab)
+[[-2.43096492 -1.85514658 -1.31863704 -2.86522151]
+ [-2.39910406 -1.4777408  -1.98142131 -2.33550376]
+ [-2.53375061 -1.59896599 -1.48961909 -2.82530423]
+ [-3.40962748 -1.54946844 -1.40787269 -2.41584653]]
+A
+C
+G
+T
+A                             C                              G                              T
+x
+i
+x
+i-1
+x
+ = GATC
+=
+T
+A
+-1.54946844
+ +
+-2.86522151
+ +
+-2.53375061
+-7.30174249
+log P( 
+x 
+) = 
+∑
+ 
+log P( 
+x
+i
+ | x
+i-1
+ 
+)
+i=2
+4
+=
+Markov chain
+P( x ) given the inside-CpG model is helpful, but we really want to know which model is better, inside CpG or outside CpG?
+C
+G
+T
+A
+C
+G
+T
+A
+Inside
+Outside
+Use 
+ratio:
+P( 
+x 
+) from inside model
+P(
+ x
+ ) from outside model
+Markov chain
+S(x) = log
+P( 
+x 
+) inside CpG
+P(
+ x
+ ) outside CpG
+=
+∑
+ 
+(
+ log 
+[
+ P( 
+x
+i
+ | 
+x
+i-1 
+) inside CpG 
+] 
+)
+ - 
+∑ 
+log 
+( 
+[
+ P( 
+x
+i
+ | 
+x
+i-1 
+) outside CpG 
+] 
+)
+ 
+i=2
+k
+= log [ P( 
+x 
+) inside CpG ] - log [ P( 
+x 
+) outside CpG ]
+If inside more probable than outside, fraction is > 1 and log ratio is > 0.  Otherwise, fraction is ≤ 1 and log ratio is ≤ 0.
+S(x) = log
+P( 
+x 
+) inside CpG
+P(
+ x
+ ) outside CpG
+Taking log, we get 
+log ratio
+:
+=
+∑
+ 
+(
+ log 
+[
+ P( 
+x
+i
+ | 
+x
+i-1 
+) inside CpG 
+]
+ - log 
+[
+ P( 
+x
+i
+ | 
+x
+i-1 
+) outside CpG 
+] 
+)
+ 
+i=2
+k
+New table: take elementwise log of the inside/outside tables, subtract outside from inside
+i=2
+k
+Markov chain
+>>> iTab, nTab = islandTransitionTables(fn, ifn)
+>>> print iTab
+[[ 0.20328697  0.26144423  0.40629367  0.12897512]
+ [ 0.18175425  0.35880255  0.24915835  0.21028485]
+ [ 0.17900663  0.32594344  0.35910409  0.13594584]
+ [ 0.09718687  0.34541934  0.35518406  0.20220973]]
+>>> print nTab
+[[ 0.32756059  0.17183665  0.24355314  0.25704963]
+ [ 0.35218354  0.25880566  0.04404104  0.34496977]
+ [ 0.28883529  0.20906356  0.25862313  0.24347803]
+ [ 0.21890134  0.20417181  0.24903103  0.32789582]]
+>>> lrTab = numpy.log2(iTab) - numpy.log2(nTab)
+>>> print lrTab
+[[-0.68824404  0.6054655   0.73828635 -0.99495413]
+ [-0.95433841  0.471321    2.5001426  -0.71412499]
+ [-0.69023394  0.64068002  0.47355078 -0.84075959]
+ [-1.17144749  0.75856518  0.51224132 -0.69738508]]
+Inside
+Outside
+A
+C
+G
+T
+A
+C
+G
+T
+A                             C                              G                              T
+Log  ratio
+A
+C
+G
+T
+Markov chain
+Now, given a string 
+x
+, we can easiy assign it a log ratio “score” 
+S
+(
+x
+):
+S
+(
+x
+) = log
+P( 
+x 
+) inside CpG
+P(
+ x
+ ) outside CpG
+≈
+∑
+ 
+(
+ log 
+[
+ P( 
+x
+i
+ | 
+x
+i-1 
+) inside CpG 
+]
+ - log 
+[
+ P( 
+x
+i
+ | 
+x
+i-1 
+) outside CpG 
+] 
+)
+ 
+i=2
+k
+Markov chain
+C
+G
+>>> iTab, nTab = islandTransitionTables(fn, ifn)
+>>> lrTab = numpy.log2(iTab) - numpy.log2(nTab)
+>>> print lrTab
+[[-0.66883939  0.50568449  0.48243108 -0.70386181]
+ [-0.78563635  0.28760934  2.03655959 -0.67945489]
+ [-0.57434013  0.49928806  0.27534041 -0.60832223]
+ [-0.9322086   0.55522735  0.35518335 -0.6463494 ]]
+A
+C
+G
+T
+A                             C                              G                              T
+x
+i
+x
+i-1
+x
+ = GATC
+T
+A
+ 0.55522735
+ +
+-0.70386181
+ +
+-0.57434013
+-0.72297459
+S( 
+x 
+) = 
+=
+Negative, so probability with 
+outside
+ model is greater
+Markov chain
+S(x) = log
+P( 
+x 
+) inside CpG
+P(
+ x
+ ) outside CpG
+S(
+CGCGCGCGCGCGCGCGCGCGCGCGCG
+) = 
+S(
+ATTCTACTATCATCTATCTATCTTCT
+) = 
+32.246609048
+-9.501209765
+ATGGGCAAGTCAGAAAGTCAGATGGATATAACTGATATCAACACTCCAAAGCCAAAGAAGAAACAGCGATGGACTCCACTGGAGATCAGCCTCTCGGTCCTTGTCCTGCTCCTCACCATCATAGCTGTGACAATGATCGACTCTATGCAACCTACGATGATGGTATTTGCAAGTCATCAGACTGCATAAAATCAGCTGCTCGACTGATCCAAAACATGGATGCCACCACTG
+… …
+Language of Life
+Markov chain: experiment
+Blue: inside
+Red: outside
+Drew 1,000 100-mers from inside CpG islands on chromosome 1, and another 1,000 from outside, and calculated log ratios for all
+Trained markov chain on dinucleotides from chromosome 22
+Markov chain
+Markov property made our problem very tractable
+P( 
+x
+i
+ | 
+x
+i-1 
+)s estimated in single, simple pass through training data
+Calculating S( 
+x
+ ) is O(| 
+x |)
+; just lookups and additions
+Transition probability tables have | ∑ |
+2
+ cells; fine for DNA & protein
+... and discriminates well between inside & outside examples in CpG island example
+Higher order Markov model
+P( 
+x 
+) 
+≈
+ P( 
+x
+k
+ | 
+x
+k-1 
+x
+k-2
+) P( 
+x
+k-1
+ | 
+x
+k-2
+ 
+x
+k-3
+ 
+) ... P( 
+x
+3
+ | 
+x
+2
+ x
+1
+ ) P(
+x
+2 
+x
+1
+ )
+P( 
+x 
+) 
+≈
+ P( 
+x
+k
+ | 
+x
+k-1 
+x
+k-2 
+x
+k-3
+) P( 
+x
+k-1
+ | 
+x
+k-2
+ 
+x
+k-3
+ 
+x
+k-4
+) ... P( 
+x
+3
+x
+2
+x
+1
+ )
+2
+nd
+ order
+ 
+3
+rd
+ order
+ 
+Question for you: for 3rd order Markov model, how many parameters does this model has? (for DNA sequence)
+Hidden Markov Models
+Many pages are from 
+Ben Langmead
+Introduction
+A Hidden Markov Model (HMM) is a statistical model which is also used in machine learning. It can be used to describe the evolution of observable events that depend on 
+internal factors
+, which are not directly observable. 
+Computational finance
+speed analysis
+Speech recognition
+Speech synthesis
+Part-of-speech tagging
+Document separation in scanning solutions
+Machine translation
+Handwriting recognition
+Time series analysis
+Activity recognition
+Sequence classification
+Transportation forecasting 
+Applications
+https://
+analyticsindiamag.com
+/a-guide-to-hidden-
+markov
+-model-and-its-applications-in-
+nlp
+/
+Metagenomic samples contain sequenced data from a large number of different microorganisms. For example, there are more than 100 trillion microorganisms living in the human gut. In metagenomic studies, sequencing machine (
+eg.
+ Illumina) is able to assembly short reads DNA into contigs, which is longer than reads. However, these contigs are still too short, and they may only cover partial regions of the complete microbial genomes. Therefore, contig binning is commonly adopted in order to reconstruct near complete genomes. 
+Contig binning methods can be broadly classified into two primary categories: supervised and unsupervised. Supervised binning techniques, exemplified by MEGAN, allocate contigs to different bins based on reference databases. The efficacy of these methods is heavily reliant on the quality and comprehensiveness of the reference database. In contrast, unsupervised methods cluster contigs into genome bins based on intrinsic genomic features, such as coverage and k-
+mer
+ frequency, without the need for reference databases. Both approaches have inherent limitations. Supervised methods struggle to identify new species due to the absence of known sequences for many organisms, and the alignment process is computationally intensive. Unsupervised methods, including 
+MaxBin
+ and CONCOCT, face challenges with samples containing species of high similarity, resulting in suboptimal performance. Although 
+MetaBAT
+ demonstrates relatively superior performance compared to other existing methods, it still fails to accurately bin many contigs with high similarity.
+Warm-up question
+In this following write-up, which part is generated by ChatGPT?
+ChatGPT
+ChatGPT
+The needed output
+An example for explaining HMM
+Dealer repeatedly flips a coin.  Sometimes the coin is 
+fair
+, with P(heads) = 0.5, sometimes it’s 
+loaded
+, with P(heads) = 0.8.  Dealer occasionally switches coins, invisibly to you.
+Question: can you tell whether the dealer is cheating?
+T
+H
+H
+H
+H
+...
+loaded
+...
+Hidden
+ Markov Model
+...
+...
+p
+1
+p
+2
+p
+3
+p
+4
+p
+n
+x
+1
+x
+2
+x
+3
+x
+4
+x
+n
+p
+ = { 
+p
+1
+, 
+p
+2
+, ...,
+ p
+n
+ } is a sequence of 
+states 
+(AKA a 
+path
+).  Each 
+p
+i
+ takes a value from set 
+Q.  
+We 
+do not
+ 
+observe 
+p
+.
+x
+ = { 
+x
+1
+, 
+x
+2
+, ...,
+ x
+n
+ } is a sequence of 
+emissions.  
+Each 
+x
+i
+ takes a value from set 
+∑
+.
+  
+We 
+do
+ 
+observe 
+x
+.
+Steps 1 through 
+n
+Trellis diagram
+Our goal: given the observation x
+1
+,x
+2
+,…
+x
+n
+, derive the
+ hidden states p
+1
+,p
+2
+,p
+3
+,…,
+p
+n
+Hidden Markov Model
+...
+...
+p
+1
+p
+2
+p
+3
+p
+4
+p
+n
+x
+1
+x
+2
+x
+3
+x
+4
+x
+n
+Assumptions:
+ edges capture 
+conditional independence
+:
+x
+2
+ is 
+conditionally independent
+ of everything else given 
+p
+2
+p
+4
+ is 
+conditionally independent
+ of everything else given 
+p
+3
+Probability of being in a particular state at step 
+i
+ is known once we know what state we were in at step 
+i
+-1.  Probability of seeing a particular emission at step 
+i
+ is known once we know what state we were in at step 
+i
+.
+Hidden Markov Model
+Example: occasionally dishonest casino
+Dealer repeatedly flips a coin.  Sometimes the coin is 
+fair
+, with P(heads) = 0.5, sometimes it’s 
+loaded
+, with P(heads) = 0.8.  Dealer occasionally switches coins, invisibly to you.
+...
+...
+p
+1
+p
+2
+p
+3
+p
+4
+p
+n
+x
+1
+x
+2
+x
+3
+x
+4
+x
+n
+How does this map to an HMM?
+Very mysterious language
+Human genome: ~ 3 billion base pairs (characters of A/C/G/T)
+Humans share ~60% DNA with a banana plant
+The genetic difference between any two unrelated humans is only about 0.1%
+Link of the picture: https://
+ib.bioninja.com.au
+/standard-level/topic-3-genetics/32-chromosomes/genome-
+size.html
+Hidden Markov Model
+Example: occasionally dishonest casino
+...
+loaded
+T
+H
+H
+T
+H
+Emissions encode flip outcomes (observed), states encode loadedness (hidden)
+How does this map to an HMM?
+Dealer repeatedly flips a coin.  Sometimes the coin is 
+fair
+, with P(heads) = 0.5, sometimes it’s 
+loaded
+, with P(heads) = 0.8.  Dealer occasionally switches coins, invisibly to you.
+We can use
+ HMM to estimate what coin the dealer is using for each flip
+Hidden Markov Model
+...
+p
+1
+F
+L
+p
+2
+F
+L
+p
+3
+F
+L
+p
+4
+F
+L
+p
+n
+F
+L
+x
+1
+H
+T
+x
+2
+H
+T
+x
+3
+H
+T
+x
+4
+H
+T
+x
+n
+H
+T
+Emissions encode flip outcomes
+H
+ = heads
+T
+ = tails
+States encode which coin is used
+F
+ = fair
+L
+ = loaded
+...
+Hidden Markov Model
+x
+1
+H
+T
+x
+2
+H
+T
+x
+3
+H
+T
+x
+4
+H
+T
+Example with six coin flips:
+H
+H
+p
+1
+F
+L
+p
+2
+F
+L
+p
+3
+F
+L
+p
+4
+F
+L
+x
+5
+H
+T
+H
+p
+5
+F
+L
+x
+6
+H
+T
+H
+p
+6
+F
+L
+p
+ = 
+FFLLLL
+x
+ = 
+HTHHHH
+Hidden Markov Model
+...
+...
+p
+1
+p
+2
+p
+3
+p
+4
+p
+n
+x
+1
+x
+2
+x
+3
+x
+4
+x
+n
+P( 
+p
+1
+, 
+p
+2
+, ..., 
+p
+n
+, 
+x
+1
+, 
+x
+2
+, ..., 
+x
+n 
+) = 
+k
+ = 1
+n
+∏
+ P( 
+x
+k
+ | 
+p
+k 
+) 
+k
+ = 2
+n
+∏
+ P( 
+p
+k
+ | 
+p
+k-1 
+) 
+P( 
+p
+1
+ )
+|Q| × |Q| transition matrix 
+A
+ encodes P( 
+p
+i
+ | 
+p
+i-1
+ )
+ = P( 
+p
+i
+ | 
+p
+i-1
+ )
+|Q| × |∑| emission matrix 
+E
+ encodes P( 
+x
+i
+ | 
+p
+i
+ )
+E 
+[
+p
+i
+, 
+x
+i
+]
+ = P( 
+x
+i
+ | 
+p
+i
+ )
+|Q| array 
+I
+ encodes initial probabilities of each state
+I 
+[
+p
+i
+]
+ = P( 
+p
+1
+ )
+A 
+[
+p
+i-1
+, 
+p
+i
+]
+Q: the state set. 
+∑ : the symbol set 
+P( 
+p
+1
+, 
+p
+2
+, ..., 
+p
+n
+, 
+x
+1
+, 
+x
+2
+, ..., 
+x
+n 
+) =
+ ?
+ 
+Hidden Markov Model
+Dealer repeatedly flips a coin.  Coin is sometimes 
+fair
+, with P(heads) = 0.5, sometimes 
+loaded
+, with P(heads) = 0.8.  Dealer occasionally switches coins, invisibly to you.
+After each flip, dealer switches coins with probability 0.4
+A:
+E:
+F
+L
+F
+L
+H
+T
+F
+L
+0.6
+0.6
+0.4
+0.4
+0.5
+0.2
+0.5
+0.8
+|Q| × |Q| transition matrix 
+A
+ encodes P( 
+p
+i
+ | 
+p
+i-1
+ )
+ = P( 
+p
+i
+ | 
+p
+i-1
+ )
+|Q| × |∑| emission matrix 
+E
+ encodes P( 
+x
+i
+ | 
+p
+i
+ )
+E 
+[
+p
+i
+, 
+x
+i
+]
+ = P( 
+x
+i
+ | 
+p
+i
+ )
+A 
+[
+p
+i-1
+, 
+p
+i
+]
+transition
+emission
+Hidden Markov Model
+If P( 
+p
+1
+ = F ) = 0.5, then joint probability = 0.5
+9
+ 0.8
+3
+ 0.6
+8
+ 0.4
+2
+ 
+p
+F
+F
+F
+L
+L
+L
+F
+F
+F
+F
+F
+x
+T
+H
+T
+H
+H
+H
+T
+H
+T
+T
+H
+P( 
+x
+i
+ | 
+p
+i
+ )
+P( 
+p
+i
+ | 
+p
+i-1
+ )
+0.5
+0.5
+0.5
+0.8
+0.8
+0.8
+0.5
+0.5
+0.5
+0.5
+0.5
+-
+0.6
+0.6
+0.4
+0.6
+0.6
+0.4
+0.6
+0.6
+0.6
+0.6
+= 0.0000026874
+A
+F
+L
+F
+L
+E
+H
+T
+F
+L
+0.6
+0.6
+0.4
+0.4
+0.5
+0.2
+0.5
+0.8
+Given 
+A
+ & 
+E
+ (right), what is the joint probability of 
+p
+ & 
+x
+?
+Hidden Markov Model
+Given flips, can we say when the dealer was using the loaded coin?
+ 
+T
+H
+T
+H
+H
+H
+T
+H
+T
+T
+H
+X
+ =
+In-class exercise: how many different state 
+paths
+ can generate X?
+State path: the sequence of fair/loaded coins used by the dealer (e.g. FFFFFFFFFFF is a possible state path)
+Hidden Markov Model
+Given flips, can we say when the dealer was using the loaded coin?
+ How many different paths can generate X?
+p
+* = argmax P( 
+p
+ | 
+x
+ )
+p
+We want to find 
+p
+*, the most likely path given the emissions.  
+This is 
+decoding
+.  
+Viterbi 
+is a common decoding algorithm
+.
+= argmax P( 
+p
+, 
+x
+ )
+p
+How to find p*? Can we compute P(
+p,x
+) for each possible p?
+T
+H
+T
+H
+H
+H
+T
+H
+T
+T
+H
+X
+ =
+Viterbi 
+(from Wikipedia)
+高通
+Hidden Markov Model: Viterbi algorithm
+Bottom-up dynamic programming
+...
+p
+1
+F
+L
+p
+2
+F
+L
+p
+3
+F
+L
+p
+n
+F
+L
+x
+1
+H
+T
+x
+2
+H
+T
+x
+3
+H
+T
+x
+n
+H
+T
+...
+s
+k
+, 
+i
+ = score
+/probability
+ of the most likely path up to step 
+i
+ with 
+p
+i
+ = k
+s
+Fair, 3
+Start at step 1, calculate successively longer 
+s
+k
+, 
+i
+ 
+In-class exercise
+ for you: use 
+s
+k
+, 
+i
+ to represent the maximum probability of seeing 
+x. 
+Natural language and biological sequence
+Natural language 
+DNA
+John wanted to go to the coffee shop in 
+Mong
+ 
+Kok
+.
+… TTAGTAGTCGTAGTCGATGTCAGTGTCATGT …
+[*start*]
+ 
+[John] 
+[wanted] 
+[to] 
+[go] 
+[to] 
+[the] 
+…
+[*start*] 
+[T]
+ 
+[C]
+ 
+[G]
+ 
+[T]
+ 
+[A]
+ 
+[G]
+ 
+[T]
+ 
+[A]
+ 
+[G]
+ 
+[T]
+ …
+[*start*]
+ 
+[TCG] 
+[TAG] 
+[TAG] 
+[TCG] 
+[TAG] 
+[TCG] 
+…
+Natural language processing (NLP) model
+Biological sequence model
+Enable computers to comprehend and generate human language.  
+    
+ Important application: e.g. 
+ChatGPT
+Enable computers to comprehend DNA.
+      
+Many health-related applications
+Hidden Markov Model: Viterbi algorithm
+p
+?
+?
+?
+?
+?
+?
+?
+?
+?
+?
+?
+x
+T
+H
+T
+H
+H
+H
+T
+H
+T
+T
+H
+s
+Fair, 
+i
+0.25
+?
+?
+?
+?
+?
+?
+?
+?
+?
+?
+s
+Loaded, 
+i
+0.1
+?
+?
+?
+?
+?
+?
+?
+?
+?
+?
+A
+F
+L
+F
+L
+E
+H
+T
+F
+L
+0.6
+0.6
+0.4
+0.4
+0.5
+0.2
+0.5
+0.8
+Given transition matrix 
+A
+ and emission matrix 
+E
+ (right), what is the most probable path 
+p
+ for the following 
+x
+?
+Initial probabilities of F/L are 0.5
+ (no preference for fair or loaded coin)
+Viterbi fills in all the question marks
+S
+Fair,1
+=0.5*0.5
+S
+Loaded,1
+=0.5*0.2
+Hidden Markov Model: Viterbi algorithm
+s
+Fair,
+i
+ = 
+P(Heads | Fair)
+ 
+X
+    max    { 
+s
+k,i-1
+ 
+x
+ 
+P(Fair | k)
+ 
+}
+k ∈ { Fair, Loaded }
+Emission prob
+Transition 
+prob
+p
+i-1
+p
+i
+F
+L
+H
+T
+F
+L
+s
+Loaded
+, 
+i
+-1
+ 
+x
+ 
+P(
+Fair
+ |
+ 
+Loaded
+)
+x
+i
+s
+Fair
+, 
+i
+-1
+ 
+x
+ 
+P(
+Fair
+ | 
+Fair
+)
+max
+P(
+Heads
+ | 
+Fair
+)
+H
+T
+x
+i-1
+...
+...
+s
+k
+, 
+i
+ = score
+/probability
+ of the most likely path up to step 
+i
+ with 
+p
+i
+ = k
+F wins max
+x
+T
+H
+T
+H
+s
+F, 
+i
+s
+L, 
+i
+Hidden Markov Model: Viterbi algorithm
+Step 1
+Step 2
+Step 3
+Step 4
+p(T|F) = 0.5
+p(F) = 0.5
+p(T|L) = 0.2
+p(L) = 0.5
+p(H|F) = 0.5
+p(F|F) = 0.6
+p(F|L) = 0.4
+0.5
+3
+・0.6
+0.2・0.4・0.5
+2
+p(H|L) = 0.8
+F wins max
+S
+F, 2
+ = 0.5
+3
+・0.6
+p(L|F) = 0.4
+p(L|L) = 0.6
+0.4・0.5
+2
+・0.8
+0.2・0.5・0.6・0.8
+S
+L, 2
+ 
+= 0.4・0.5
+2
+・0.8
+p(T|F) = 0.5
+p(F|F) = 0.6
+p(F|L) = 0.4
+0.5
+4
+・0.6
+2
+F wins max
+S
+F,3
+ = 0.5
+4
+・0.6
+2
+0.
+4
+・0.4・0.5
+2
+・0.
+8
+・0.
+5
+max:
+max:
+S
+F, 1
+ = 0.5
+2
+S
+L, 1
+ = 0.2
+・0.5
+ 
+max:
+etc
+etc
+etc
+...
+Hidden Markov Model: Viterbi algorithm
+Step n-3
+Step n-2
+Step n-1
+Step n
+Pick state in step 
+n
+ with highest score; 
+backtrace
+ for most likely path
+s
+F, n
+s
+L, n
+s
+F, n-1
+s
+L, n-1
+s
+F, n-2
+s
+L, n-2
+s
+F, n-3
+s
+L, n-3
+Backtrace according to which state 
+k
+ “won” the max in:
+s
+L,n
+ > 
+s
+F,n
+Hidden Markov Model: Viterbi algorithm
+How much work did we do, given 
+Q 
+is the set of states and 
+n
+ is the length of the sequence?
+Matrix 
+A
+ 
+has
+ 
+|Q|
+2
+ 
+elements, 
+E
+ has |Q||∑| elements, 
+I
+ has |Q|
+ 
+elements
+O
+(
+n・
+|Q|
+2
+)
+# 
+s
+k, i
+ values to calculate = 
+n・
+|Q|
+n
+|Q|
+, each involves max over |Q| products
+Hidden Markov Model: Viterbi algorithm
+What happened?
+>>> hmm = HMM({"FF":0.6, "FL":0.4, "LF":0.4, "LL":0.6},
+...           {"FH":0.5, "FT":0.5, "LH":0.8, "LT":0.2},
+...           {"F":0.5, "L":0.5})
+>>> prob, _ = hmm.viterbi("THTHHHTHTTH")
+>>> print prob
+2.86654464e-06
+>>> prob, _ = hmm.viterbi("THTHHHTHTTH" * 100)
+>>> print prob
+0.0
+Repeat string 100 times
+Occasionally dishonest casino setup
+Underflow!
+Hidden Markov Model: Viterbi algorithm
+When multiplying many numbers in (0, 1], we quickly approach the smallest number representable in a machine word.  Past that we have 
+underflow
+ and processor rounds down to 0.
+Switch to log space.  Multiplies become adds.  
+>>> hmm = HMM({"FF":0.6, "FL":0.4, "LF":0.4, "LL":0.6},
+...           {"FH":0.5, "FT":0.5, "LH":0.8, "LT":0.2},
+...           {"F":0.5, "L":0.5})
+>>> prob, _ = hmm.viterbi("THTHHHTHTTH")
+>>> print prob
+2.86654464e-06
+>>> prob, _ = hmm.viterbi("THTHHHTHTTH" * 100)
+>>> print prob
+0.0
+>>> logprob, _ = hmm.viterbiL("THTHHHTHTTH" * 100)
+>>> print logprob
+-1824.4030071946879
+Repeat string 100 times
+log-space Viterbi
+In-class exercise: 
+fill out the first 5 columns of the table
+p
+?
+?
+?
+?
+?
+?
+?
+?
+?
+?
+?
+x
+T
+H
+T
+H
+H
+H
+T
+H
+T
+T
+H
+s
+Fair, 
+i
+0.25
+?
+?
+?
+?
+?
+?
+?
+?
+?
+?
+s
+Loaded, 
+i
+0.1
+?
+?
+?
+?
+?
+?
+?
+?
+?
+?
+A
+F
+L
+F
+L
+E
+H
+T
+F
+L
+0.6
+0.6
+0.4
+0.4
+0.5
+0.2
+0.5
+0.8
+Given transition matrix 
+A
+ and emission matrix 
+E
+ (right), what is the most probable path 
+p
+ for the following 
+x
+?
+Initial probabilities of F/L are 0.5
+ (no preference for fair or loaded coin)
+Viterbi fills in all the question marks
+S
+Fair,1
+=0.5*0.5
+S
+Loaded,1
+=0.5*0.2
+Problem two: given a genome, 
+search for 
+CpG
+ islands in the genome
+.
+ATCATGCTGGAAATTGAAGAGGAACGCAGCCAGTGCCTGGCAGAGATCACTGAGGATAATCAGACCTCAGGTTGCAGAAGACAGTGGGACAACATCACGTGCTGGCCTGAGGCGCAGGTGGGAGCAGTTGTGGTGAAGCCATGCCCAAAGTACTTCAGGTTCCTCACCACTTTTCTCGGAAATGTGAGCAGGAATTGCACAAGTCAGGGCTGGACAGATGTGTACCCTGCACCGTATGCTGTTGCTTGTGGATACGATTCCAACAGCACACCAGGGGAAGAGCAAACGGCGTTCTATGGCACGGTCAAGACCGGCTACACCATTGGACATACCTTGTCACTCATTGCTCTCACAGCTGCTATGATCATTTTCTGTCTCTTCAGAAAACTACACTGTACTCGAAATTATATTCATATGCACCTCTTCATGTCCTTTATAATGAGAGCCATTGCAGTCTTC
+CGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGa
+CTAAGCTTCAAGGAGGGTGACCTCATTACCCTGCTGGTGCCTGAGGCCCGTGATGGCTGGCACTACGGAGAGAGTGAGAAGACCAAGATGCGGGGCTGGTTTCCCTTCTCCTACACCCGGGTCCTGGACAGCGACGGCAGTGACAGGCTGCACATGAGCTTGCAGCAAGGGAAGAGCAGCAGCACGGGCAACCTCCTAGACAAGGACGACTTGGCCATCCCGCCCCCTGACTACGGCGCCACCTCCCGGGCCTTCCCTGCCCAGACAGCCAGTGGCTTCAAGCAGAGGCCCTACAGCGTGGCCGTGCCTGCCTTCTCCCAGGGTCTGGAAGACTATGGAGCACGGTCCATGAGCAGTGGCAGCGGCACG
+Goal: identify a region with lots of C followed by G
+atatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatat
+Markov Chains
+ and kth order Markov models
+Some slides are from Ben Langmead
+ of the Johns Hopkins University
+.
+CpG
+ islands
+Definition: CpG is the pair of nucleotides C and G appearing successively, in this order, along one DNA strand. 
+ (e.g. CGCGCGGCCGGCGCG) But it can have “CC”, “GG” or even A and T in the islands.
+CpG relatively rare in most DNA sequences. However, in particular sub-sequences, which are a few hundred to a few thousand bees long, CpG is more frequent. Those sequences are called CpG  islands. 
+Problem one: given a short DNA sequence x, 
+decide whether x is from CpG island.
+ (a typical classification problem)
+Problem two: given a genome, 
+search for CpG islands in the genome.
+Can we use 
+binary classification model M 
+to pick out CpG islands from the rest of the genome?
+Sequence models
+Binary classification 
+assigns a score to a string; doesn’t naturally give a “running” score across a long sequence
+Genome position
+Probability of being in island
+(a) Pick window size 
+w
+, (b) score every 
+w
+-
+mer
+ using 
+M
+, (c) use a 
+cutoff
+ to find islands
+We could use a 
+sliding window
+Smoothing before (c) might also be a good idea
+Sequence models
+Genome position
+Probability of being in island
+Choosing 
+w 
+involves an assumption about how long the islands are
+If 
+w
+ is too large, we’ll miss small islands
+If 
+w
+ is too small, we’ll get many small islands where perhaps we should see fewer larger ones
+Ideal solution: every base (rather than a window) is assigned with a label, inside or outside
+GAGAGCCATTGCAGTCTT
+CGCGCGCGCGCGCGCGCGCGGCGCGCGCGCGCGCGC
+TTACCCTGCGTGCCT
+in
+in
+in
+out
+out
+Hidden Markov Model
+Task: design an HMM for finding CpG islands?
+...
+...
+p
+1
+p
+2
+p
+3
+p
+4
+p
+n
+x
+1
+x
+2
+x
+3
+x
+4
+x
+n
+Hidden Markov Model
+Idea 1: Q = { inside, outside }, ∑ = { A, C, G, T }
+...
+p
+1
+I
+O
+p
+2
+I
+O
+p
+3
+I
+O
+p
+4
+I
+O
+p
+n
+I
+O
+x
+1
+A
+C
+x
+2
+x
+3
+x
+4
+x
+n
+...
+G
+T
+A
+C
+G
+T
+A
+C
+G
+T
+A
+C
+G
+T
+A
+C
+G
+T
+Hidden Markov Model
+Idea 1: Q = { inside, outside }, ∑ = { A, C, G, T }
+O
+I
+A
+I
+O
+I
+O
+E
+A
+C
+G
+T
+I
+O
+inside
+outside
+Transition matrix
+Emission matrix
+Estimate as fraction of nucleotides inside islands that are C
+Estimate as fraction of positions where we transition from inside to outside
+Hidden Markov Model
+Example 1 using HMM idea 1:
+ATATATA
+CGCGCGCGCGCGCG
+ATATATATATATA
+OOOOOOO
+IIIIIIIIIIIIII
+OOOOOOOOOOOOO
+x:
+p:
+A
+I
+O
+I
+0.8
+0.2
+O
+0.2
+0.8
+E
+A
+C
+G
+T
+I
+0.1
+0.4
+0.4
+0.1
+O
+0.25
+0.25
+0.25
+0.25
+(from Viterbi)
+Hidden Markov Model
+Example 2 using HMM idea 1:
+ATAT
+CGCGCGCG
+ATATAT
+CGCGCGCG
+ATATATAT
+OOOO
+IIIIIIII
+OOOOOO
+IIIIIIII
+OOOOOOOO
+x:
+p:
+E
+A
+C
+G
+T
+I
+0.1
+0.4
+0.4
+0.1
+O
+0.25
+0.25
+0.25
+0.25
+A
+I
+O
+I
+0.8
+0.2
+O
+0.2
+0.8
+(from Viterbi)
+Hidden Markov Model
+Example 3 using HMM idea 1:
+ATATATACCCCCCCCCCCCCCATATATATATATA
+E
+A
+C
+G
+T
+I
+0.1
+0.4
+0.4
+0.1
+O
+0.25
+0.25
+0.25
+0.25
+OOOOOOO
+IIIIIIIIIIIIII
+OOOOOOOOOOOOO
+Oops - not a CpG island!
+A
+I
+O
+I
+0.8
+0.2
+O
+0.2
+0.8
+(from Viterbi)
+x:
+p:
+Goal: identify a region with lots of C followed by G
+atatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatat
+Hidden Markov Model
+Idea 2: Q = { A
+i
+, C
+i
+, G
+i
+, T
+i
+, A
+o
+, C
+o
+, G
+o
+, T
+o
+ }, ∑ = { A, C, G, T }
+...
+p
+1
+A
+i
+A
+o
+x
+1
+A
+C
+...
+G
+T
+C
+i
+C
+o
+G
+i
+G
+o
+T
+i
+T
+o
+p
+2
+A
+i
+A
+o
+x
+2
+A
+C
+G
+T
+C
+i
+C
+o
+G
+i
+G
+o
+T
+i
+T
+o
+p
+n
+A
+i
+A
+o
+x
+n
+A
+C
+G
+T
+C
+i
+C
+o
+G
+i
+G
+o
+T
+i
+T
+o
+Hidden Markov Model
+Idea 2: Q = { A
+i
+, C
+i
+, G
+i
+, T
+i
+, A
+o
+, C
+o
+, G
+o
+, T
+o
+ }, ∑ = { A, C, G, T }
+A
+inside
+C
+inside
+T
+inside
+G
+inside
+A
+outside
+C
+outside
+G
+outside
+T
+outside
+All inside-outside edges
+Hidden Markov Model
+Idea 2: Q = { A
+i
+, C
+i
+, G
+i
+, T
+i
+, A
+o
+, C
+o
+, G
+o
+, T
+o
+ }, ∑ = { A, C, G, T }
+A
+A
+i
+C
+i
+G
+i
+T
+i
+A
+o
+C
+o
+G
+o
+T
+o
+A
+i
+C
+i
+G
+i
+T
+i
+A
+o
+C
+o
+G
+o
+T
+o
+E
+A
+C
+G
+T
+A
+i
+C
+i
+G
+i
+T
+i
+A
+o
+C
+o
+G
+o
+T
+o
+Estimate P(C
+i
+ | T
+i
+) as fraction of all dinucleotides where first is an inside T, second is an inside C
+1
+0
+0
+0
+0
+1
+0
+0
+0
+0
+1
+0
+0
+0
+0
+1
+1
+0
+0
+0
+0
+1
+0
+0
+0
+0
+1
+0
+0
+0
+0
+1
+Hidden Markov Model
+Actual trained transition matrix A:
+A:
+[[  1.85152516e-01   2.75974026e-01   4.00289017e-01   1.37026750e-01
+    3.19045117e-04   3.19045117e-04   6.38090233e-04   2.81510397e-04]
+ [  1.89303979e-01   3.58523577e-01   2.52868527e-01   1.97836007e-01
+    4.28792308e-04   5.72766368e-04   3.75584503e-05   4.28792308e-04]
+ [  1.72369088e-01   3.29501650e-01   3.55446538e-01   1.40829292e-01
+    3.39848138e-04   4.94038497e-04   7.64658311e-04   2.54886104e-04]
+ [  9.38783432e-02   3.40823149e-01   3.75970400e-01   1.86949063e-01
+    2.56686367e-04   5.57197235e-04   1.05804868e-03   5.07112091e-04]
+ [  0.00000000e+00   3.78291020e-05   0.00000000e+00   0.00000000e+00
+    2.94813496e-01   1.94641138e-01   2.86962055e-01   2.23545482e-01]
+ [  0.00000000e+00   7.57154865e-05   0.00000000e+00   0.00000000e+00
+    3.26811872e-01   2.94079570e-01   6.17258712e-02   3.17306971e-01]
+ [  0.00000000e+00   5.73810399e-05   0.00000000e+00   0.00000000e+00
+    2.57133507e-01   2.33483327e-01   2.94234944e-01   2.15090841e-01]
+ [  0.00000000e+00   3.11417347e-05   0.00000000e+00   0.00000000e+00
+    1.79565378e-01   2.32469115e-01   2.94623408e-01   2.93310958e-01]]
+Hidden Markov Model
+Actual trained transition matrix A:
+A
+i
+C
+i
+G
+i
+T
+i
+A
+o
+C
+o
+G
+o
+T
+o
+A
+i
+C
+i
+G
+i
+T
+i
+A
+o
+C
+o
+G
+o
+T
+o
+Red & orange: low probability
+Yellow: high probability
+White: probability = 0
+Once inside, we likely stay inside for a while
+Same for outside
+CpG islands start with C (in fact, they start with CG)
+CpG islands end with G (in fact, they end with CG)
+Ignore the small yellow blocks
+Hidden Markov Model
+Viterbi result; lowercase = 
+outside
+, uppercase = 
+inside
+:
+atatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatat
+Hidden Markov Model
+atatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatatat
+Viterbi result; lowercase = 
+outside
+, uppercase = 
+inside
+:
+Hidden Markov Model
+Many of the Markov chains and HMMs we’ve discussed are 
+first order, 
+but we can also design models of higher orders
+First-order Markov chain:
+...
+Second-order Markov chain:
+...
+...
+Hidden Markov Model
+For higher-order HMMs, Viterbi 
+s
+k, 
+i
+ 
+no longer depends on just the previous state assignment
+p
+i-1
+p
+i
+F
+L
+H
+T
+F
+L
+x
+i
+H
+T
+x
+i-1
+...
+...
+Can sidestep the issue by expanding the state space...
+p
+i-2
+F
+L
+H
+T
+x
+i-1
+Hidden Markov Model
+After expanding, usual Viterbi works fine.
+p
+i-1
+p
+i
+F
+L
+F
+L
+p
+i-2
+F
+L
+p
+i-1
+p
+i
+FF
+FL
+LF
+LL
+FF
+FL
+LF
+LL
+Q
+ = { F, L }
+Q
+ = { F, L } × { F, L }
+Now 
+one
+ state encodes the last 
+two 
+“loadedness”es of the coin
+CpG
+ islands
+Definition: CpG is the pair of nucleotides C and G appearing successively, in this order, along one DNA strand. 
+ (e.g. CGCGCGGCCGGCGCG) But it can have “CC”, “GG” or even A and T in the islands.
+CpG relatively rare in most DNA sequences. However, in particular sub-sequences, which are a few hundred to a few thousand b
+ases
+ long, CpG is more frequent. Those sequences are called CpG  islands. 
+Problem one: given a short DNA sequence x, 
+decide whether x is from CpG island.
+Problem two: given a genome, 
+search for CpG islands in the genome.
+Other applications
+Speech recognition
+Suppose we want to recognize the word "hello" from an acoustic signal. We can first divide the acoustic signal into small time frames, and then extract acoustic features such as the frequency spectrum from each time frame.
+Next, we can model the relationship between the acoustic features and the underlying phonetic units using HMMs. For example, we can have one HMM for each phonetic unit (e.g. "h", "e", "l", "o"). Each HMM will have a set of observation probabilities, which provide the likelihood of observing a particular acoustic feature given the current state of the HMM.
+To recognize the word "hello", we can use a technique called Viterbi decoding, which involves finding the most likely sequence of phonetic units given the observed acoustic features and the HMMs. In this case, the most likely sequence would be "h", "e", "l", "l", "o", corresponding to the word "hello".
+This is a simplified example, but it illustrates the basic idea of how HMMs can be used in speech recognition.
+Application in finance
+Suppose we want to model the volatility of a stock's returns. We can assume that the stock returns are generated by a hidden Markov model with two hidden states: a high volatility state and a low volatility state.
+We can then use historical data on the stock returns to estimate the transition probabilities between the two states (i.e. the probability of transitioning from a high volatility state to a low volatility state, or vice versa) and the observation probabilities (i.e. the distribution of returns given each state).
+Once we have estimated the HMM, we can use it to predict the probability of being in each state at each time step, based on the observed returns. This can be used to make predictions about future volatility, or to construct portfolios that are optimized for different volatility regimes.
+Image credit: Does VIX scare stocks of tourism companies?
+Classification problem
+Given 
+a short DNA sequence x, 
+decide whether x is from CpG island.
+S: AAGCCGGGAAGTTGTATG
+Questions:
+Is S from inside/outside CpG islands?
+Compare 
+P(
+inside|S
+)
+ and P(
+outside|S
+)
+Training data: a bunch of sequences from
+ inside and outside of 
+CpG
+ islands
+i
+nside
+CGCGCGGCCGCGGCGA
+CCGGCGCGCGCGTGCC
+CCGGCGACCCGGGCGCG
+……
+out
+side
+CTACCGATCTCGCAAA
+CGTAACATGACGATTGC
+CCGTAATCCTTACTAG
+……

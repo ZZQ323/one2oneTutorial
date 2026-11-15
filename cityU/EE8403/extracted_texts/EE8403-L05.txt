@@ -1,0 +1,776 @@
+ EE 8403 Machine Learning for
+ Signal Processing Applications
+
+    Lecture 5: Machine Learning for Wireless
+Communications, RF Sensing, and Terahertz Systems
+
+               Professor Geng-Bo Wu
+          YEUNG G6418, bogwu2@cityu.edu.hk, 3442-7802
+
+         https://www.cityu.edu.hk/stfprofile/bogwu2.htm
+                                            TIME
+The development of wireless communications
+
+
+
+
+       Martin Cooper                           Steve Jobs
+
+Analogue               Digital        Multi-functional Fast Mobile   Machine-to-   Terahertz &
+Wireless               Communications Mobile           Internet      Machine       Millimeter Waves
+
+
+  1G 2G 3G 4G 5G 6G
+1980                   1990          2000                   2010     2020          2030         Year
+
+
+
+
+                                                                                                       2
+ Features          1G           2G            3G          4G          5G           6G
+
+
+   Period       1980-1990   1990-2000      2000-2010   2010-2020   2020-2030    2030-2040
+
+ Max. rate       2.4kb/s     144kb/s        2Mb/s        1Gb/s     35.5Gb/s     100Gb/s
+
+
+Max. carrier
+                894MHz      1900MHz        2100MHz       6GHz       90GHz        10THz
+  freq.
+
+
+Service level     Voice        Text         Picture      Video     3D VR/AR         AI
+
+                                                        MIMO        Massive     Intelligent
+Architecture      SISO         SISO          SISO
+                                                        OFDM        MIMO          surface
+                                                                                Security,
+                                                          Live     Extremely
+ Highlight      Mobility    Digitization    Internet                            secrecy,
+                                                       streaming   high speed
+                                                                                privacy
+
+
+
+
+                                                                                         3
+                  Electromagnetic (EM) Spectrum
+ 𝑐 = 𝜆𝑓
+
+Frequency:
+
+
+Wavelength:
+
+
+
+
+    Frequency spectrum for wireless communications:
+
+             4G
+                   < 6GHz      26/28 37/42    60     70/90   0.97        3 THz
+                    Band       GHz GHz       GHz     GHz     THz          band
+                               Band band     band    band    band
+                        Microwave            MMW                     Terahertz (THz)
+
+
+                                                                    6G
+                                    Automotive      Point-to-point
+                                    radar           communications
+              RF Transceiver Architecture
+              RF Transmitter                                RF Receiver
+
+
+
+
+Baseband              RF Frontend                     RF Frontend              Baseband
+
+
+ Typical radio frequency (RF) transceiver architecture consists of different RF
+ frontend components, such as local oscillator (LO), mixer, filter, phase shifters,
+ power amplifier (PA), and antennas, etc.
+What is Antenna?
+Antenna: the interface between radio waves propagating through free space and
+transmission line
+
+
+
+
+                                              Dipole antenna       Patch antenna
+
+
+
+
+Antenna
+
+
+                                               Horn antenna         Antenna array
+Radiate or receive electromagnetic
+(EM) waves
+
+
+
+                                                                                    6
+                                               Lens antenna          Reflector antenna
+ Where is Antenna?
+
+
+
+
+• Communication: Multiple VHF and HF antennas for talking to air traffic control
+• Navigation: GPS receivers, VOR/LOC on the tail, and DME units
+• Surveillance: Top and bottom TCAS and ATC transponders for traffic avoidance
+• Weather & Safety: Weather radar hidden in the nose radome and an emergency locator transmitter (ELT)
+• Connectivity: SATCOM, Wi-Fi, and cellular system hardware
+Where is Antenna?
+
+                            Samsung’s Galaxy S8 includes
+                            antennas for Bluetooth, GPS,
+                            Wi-Fi,         and          NFC
+                            communications, as well as at
+                            least four LTE cellular antennas
+                            to support Gbit/s speed data
+                            transfers.
+
+
+
+
+                            Apple Watch 2 (bottom),
+                            includes antennas for Wi-Fi,
+                            Bluetooth,     GPS,     and
+                            LTE cellular.
+https://spectrum.ieee.org
+    Where is Antenna?
+    Five-hundred-meter Aperture                            Starlink satellite internet
+    Spherical Telescope (FAST)
+
+
+
+
+                                                           https://www.space.com
+
+
+
+
+    Source: wikipedia
+
+
+•      World’s most sensitive listening device
+•      70 MHz to 3.0 GHz, gain from 71 to 85 dBi
+•      First two pulsars detected are 16,000 and 4,100
+       light years away
+                                                         L-probe feeding technology (invented by Prof.
+                                                         K. M. Luk at CityU in 1998) is used in the 1st
+                                                         generation of Starlink receiver
+    Where is Antenna?
+    Antennas in Sci-fi The Three-Body Problem
+
+
+
+
+                                                                                  www.sohu.com
+
+                               • “Sun Antenna”, utilizing the Sun itself as a super-amplifier
+
+
+
+                                                                            Friis transmission
+                                                                            formula:
+
+
+
+•   The Red Coast High-Power       www.techbang.com
+    Directive Antenna          •      Gravitational-Wave Antennas
+How Antenna Works?
+
+
+
+
+                                                    https://www.youtube.com/watch?v=ZaXm6wau-jc
+
+
+
+
+                                                           Maxwell Equations:
+
+
+
+
+ Typical antenna size is one half of a wavelength                                                 11
+How Antenna Works?
+Maxwell’s Equations & Antenna Radiation
+
+
+
+
+https://www.youtube.com/watch?v=CfY32beKL3c
+Summary
+• An antenna is a device that provides the interface
+  between radio waves propagating through space and
+  oscillating electric or magnetic currents moving on
+  a radiator (metal/ non-metal surfaces).
+• It uses for being a transmitter or receiver for the
+  radio communications for satisfying the condition
+  of wave propagation.
+• Antennas can be used for communications, sensing,
+  radar, power transfer, imaging, detection, chemical
+  differentiation, bio-treatment, etc.
+• Antenna = Resonator + Radiator
+
+                                                   13
+What Is a Good Antenna?
+• Reflection coefficient (denoted by the Γ or S-parameter S11) measures
+  how much radio frequency (RF) power is reflected back to the transmitter
+  instead of being accepted by the antenna
+• Impedance mismatch between the transmission line (50Ω) and the antenna
+
+
+
+
+       Fractional bandwidth=Bw/fc =5.1%
+
+
+
+                                              z𝑖𝑛 : antenna input impedance
+                                               z0 : transmission line characteristic
+                                               impedance (usually 50Ω)
+
+                                                                              14
+What Is a Good Antenna?
+Radiation Pattern: a graph of the spatial variation of the power density
+along a constant radius (in dB scale)
+3-D Pattern:                                                    2-D Pattern:
+
+
+
+
+• Half-power beamwidth (HPBW), 3dB Beamwidth: The angle between the two
+  directions in which the radiation intensity is one-half value of the maximum
+
+• Side Lobe Level                        • Gain                   • Front-to-Back Ratio
+
+
+ Balanis, Constantine A. Antenna theory: analysis and design. John wiley & sons, 2016.
+What Is a Good Antenna?
+
+
+
+
+Microstrip patch antenna
+
+
+
+
+    Antenna Array
+What Is a Good Antenna?
+                                                                                  AUT
+
+
+
+
+                                                        Reference
+                              niteize.com
+                                                   https://en.wikipedia.org/wiki/Gain
+         Bulb              Flashlight
+      (Isotropic)         (Directional)
+
+
+Antenna gain describes how well the antenna converts input power into
+radio waves headed in a specified direction
+ Unlike an amplifier, an antenna is a passive device—it cannot create extra
+ power. Instead, gain represents spatial focusing.
+
+           𝑈     𝑈     4𝜋𝑈
+  Gain =      = 𝑃𝑎𝑐𝑐 =           (in dB) where, U = Radiation Intensity
+           𝑈0          𝑃𝑟𝑎𝑑
+                    4𝜋
+                                            𝑃𝑟𝑎𝑑 = Antenna accpted power
+                                                                                        17
+                         Microstrip Antenna
+In high-performance aircraft, spacecraft, satellite, and missile applications, where size,
+weight, cost, performance, ease of installation, and aerodynamic profile are constraints,
+low-profile antennas are be required.
+
+Many other commercial applications, such             as   mobile         radio       and        wireless
+communications, have similar specifications.
+
+Microstrip antennas are low profile, conformable to planar and nonplanar surfaces,
+simple and inexpensive to manufacture using modern printed-circuit board (PCB)
+technology
+
+
+
+
+                                                          Smart Base Station Antennas developed by
+       Satellite                   Base station
+                                                          CityU (2570-2620MHz, dual-pol, gain of
+                                                          16dBi)
+                                                           https://www.ee.cityu.edu.hk/skltmw/project1/achiv3.html
+                          Microstrip Antenna
+A microstrip antenna (or patch antenna) is a low-profile antenna built on a
+printed circuit board (PCB) in a sandwich-like structure.
+
+                                         Radiating Patch (Top Layer): A thin metallic layer
+                                         made of conductive material like copper or gold
+
+                                         Dielectric Substrate (Middle Layer): A non-
+                                         conductive material (such as FR4) with a specific
+                                         dielectric constant and thickness
+
+                                         Ground Plane (Bottom Layer): A solid metallic layer
+                                         covering the entire bottom surface of the dielectric
+                                         substrate
+
+                                         Feed Line: The connection technique used to transfer
+                                         radio frequency (RF) energy into the radiating patch
+
+
+               First proposed in 1953, became popular in 1970s
+
+ [1] C. A. Balanis, Antenna theory: analysis and design: John wiley & sons, 2016.
+                      Microstrip Antenna
+                                 Most common due to attractive performance,
+                                 such as low cross-polarization
+
+
+
+
+The shapes of patch will affect the radiation performance of the microstrip antenna
+                   Microstrip Antenna
+Advantages:
+• Low Profile & Compact Size
+• Low Manufacturing Cost
+• Easy Integration
+• Conformal Flexibility
+• Multi-Frequency Support
+
+Limitations:
+•Narrow Bandwidth
+•Low Efficiency & Power Handling
+•Low Gain
+•Spurious Radiation
+                        Microstrip Antenna
+Various feeding methods can be used to excites microstrip patch antennas,
+including microstrip line, coaxial probe, aperture coupling, and proximity
+coupling
+Microstrip line feed (Direct contacting):
+
+
+
+
+                                            Equivalent circuits
+Probe feed (Direct contacting):
+                     Microstrip Antenna
+Aperture-coupled feed (Non-contacting):
+
+
+
+
+Proximity-coupled feed (Non-contacting):   Equivalent circuits
+          Microstrip Antenna
+
+Comparison Table
+Feeding      Fabrication   Spurious                  Impedance
+                                       Bandwidth
+Method       Ease          Radiation                 Matching
+
+Microstrip                             Narrow (~2–
+             Very Easy     High                      Very Easy
+Line                                   5%)
+
+Coaxial      Moderate                  Narrow (~2–
+                           Low                       Very Easy
+Probe        (Drilling)                5%)
+
+Aperture                               Moderate
+             Complex       Low                       Easy
+Coupled                                (~10–15%)
+
+Proximity                              High (~13–
+             Complex       Very Low                  Easy
+Coupled                                20%)
+How a microstrip antenna works?
+     Microstrip Antenna Analysis Methods
+Various analysis methods for microstrip antennas, including transmission line, cavity,
+and full wave simulations
+
+                                             Computation
+ Method          Type         Accuracy                       Best Use Case
+                                             al Effort
+
+ Transmission                 Low to         Very Low        Initial rectangular patch
+                 Analytical
+ Line                         Moderate       (instant)       design and sizing
+
+
+                                                             Understanding field
+                              Moderate to
+ Cavity Model    Analytical                  Low             modes and radiation
+                              High
+                                                             physics
+
+                                             High
+                                                             Final design optimization,
+ Full-Wave                                   (requires
+                 Numerical    Very High                      complex shapes, multi-
+ (MoM/FEM)                                   simulation
+                                                             layer feeds
+                                             software)
+                           Transmission Line Model
+    The fields at the patch edges undergo fringing, equivalent to two radiating
+    slots with a space of Leff
+
+
+
+
+    x                                    z
+            z
+                y                                y           Top view
+
+        h                        h
+                                                     -----               +++++
+w                            w
+                                     x
+                    Leff                             +++++               -----
+                                             y               Side view
+        Equivalent slots
+                       Transmission Line Model
+    The fringing effect makes the patch look electrically longer than its physical length
+    Leff > L, and introduces an effective dielectric constant 𝜀𝑒𝑓𝑓
+
+                                              Effective dielectric constant:
+
+
+
+                                              Effective length:
+
+
+x    z
+         y
+
+
+
+    Resonant frequency of the dominant TM010 mode:
+                    Transmission Line Model
+Typical Patch Antenna Design Procedure:
+
+Known:
+
+Determine:                     W, L                           x   z
+                                                                      y
+Step1: A practical width for good radiation efficiencies is
+
+                       W
+
+Step 2: Determine the effective dielectric constant of microstrip antenna
+
+
+
+Step 3: Determine the extension of the length ΔL
+
+
+
+Step 4: Determine the actual length of the patch
+                    Transmission Line Model
+
+
+
+
+ • An inset feed with a notch is used for impedance match from the transmission
+   line to Patch antenna
+ • The input resistance varies with a distance y0 from slot #1
+                                            ~150-300Ω
+
+
+
+
+50Ω
+
+
+ z
+      y
+                           Cavity Model
+• Solves the exact interior field distributions and converts the boundary fields
+  into equivalent radiation sources
+• Equivalent magnetic current densities 𝑴𝒔 = −𝑛ො × 𝑬 along the side walls
+  are used to compute far-field radiation patterns
+
+Core concept:
+ • Top and Bottom: Modeled as Perfect Electric Conductors (PEC)
+ • Four Side Walls: Modeled as Perfect Magnetic Conductors (PMC) because the
+ tangential magnetic field at the edges is approximately zero
+
+
+
+
+                                   Simplified
+
+
+
+
+           Patch antenna                              Cavity model
+                            Cavity Model
+The vector potential in the cavity satisfy the homogeneous wave equation
+
+
+
+ Solution:
+
+
+
+ Electric and magnetic fields within the cavity according to Ax:
+                               Cavity Model
+Electric and magnetic fields within the cavity:
+
+
+
+
+                                                      𝑥
+                                                    TM010 mode
+                                                  (dominant mode)
+
+
+
+
+                                                      𝑥
+                                                   TM001 mode
+                                                  (second mode)
+                             Cavity Model
+Radiating Edges: The equivalent magnetic currents are in phase and
+constructively reinforce each other in the far field to create the main radiation
+lobe
+Non-Radiating Edges: At the side edges along length L, Ez in-phase, causing
+the equivalent magnetic currents to be out of phase, canceling out their far-
+field radiation
+
+
+                                   𝑥
+Electric and magnetic fields for TM010 mode:
+
+
+
+
+                                          Equivalent magnetic current at the patch edge
+                          Cavity Model
+The two equivalent magnetic currents are integrated to compute far-field
+radiation patterns
+
+
+
+E-plane:
+
+
+
+
+ H-plane:
+                    Cavity Model
+                          S11                       3D radiation pattern
+Example
+L = 0.906cm
+W=1.186cm
+𝜀𝑟 = 2.2
+(RT/duroid 5880)
+h=0.1588cm
+y0=0.203cm
+f0=9.8GHz
+      Prototype    E-plane radiation pattern   H-plane radiation pattern
+                           Cavity Model
+• Another popular configuration is the circular patch antenna
+• Only one geometry degree of freedom to control resonant frequency (radius
+  of the patch)
+• Cavity model with cylindrical coordinate can be used to analyze its radiation
+  performance
+
+
+
+
+                                  Simplified
+
+
+
+
+  Circular patch antenna                             Cavity model
+                              Cavity Model
+The vector potential in the cavity satisfy the homogeneous wave equation in
+cylindrical coordinate system:
+
+
+   Solution:
+
+   Electric and magnetic fields within the cavity according to Az:
+                               Cavity Model
+
+Electric and magnetic fields within the   Radiation pattern in two principal
+cylindrical cavity:                       planes:
+
+                                           E-plane:
+
+
+
+
+                                           H-plane:
+                     Cavity Model
+                          S11                    3D radiation pattern
+Example
+a = 0.525cm
+𝜀𝑟 = 2.2
+(RT/duroid 5880)
+h=0.1588cm
+f0=10 GHz
+
+     Prototype     E-plane radiation pattern   H-plane radiation pattern
+                  Cavity Model
+
+
+
+
+Rectangle patch   Arbitrary-shape patch   CityU-logo patch
+                      Full-Wave Simulation
+When antennas feature arbitrary geometries, complex feeds, multi-layer
+substrates, or thick dielectrics, numerical algorithms solve Maxwell's equations
+without major physical approximations
+
+Commercial full-wave simulation software:
+
+ • Finite Element Method (FEM):
+
+
+
+ • Finite-Difference Time-Domain
+   (FDTD):
+
+
+ • Method of Moments (MoM):
+                     Full-Wave Simulation
+  High Frequency Structure Simulator (HFSS)
+• Numerical technique: Finite Element
+  Method (FEM)
+• A structure is subdivided into many small
+  finite elements in the form of tetrahedra
+• Maxwell’s Equations are satisfied across
+  inter-element boundaries yielding a field
+  solution for the entire original structure
+
+
+   Solve for the E- and H-field:
+                   Full-Wave Simulation
+ High Frequency Structure Simulator (HFSS)
+• Automatic adaptive mesh refinement process
+• The common convergence criterion is to ensue the difference in the S-
+  parameter value between two consecutive solves is less than the
+  specified magnitude
+
+
+
+
+                                             Convergence Plot
+                    Full-Wave Simulation
+
+
+
+
+                          Design Process in HFSS
+
+
+
+
+Probe-fed patch antenna
+                     Full-Wave Simulation
+Comparison Table
+
+Software / Feature
+
+Primary              FEM (Frequency       FIT / FDTD (Time   MoM & Hybrid
+Numerical Solver     Domain)              Domain)            Asymptotics
+
+                     Volumetric           Volumetric
+                                                             Surface Triangular
+Mesh Approach        Tetrahedral (Auto-   Hexahedral (PBA
+                                                             (plus 3D hybrid)
+                     adaptive)            Grid)
+
+Best Frequency       Narrowband /         Ultra-Wideband     Wideband on large
+Sweep                Single Resonances    (Single pass)      platforms
+
+                     High-precision       Transient EM,      Electrically large
+Primary Domain
+                     component design     EMC/EMI, bio-EM    structures, RCS
+     Microstrip Antenna Analysis Methods
+Various analysis methods for microstrip antennas, including transmission line, cavity,
+and full wave simulations
+
+                                             Computation
+ Method          Type         Accuracy                       Best Use Case
+                                             al Effort
+
+ Transmission                 Low to         Very Low        Initial rectangular patch
+                 Analytical
+ Line                         Moderate       (instant)       design and sizing
+
+
+                                                             Understanding field
+                              Moderate to
+ Cavity Model    Analytical                  Low             modes and radiation
+                              High
+                                                             physics
+
+                                             High
+                                                             Final design optimization,
+ Full-Wave                                   (requires
+                 Numerical    Very High                      complex shapes, multi-
+ (MoM/FEM)                                   simulation
+                                                             layer feeds
+                                             software)
+       Antenna Forward Design (Traditional)
+
+            L                •    Transmission line
+                             •    Cavity Model
+                             •    Full-Wave
+
+                         W                                    S11
+
+
+
+
+       Geometry                                               EM Response
+
+
+Workflow:
+
+                Geometry         Analytical/          Performance   Manual
+Concept                                                             /Optimization
+                Definition       Simulation           Analysis
+    Antenna Forward Design (Traditional)
+
+Traditional Design Limitations:
+• Relies heavily on human intuition and manual parameter tweaks
+(L, W, feed point)
+• Requires repetitive, time-consuming full-wave electromagnetic
+(EM) simulations (e.g., CST/HFSS)
+• Difficult for complex multi-band or non-standard performance
+goals
+        Antenna Inverse Design (Automated)
+   Challenge: Multiple different geometries can yield the same EM response
+   (one-to-many problem)
+
+
+
+
+        S11                                                   or
+
+
+
+
+        EM Response                                      Geometry
+
+Workflow:
+
+                              Topology/        Automated
+Specific      Object                                               Performance
+                              Optimizati       Geometry
+ations        Function                                             Verification
+                              on               Generation
+Similarity Between Microstrip Antenna
+         and Computer Vision?
+

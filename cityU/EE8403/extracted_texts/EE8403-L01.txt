@@ -1,0 +1,805 @@
+              EE8403
+Machine Learning for Signal Processing
+            Applications
+               Dr. LI Haoliang
+      Department of Electrical Engineering
+Course Instructors
+• Prof. Haoliang LI: Overview
+• Prof. Yanni SUN: Bioinformatics and healthcare
+• Prof. Gengbo Wu: Microwave and wireless communication
+• Prof. Qun SONG: AIoT and security
+• Prof. Chaojie LI: Smart energy system
+• Prof. Yue ZHU: Power system stabilization and control
+Who should not take this course
+• This course may not be a good fit if you are looking for:
+    • Already have strong, in-depth expertise in machine learning and a specialised signal-processing
+      application area.
+    • Are looking for an advanced, research-intensive course that develops one topic in substantial technical
+      depth.
+    • Have limited preparation in programming, mathematics, or computer-science-style logical reasoning.
+    • Are not comfortable reading technical material, understanding machine-learning concepts, and writing
+      analytical reports.
+    • Prefer learning through only step-by-step instruction rather than applying concepts across different
+      application domains.
+
+• This course is best for students who are interested in broad, application-driven machine-
+  learning perspectives and are comfortable with independent reading, critical thinking,
+  and report writing.
+Course Project on Kaggle
+• Select one of the following Kaggle competitions for the course
+  project:
+   • https://www.kaggle.com/code/pythonafroz/solar-power-generation-
+     forecast
+   • https://www.kaggle.com/code/nina2025/cmi-detect-behavior-with-
+     sensor-data
+   • https://www.kaggle.com/datasets/samira1992/gene-expression-
+     bioinformatics-dataset
+
+• Projects should be done in groups of 1-3.
+• Submission: Project report in the format of ICLR conference submission.
+  We will evaluate based on ICLR standard.
+Final Examination
+•The final assessment is a report-based examination
+•Duration: 2 hours
+•Each teaching module contributes one open-ended question.
+•Choose either:
+   •One question for an in-depth analysis, or
+   •Two questions for a comparative analysis.
+•You may use generative-AI tools during the examination.
+•Submit:
+   •Your final report, and
+   •The complete AI conversation log used in preparing it.
+•The instructor who sets the question will mark the corresponding response.
+•A common marking rubric will be applied across all modules.
+What is machine learning?
+Why Machine Learning?
+• Computers can simulate anything
+• So why can’t computers do everything?
+   • Writing programs is difficult
+   • Input data can be really complicated
+   • That’s why we have a software industry
+• Is there a better way? –
+   • Let’s have computers come up with their own programs
+What Can it Do?
+What can it do?
+What can it do?
+
+
+
+
+                  Hong Kong Smart City Blueprint
+What can’t it do?
+• Not so great at deeper understanding (yet)
+
+
+
+
+                                               On the way…
+Machine learning:
+an interdisciplinary and exciting field
+Spam filtering
+Object classification
+Weather prediction
+Stock market
+Weather prediction revisited
+Clustering Data: Group similar things
+Clustering News
+Embedding images
+Another example: Robotics
+
+
+
+
+                            From Chelsea Finn
+Another example: ChatGPT
+• Can even help to
+  debug and
+  generate code!!
+Another example: software debugging
+
+
+
+
+    Wuji: Automatic Online Combat Game Testing Using Evolutionary Deep Reinforcement
+    Learning, ASE’19
+Using a validation set
+• Divide the total dataset into three subsets:
+   • Training data is used for learning the parameters of the
+     model.
+   • Validation data is not used of learning but is used for
+     deciding what type of model and what amount of
+     regularization works best.
+   • Test data is used to get a final, unbiased estimate of how
+     well the network works. We expect this estimate to be
+     worse than on the validation data.
+• We could then re-divide the total dataset to get
+  another unbiased estimate of the true error rate.
+Regression
+A Motivated Example
+
+
+
+
+              𝑦 = 𝑤1 𝑥1 + 𝑤2 𝑥2 + 𝑏
+           Living area 𝑓𝑒𝑒𝑡 2 , #bedrooms=4, price=?
+Polynomial Curve Fitting
+
+
+
+
+                                            = 𝒘𝑇 𝐱
+
+                 Question: how to find w?
+The loss function
+     • Fitting a model to data is typically done by finding the
+       parameter values that minimize some loss function.
+     • There are many possible loss functions. What criterion should
+       we use for choosing one?
+         • Choose one that makes the math easy (squared error)
+         • Choose one that makes the fitting correspond to
+           maximizing the likelihood of the training data given some
+           noise model for the observed outputs.
+         • Choose one that makes it easy to interpret the learned
+           coefficients (easy if mostly zeros)
+         • Choose one that corresponds to the real loss on a
+           practical application (losses are often asymmetric)
+Sum-of-Squares Error Function
+
+
+
+
+               y: predicted output,   t: groundtruth
+Minimizing squared error
+Minimizing squared error
+      Matrix formulation
+           y = wT x
+           error =  (t n − w x n ) T     2
+
+                        n
+                              −1                 vector of
+           w = ( X X)
+              *        T             T
+                                    X t          target values
+
+
+         optimal                     the transposed
+         weights   inverse of the    design matrix has
+                   covariance        one input vector
+                   matrix of the     per column
+                   input vectors
+Linear Regression - Derivation
+• Write the problem in matrix form:
+                     ෠𝐿 𝑓𝒘 = 1 σ𝑁
+                                𝑖=1(𝒘𝑇 𝒙 𝒊 − 𝑦𝑖 )2 =
+                                                     1
+                                                       𝑿𝒘 − 𝒚 2
+                                                              2
+                            N                    N
+
+
+
+
+• Concatenate the rows:             𝒙𝒊                                𝑦𝒊
+   • Matrix 𝑿 ∈ 𝑅𝑁×(𝑑+1)
+                                                                  𝒚
+   • Vector 𝒚 ∈ 𝑅𝑁
+
+   • Vector 𝒘 ∈ 𝑅𝑑+1
+
+                                                                           39
+Linear Regression - Derivation
+     • Write the problem in matrix form:
+                                  1                   1          2
+                           𝐿෠ 𝑓𝒘 = σ𝑁    𝑇         2
+                                    𝑖=1(𝒘 𝒙𝒊 − 𝑦𝑖 ) =     𝑿𝒘 − 𝒚 2
+                                     N                  N
+
+
+
+     • Find the gradient w.r.t. 𝒘:
+
+                        ∇𝒘 𝑿𝒘 − 𝒚 22 = ∇𝒘 𝑿𝒘 − 𝒚 𝑇 𝑿𝒘 − 𝒚
+                                           = ∇𝑤 𝒘𝑇 𝑿𝑇 𝑿𝒘 − 2𝒘𝑇 𝑿𝑇 𝒚
+                                    = 2𝑿𝑇 𝑿𝒘 − 2𝑿𝑇 𝒚
+
+     • Set gradient to zero to get the minimizer:
+                                           𝑿𝑇 𝑿𝒘 = 𝑿𝑇 𝒚
+
+                                         𝒘 = (𝑿𝑇 𝑿)−1 𝑿𝑇 𝒚
+
+         • Note: here we assume (𝑿𝑇 𝑿)−1 exists unless otherwise specified.
+Recap: When is minimizing the squared error equivalent
+to Maximum Likelihood Learning?
+• Minimizing the squared residuals
+  is equivalent to maximizing the
+  log probability of the correct
+  answer under a Gaussian
+  centered at the model’s guess.
+
+                                                t = the     y = model’s
+                                                correct     estimate of most
+yn = y ( x n , w )                              answer      probable value
+                                                                     ( t n − yn ) 2
+                                                           1     −
+p (t n | yn ) = p ( yn + noise = t n | x n , w ) =             e        2 2
+                                                          2 
+                                                     (t n − yn ) 2
+− log p (t n | yn ) = log 2 + log  +
+                                                          2 2 can be ignored if
+                                 can be ignored                 sigma is same for
+                                 if sigma is fixed              every case
+Multiple outputs
+    • If there are multiple outputs we can often treat the learning
+      problem as a set of independent problems, one per output.
+         • Not true if the output noise is correlated and changes
+           from case to case.
+    • Even though they are independent problems we can save
+      work by only multiplying the input vectors by the inverse
+      covariance of the input components once. For output k we
+      have:
+
+
+
+          w*k = (XT X) −1 XT t k
+
+                     does not
+                     depend on a
+Least mean squares: An alternative approach for really big datasets
+
+                     +1                 
+                 w             = w −  En ( )
+            weights after
+            seeing training                  learning   vector of derivatives of the
+            case tau+1                       rate       squared error w.r.t. the
+                                                        weights on the training case
+                                                        presented at time tau.
+
+       • This is called “online“ learning. It can be more efficient if the dataset is very
+         redundant and it is simple to implement in hardware.
+           • It is also called stochastic gradient descent if the training cases are
+             picked at random.
+           • Care must be taken with the learning rate to prevent divergent
+             oscillations, and the rate must decrease at the end to get a good fit.
+Illustrative Example
+Illustrative Example
+
+
+
+
+            How does learning rate influence the results?
+Pseudo-code of incremental learning
+Beyond incremental learning:
+Overview of gradient descent methods
+• Momentum
+• Nesterov accelerated gradient
+• Adagrad
+• Adadelta
+• RMSprop
+• Adam
+• AdaMax
+• Nadam
+• AMSGrad
+Polynomial Fitting
+Polynomial Fitting
+Polynomial Fitting
+Polynomial Fitting
+
+
+
+
+                     Looks good!
+Polynomial Fitting
+Overfitting
+Polynomial Coefficients
+
+
+
+
+                          Very large
+Regularized least squares
+        ~       1 N                        
+        E (w ) =  { y (x n , w ) − t n } + || w || 2
+                                         2
+                    2 n =1                              2
+
+       The penalty on the squared weights is mathematically compatible with
+       the squared error function, so we get a nice closed form for the optimal
+       weights with this regularizer:
+
+
+
+
+          w* = ( I + XT X) −1 XT t
+
+                     identity
+                     matrix
+Regularization
+The lasso: penalizing the absolute values of the weights
+
+          ~
+          E (w ) =  { y (x n , w ) − t n }2 +   | w i |
+                  1 N
+                     2 n =1
+                                                           i
+       • Finding the minimum requires quadratic programming but
+         its still unique because the cost function is convex (a bowl
+        plus an inverted pyramid)
+       • As lambda is increased, many of the weights go to exactly
+         zero.
+           • This is great for interpretation, and it is also pretty good
+             for preventing overfitting.
+Increasing data size
+
+     Another option to mitigate the problem of
+     overfitting
+Classification
+Logistic Regression
+
+
+
+
+             One more dimension with value 1 is added to x.
+Logistic Regression
+
+
+
+
+                                                              Sigmoid
+                                                              function
+
+
+             One more dimension with value 1 is added to x.
+Logit
+        In statistics, odds represent the likelihood that
+        an event will occur.
+Likelihood
+Likelihood
+Gradient of NLL
+      Using the chain rule to obtain the derivative of NLL on
+      w:
+More details: Using the chain rule to get the error derivatives
+
+                                   zn
+            zn = w x n + w0 ,
+                   T
+                                       = xn
+                                   w
+
+            En   yn − t n           dyn
+                =            ,           = yn (1 − yn )
+            yn yn (1 − yn )         dzn
+
+
+            En   En dyn zn
+                =             = ( yn − t n ) x n
+            w    yn dzn w
+Hessian matrix of NNL
+
+             (Second-order partial derivatives)
+
+
+
+
+                                         where
+Hessian matrix of NNL
+
+             (Second-order partial derivatives)
+
+
+
+
+                                         where
+Gradient Descent
+
+     Using gradient descent to search w:
+Prediction
+Multi-class logistic regression
+
+
+
+
+              Softmax function, widely adopted in DNN.
+Multi-class logistic regression
+• Likelihood
+Multi-class logistic regression
+• Likelihood
+Multi-class logistic regression
+• Likelihood
+A special case of softmax for two classes
+                           z1
+                       e                         1
+           y1 =                      =          −( z1 − z0 )
+                  e +e
+                  z1            z0
+                                         1+ e
+
+      • So the logistic is just a special case that avoids
+        using redundant parameters:
+         • Adding the same constant to both z1 and z0 has no
+           effect.
+         • The over-parameterization of the softmax is because the
+           probabilities must add to 1.
+Multi-class logistic regression
+• Gradient
+Multi-class logistic regression
+• Hessian matrix
+  • The Hessian matrix has a submatrix (one d*d block)
+
+
+
+
+                   Positive definite: NLL(W) has unique minimum
+Multi-class logistic regression
+• Learning and prediction
+Summary
+• Target variable is not quantitative
+• Logistic Regression
+   • Target variable is categorical (nominal), e.g., married, single, divorced
+• Ordinal Logistic Regression
+   • Target variable is ordinal, e.g., high, medium, low
+
+
+
+
+                     It is actually doing classification.
+Neural Networks
+     • Basic building block for composition is a
+       perceptron (Rosenblatt c.1960)
+     • Linear classifier – vector of weights w and a ‘bias’
+      b
+                    𝑥1               𝒘 = (𝑤1 , 𝑤2 , 𝑤3 )
+                                     𝒃 = 0.3
+
+                    𝑥2                 Output (binary)
+
+                    𝑥3
+Neural Networks - multiclass
+     • Add more perceptrons
+
+              𝑥1               Binary output
+
+
+              𝑥2               Binary output
+
+
+
+              𝑥3               Binary output
+Composition
+                     Layer 1    Layer 2
+
+
+
+
+      Sets of layers and the connections (weights) between
+      them define the network architecture.
+
+
+                                                             Nielsen
+Composition
+                      Hidden     Hidden
+                      Layer 1    Layer 2
+
+
+
+
+      Layers that are in between the input and the output are
+      called hidden layers, because we are going to learn their
+      weights via an optimization process.
+                                                                  Nielsen
+Composition
+                                   Hidden
+                        Hidden     Layer 2
+                        Layer 1
+
+
+
+
+   Multiple
+
+
+
+
+              Matrix!   Matrix!    Matrix!
+
+
+                      It’s all just matrix multiplication!
+      GPUs -> special hardware for fast/large matrix multiplication.
+                                                                   Nielsen
+Problem 1 with all linear functions
+• We have formed chains of linear functions.
+• We know that linear functions can be reduced
+  • g = f(h(x))
+
+
+                  Our composition of functions is really
+                        just a single function : (
+Problem 2 with all linear functions
+• Linear classifiers: small change in input can cause large change in
+  binary output
+  = problem for composition of functions
+
+
+         Activation
+          function
+
+
+
+
+                                                           Nielsen
+Problem 2 with all linear functions
+• Linear classifiers: small change in input can cause large change in
+  binary output.
+
+• We want:
+
+
+
+
+                                                           Nielsen
+Let’s introduce non-linearities
+• We’re going to introduce non-linear functions to transform the
+  features.
+
+
+
+
+                                                          Nielsen
+Rectified Linear Unit
+• ReLU
+Multi-layer perceptron (MLP)
+     • …is a ‘fully connected’ neural network with non-
+       linear activation functions.
+
+
+
+
+     • ‘Feed-forward’ neural network
+                                                          Nielson
+MLP
+• Use is grounded in theory
+   • Universal approximation theorem (Goodfellow 6.4.1)
+
+
+• Can represent a NAND circuit, from which any binary function can
+  be built by compositions of NANDs
+
+• With enough parameters, it can approximate
+  any function
+Images as input to neural networks
+Images as input to neural networks
+Images as input to neural networks
+Motivation
+• Sparse interactions – receptive fields
+   • Assume that in an image, we care about ‘local neighborhoods’ only for a
+     given neural network layer.
+   • Composition of layers will expand local -> global.
+Motivation
+• Sparse interactions – receptive fields
+   • Assume that in an image, we care about ‘local neighborhoods’ only for a
+     given neural network layer.
+   • Composition of layers will expand local -> global.
+
+
+• Parameter sharing
+   • ‘Tied weights’ – use same weights for more than one perceptron in the
+     neural network.
+   • Leads to equivariant representation
+      • If input changes (e.g., translates), then output changes similarly
+Filtering reminder:                                                        f [ , ]         1 1 1
+                                                                                             1 1 1
+
+Correlation (rotated convolution)                                                            1 1 1
+
+
+
+
+              I [.,.]                                       h[.,.]
+ 0   0   0    0    0    0    0    0       0   0
+
+ 0   0   0    0    0    0    0    0       0   0   0    10   20   30   30    30   20   10
+
+ 0   0   0    90   90   90   90   90      0   0   0    20   40   60   60    60   40   20
+
+ 0   0   0    90   90   90   90   90      0   0   0    30   60   90   90    90   60   30
+
+ 0   0   0    90   90   90   90   90      0   0   0    30   50   80   80    90   60   30
+
+ 0   0   0    90   0    90   90   90      0   0   0    30   50   80   80    90   60   30
+
+
+ 0   0   0    90   90   90   90   90      0   0   0    20   30   50   50    60   40   20
+
+
+ 0   0   0    0    0    0    0    0       0   0   10   20   30   30   30    30   20   10
+
+ 0   0   90   0    0    0    0    0       0   0   10   10   10   0    0      0   0     0
+
+ 0   0   0    0    0    0    0    0       0   0
+
+
+
+
+              h[m, n] =  f [k , l ] I [m + k , n + l ]
+                                   k ,l                                                    Credit: S. Seitz
+Perceptron:
+
+
+
+              This is
+              convolution!
+Filter = ‘local’ perceptron.
+Also called kernel.
+n = layer number
+K = kernel size
+j = # channels
+(input)
+or # filters (depth)
+The whole CNN
+       3       0
+        -1         1        Convolution
+
+       3       1
+           0       3
+                            Max Pooling
+     A new image
+                            Convolution
+Smaller than the original
+image
+The number of channels      Max Pooling
+
+is the number of filters
+The whole CNN
+                                                        Train with back-
+                                                        propagation
+    cat dog ……
+                                   Convolution
+
+
+
+                                   Max Pooling
+
+   Fully Connected                               A new image
+ Feedforward network
+                                   Convolution
+
+
+
+                                   Max Pooling
+
+
+                       Flattened            A new image
+                            3
+    Flattening
+                            0
+
+                            1
+3       0
+ -1         1               3
+
+3       1                   -1
+    0       3   Flattened
+
+                            1      Fully Connected
+                                 Feedforward network
+
+                            0
+
+                            3
+Semantic Segmentation Idea:
+Fully Convolutional
+                                                                                                                       Upsampling:
+        Downsampling:                     Design network as a bunch of convolutional layers, with
+                                                                                                                       Unpooling or strided
+        Pooling, strided                  downsampling and upsampling inside the network!
+                                                                                                                       transpose convolution
+        convolution
+                                                             Med-res:                        Med-res:
+                                                          D2 x H/4 x W/4                  D2 x H/4 x W/4
+
+
+
+
+                                                                         Low-res:
+                                                                      D3 x H/4 x W/4
+                Input:                   High-res:                                                       High-res:             Predictions:
+              3 x H xW                D1 x H/2 x W/2                                                  D1 x H/2 x W/2             HxW
+
+
+  Long, Shelhamer, and Darrell, “Fully Convolutional Networks for Semantic Segmentation”, CVPR 2015
+  Noh et al, “Learning Deconvolution Network for Semantic Segmentation”, ICCV 2015
+
+
+                                                                                                                            May 10, 2017
+
+                 Fei-Fei Li & Justin Johnson & Serena
+                                                                                                        Lecture 11 -
+              Yeung
+  Slide by: Justin Johnson
+Object Detection as Regression
+                                                    CAT: (x, y, w, h)
+
+
+
+
+                                                    DOG: (x, y, w, h)
+                                                    DOG: (x, y, w, h)
+                                                    CAT: (x, y, w, h)
+
+
+                                                    DUCK: (x, y, w, h)
+                                                    DUCK: (x, y, w, h)
+                                                    ….
+
+                                                                         May 10, 2017
+
+             Fei-Fei Li & Justin Johnson & Serena
+                                                     Lecture 11 -
+              Yeung
+  Slide by: Justin Johnson
+Object Detection as Classification: Sliding
+Window
+                                               Apply a CNN to many different crops of the
+                                               image, CNN classifies each crop as object
+                                               or background
+
+
+
+
+                                                                                            Dog? NO Cat?
+                                                                                            NO
+                                                                                            Background? YES
+
+
+
+
+                                                                                                May 10, 2017
+
+             Fei-Fei Li & Justin Johnson & Serena
+                                                                             Lecture 11 -
+              Yeung
+  Slide by: Justin Johnson
+Object Detection as Classification: Sliding
+Window
+                                               Apply a CNN to many different crops of the
+                                               image, CNN classifies each crop as object
+                                               or background
+
+
+
+
+                                                                                            Dog? YES
+                                                                                            Cat? NO
+                                                                                            Background? NO
+
+
+
+
+                                                                                                May 10, 2017
+
+             Fei-Fei Li & Justin Johnson & Serena
+                                                                             Lecture 11 -
+              Yeung
+  Slide by: Justin Johnson
+Object Detection as Classification: Sliding
+Window
+                                               Apply a CNN to many different crops of the
+                                               image, CNN classifies each crop as object
+                                               or background
+
+
+
+
+                                                                                            Dog? YES
+                                                                                            Cat? NO
+                                                                                            Background? NO
+
+
+
+
+                                                                                                May 10, 2017
+
+             Fei-Fei Li & Justin Johnson & Serena
+                                                                             Lecture 11 -
+              Yeung
+  Slide by: Justin Johnson
+

@@ -1,0 +1,925 @@
+    EE8403
+    Machine Learning for Signal
+    Processing Applications
+    Machine Learning for Power System
+    Stability and Control
+
+
+    Prof. Yue Zhu
+
+                                        1
+2026/27 Sem. A
+What is power system stability?
+
+
+                             2
+Traditional Power Systems
+                                 Overhead-lines       Distribution transformers -1
+
+
+
+
+                                                               Distribution
+                                                               transformers -2
+
+
+
+
+                                                                            3
+                            Utility poles    Underground cables
+ How power is transferred?
+
+                                                           • Three-phase AC
+Power generation:                                            voltage
+Synchronous generator
+
+
+
+                             • We need to maintain the system frequency of
+                               voltage at 50 Hz (or 60 Hz in North America).
+                             • We need to maintain the voltage amplitude
+                               constant. (220 V from our socket).
+                             • We need to make sure generators are
+                               synchronized (in phase).
+                             • We need to make sure that the above conditions
+                               are met if the system suffers from perturbations
+                               (small or large) , in short-term as well as long-
+                               term period.
+                             Ensuring the stability is the fundamental of
+                                                                              4
+                             operating a power system.
+ Definition and Classification of Power System Stability
+ (Traditional)
+
+
+
+
+P. Kundur, J. Paserba, V. Ajjarapu, G. Andersson, A. Bose, C. Canizares, N. Hatziargyriou, D. Hill, A. Stankovic, C. Taylor, T. Van Cutsem, and V. Vittal, “Definition and
+classification of power system stability IEEE/CIGRE joint task force on stability terms and definitions,” IEEE Transactions on Power Systems, vol. 19, no. 3, pp. 1387–
+1401, 2004.                                                                                                                                                                  5
+Concept of stability
+ Stability considers:
+ 1. Can you fix the system at a steady operating point?
+ 2. Consider a “perturbation” added at the operating point, will the system be fixed (at the
+ same point or a different point) again?
+
+
+
+
+                                                                                               6
+Rotor Angle Stability
+
+                                                    • All apparatus in an AC power system
+                                                      needs to be synchronised.
+                                                    • Synchronisation can be represented by
+                                                      the angle differences between all
+                                                      apparatuses, and hence
+                                                      “synchronisation = angle stability”.
+                                                    • The synchronisation is done without
+                                                      apparatuses being able to see each
+                                                      other: no telecommunication, only local
+                                                      estimation.
+                                                    • The voltage, current, and power seen by
+                                                      an apparatus provide good estimators for
+                                                      synchronisation detection.
+▪ Roter angle stability is like maintaining every
+  car’s relative position: consider they are
+  pulling the wheel using a ‘spring’.                                                      7
+Rotor Angle Stability                                        Rotor angle: in respect to the grid
+                                  Rotor speed
+                          PMech                     Grid     Internal Voltage (EMF)           Grid Voltage
+
+                                                                              𝑋
+                                      𝜔                      𝐸∠𝛿                                    𝑉𝐺
+                                                     𝛿
+
+
+                 Mechanical Model                                           Electrical Model
+        𝑑𝜔   1                   𝑑𝛿                                                    𝐸 𝑉𝐺
+           =   𝑃𝑀𝑒𝑐ℎ − 𝑃𝐸𝑙𝑒𝑐 , _    = 𝜔 − 𝜔𝐺                                𝑃𝐸𝑙𝑒𝑐 =         sin𝛿
+        𝑑𝑡 𝐽𝜔                    𝑑𝑡                                                     𝑋
+
+Inertia of the rotor (𝑘𝑔 ⋅ 𝑚2 )                 Grid frequency   PElec
+
+   The above equations are called the swing equation.
+   With the swing equation, a synchronous machine is             PMech                                       Natural
+                                                                                                             synchronisation
+   synchronised to grid naturally via physical law:
+   ▪ For 𝛿 > 𝛿0 , 𝑃𝑀𝑒𝑐ℎ < 𝑃𝐸𝑙𝑒𝑐 , 𝜔 decelerates;
+   ▪ For 𝛿 < 𝛿0 , 𝑃𝑀𝑒𝑐ℎ > 𝑃𝐸𝑙𝑒𝑐 , 𝜔 accelerates;
+                                                                                                                 𝛿
+   ▪ For 𝛿 = 𝛿0 , 𝑃𝑀𝑒𝑐ℎ = 𝑃𝐸𝑙𝑒𝑐 , 𝜔 keeps constant.                               𝛿0
+                                                                                        90°
+                                                                                                                           8
+Frequency Stability
+
+
+
+
+                                                                              CoI (frequency) +Swing
+                                                                              (angle). Frequency and
+                                                                              angle dynamics separated
+                                                                              in timescales.
+
+                      Centre of Inertia (CoI)
+ ▪ Frequency stability is like all cars must pull together
+   to keep the wheel’s center moving at 50km/hr.
+   • With reduced inertia, the rate of change of frequency (RoCoF) is larger, and frequency starts
+     to interact with angle.
+   • RoCoF measures how quickly an electrical grid's frequency changes following a generation-
+     load imbalance, in Hz/second. 𝑅𝑜𝐶𝑜𝐹 = 𝑑𝑓/𝑑𝑡                                                     9
+Inertia & Frequency Response: Two Pillars for Frequency
+                       Stability
+                                  𝑑𝜔   1                 𝑑𝛿
+                                     =   𝑃   − 𝑃𝐸𝑙𝑒𝑐 , _    = 𝜔 − 𝜔𝐺
+                                  𝑑𝑡 𝐽𝜔 𝑀𝑒𝑐ℎ             𝑑𝑡
+
+• Inertia and Frequency Response (also called primary control or droop control) are two
+  factors governing frequency stability:
+
+   • Inertia responds to frequency derivation 𝑑𝜔/𝑑𝑡
+   • Frequency Response responds to frequency deviation Δ𝜔 = 𝜔 − 𝜔0
+
+• Inertia and Frequency Response work in complement to each other.
+
+   • For a conventional power system, inertia is high and frequency response is slow (thermal-
+     mechanical controlled)
+
+
+                                                                                                 10
+Voltage Stability
+
+
+
+
+         Excitation control of a synchronous machine (generator or condenser)
+
+• A synchronous machine presents an internal voltage source and thus provide direct
+  support to system voltage
+• The amplitude of the internal voltage is controlled by the excitor: field current (IF) →
+  flux (φ) → voltage (E)
+• The field current IF has constraint: after reaching the maximum IF, the voltage control
+  capability is limited
+• A synchronous condenser is a synchronous machine that does not generate power:
+  only used to control voltage                                                               11
+Small-Signal Stability
+Small-signal stability considers the system performance under a ‘small’ perturbation. (empirically,
+below 10% of the steady-state value). Then a linearization can be adopted. Note: we are considering
+an autonomous system. Consider 𝑥0 be the initial state vector and 𝑢0 the input vector
+                                               xሶ 0 = 𝑓 𝑥0 , 𝑢0 = 0
+Let the system be perturbed from the original state:
+                                       𝑥 = 𝑥0 + Δ𝑥, 𝑢 = 𝑢0 + Δ𝑢
+Then the new state satisfies:
+                                  𝑥ሶ = 𝑥ሶ 0 + Δ𝑥ሶ = 𝑓 𝑥0 + Δ𝑥, 𝑢0 + Δ𝑢
+ Using Taylor Expansion and ignore the higher-order terms:
+                                               𝜕𝑓𝑖           𝜕𝑓𝑖         𝜕𝑓𝑖           𝜕𝑓𝑖
+         𝑥ሶ 𝑖 = 𝑥ሶ 𝑖0 + Δ𝑥ሶ 𝑖 = 𝑓𝑖 𝑥0 , 𝑢0 +       Δ𝑥1 + ⋯ +     Δ𝑥𝑛 & +     Δ𝑢1 + ⋯ +     Δ𝑢
+                                               𝜕𝑥1           𝜕𝑥𝑛         𝜕𝑢1           𝜕𝑢𝑟 𝑟
+
+                            𝑛                  𝑟
+                             𝜕𝑓𝑖         𝜕𝑓𝑖
+                   Δ𝑥ሶ 𝑖 = ෍     Δ𝑥𝑗 + ෍     Δ𝑢
+                             𝜕𝑥𝑗         𝜕𝑢𝑗 𝑗
+                          𝑗=1              𝑗=1
+                                                           What are the ‘states’ in the power system?
+                          Δ𝑥ሶ = 𝐴 ⋅ Δx + B ⋅ Δ𝑢                 State Space Equation                    12
+Small-Signal Stability
+                                                                                            System modes:
+ • State-space models (white-box model)
+                                     𝑑𝜔   1                   𝑑𝛿
+                                        =   𝑃𝑀𝑒𝑐ℎ − 𝑃𝐸𝑙𝑒𝑐 , _    = 𝜔 − 𝜔𝐺
+                                     𝑑𝑡 𝐽𝜔                    𝑑𝑡
+
+ State-space model:
+      x dot equals cap A. x
+
+
+
+
+       𝑥ሶ = 𝐴𝑥
+
+
+
+
+                              Eigenvalue Analysis
+                                                       𝜆 = 𝜎 ± 𝑗𝜔
+                                                       Damping,
+                               (Oscillatory Mode)
+                                                       frequency
+
+
+
+
+                                                      Modal Analysis:
+                                                    Oscillatory Modes,      𝑝𝑘𝑖 = ψ𝑖𝑘 𝜙𝑘𝑖
+                                                    participation factors
+
+
+
+                                                                                                            13
+Transient Stability
+𝑑𝜔   1                   𝑑𝛿                        𝐸 𝑉𝐺
+   =   𝑃𝑀𝑒𝑐ℎ − 𝑃𝐸𝑙𝑒𝑐 , _    = 𝜔 − 𝜔𝐺     𝑃𝐸𝑙𝑒𝑐 =        sin𝛿
+𝑑𝑡 𝐽𝜔                    𝑑𝑡                         𝑋          • Equal-Area Criterion
+
+
+
+                       Concept
+                                                                    0V
+Transient stability = can the system survive from a
+major shock?
+• Examples: a lightning strike causes a short-circuit
+fault and trips a transmission line,
+• or a large generator suddenly disconnects
+
+
+Will the system recover, or collapse after a large
+disturbance?
+
+
+
+
+                                                                                        14
+  Definition and Classification of Power System Stability
+  (Traditional)
+
+
+
+Swing equation &
+Natural synchronization
+                                                                                 Excitation sysem
+
+
+                                                                                 State-space
+                                                                                 method
+ Inertia & frequency response
+                                                                    Equal-area
+                                                                    creterion
+           We already have well-developed theorical methods which can
+           analyse the stability. Do we really need AI to support us?                    15
+What makes stability analysis
+challenging?
+
+
+                                16
+Transitions of power systems
+
+
+
+                           Solar️
+
+
+
+
+                 Nuclear
+
+
+
+
+                                    17
+  Transitions of power systems
+
+
+
+
+                                                  18
+https://www.ren21.net/gsr-2025/global_overview/
+Transitions of power systems
+
+              Installed Capacity of Different Types of Generation in
+                                       China
+              1%                   2%                       2%                 2%
+
+              22%                                           17%                16%
+                                   21%
+
+              3%                   3%                       11%                16%
+                                   8%
+                                                            13%
+                                                                               14%
+
+
+
+
+              74%
+                                   66%
+                                                            57%
+                                                                               52%
+
+
+
+
+              2010                2015                      2020               2022
+                       Thermal power plant   Wind   Solar    Hydro   Nuclear
+《新型电力系统发展蓝皮书》， 2023                                                                   19
+Transitions of power systems
+
+
+
+
+    • Share of Variable Renewable Electricity Generation, and Maximum Daily Renewable
+      Share of Net Electricity Generation of some countries, 2022                       20
+AI’s Influence to Power Systems
+
+     • the proliferation of infrastructure for data centres
+       created substantial new electricity loads
+
+
+
+
+•   As of 2022, data centres and data transmission networks each accounted for
+    around 1% to 1.5% of total global electricity consumption
+•   Global electricity demand rose 4% between 2023 and 2024, compared to an
+    annual average growth rate of 2.5% over the previous decade.                 Generated by ChatGPT – with the
+                                                                                 energy that could charge a phone 21
+Transitions of power systems
+                        Synchronous                                        Grid-connected   50/60 Hz
+                        Generator (SG)   50/60 Hz             Electrical   Inverters        Grid
+               mechanical
+                                         Grid                 Energy
+   Energy      energy
+  Conversion
+
+
+
+
+ Traditional generators: create 50/60 Hz AC
+ from a rotating electro-magnet. Dynamics are       Inverter-based       Resources    (IBRs):
+ described by well-known physics equations          dynamics are set by control software and
+   𝑑2𝛿 𝑝               𝐸𝑆 𝑉𝐺            𝑑𝛿          behave      differently   as   traditional
+        =    𝑇     −          𝑠𝑖𝑛 𝛿 − 𝐷             synchronous generators.
+   𝑑𝑡 2   𝐽 𝑀𝑒𝑐ℎ 𝜔𝑅𝑜𝑡𝑜𝑟 𝑋𝑆              𝑑𝑡
+  Dynamic behavior is shaped by Physics             Dynamic behavior is shaped by Software
+
+
+      The stability of power systems are reshaped by IBRs                                         22
+    Definition and Classification of Power System Stability
+    (new)
+
+
+
+
+New definitions added to address inverters
+
+
+N. Hatziargyriou, J. Milanovic, C. Rahmann, V. Ajjarapu, C. Canizares, I. Erlich, D. Hill, I. Hiskens, I. Kamwa, B. Pal et al., “Definition and classification of power
+system stability revisited & extended,” IEEE Transactions on Power Systems, 2020.                                                                                         23
+Definition and Classification of Power System Stability
+(new)
+                           These are all inverter-based resources
+                           • HVDC – High Voltage DC
+                           • FACT – Flexible AC Transmission
+                           • DFIG – Doubly Fed Induction Generator (for Wind)
+                           • Power electronics-based = inverter-based
+
+                           The new definition highlighted the impact of inverter-based
+                           resources and the new mode of interactions behind them
+                           • Exciting resonance (electrical or torsional)
+                           • Slow & fast interaction
+
+
+
+
+                                                                             24
+Incorporating the New Definition into the Classic Framework
+
+
+
+
+• New category added called electromagnetic (EM) stability
+• The three classic categories (voltage, angle, and frequency) are extended in both timescale and mode of
+  interactions                                                                                         25
+26
+          Instability (Oscillation events) induced by IBRs
+Local-area
+
+
+
+               2007                          2013                      2015
+               Minnesota                     Ningxia                   Xinjiang
+               USA                           China                     China
+               9.44 Hz                       41.9 Hz                   30 Hz
+System-wide
+
+
+
+
+                                             2020
+                                                                       2022
+               2019                          West Murray
+                                                                       Scotland
+               UK                            Australia
+                                                                       UK
+               system-wide                   19 Hz
+                                                                       8 Hz
+
+
+               2020                          2023
+Special Case
+
+
+
+
+                                             Hawaii                    2025
+               Zhangbei                                                Spain
+               China                         USA
+                                             1 Hz                      0.63 Hz
+               44.8 Hz
+
+               Sub-synchronous oscillation      GFM-inverter induced      System-wide very-low
+                    in HVDC system                  oscillation           frequency oscillation 27
+Stability Challenge 1: Software-based dynamics
+
+
+
+
+• Inverters synchronise by control, i.e. phase-locked look (PLL), not by physical law. This can
+  introduce instabilities if PLL is not well designed.
+                                                                                              28
+Stability Challenge 2: High-Order System
+
+                                                Centralised & hierarchical (pre-2000)
+
+
+
+                                                Meshed transmission & embedded
+                                                generation (2000–2015)
+
+
+
+                                                Active, bidirectional networks (2015–
+                                                today)
+
+                                                Hybrid AC/DC & network-of-networks
+                                                (future)
+
+                                                • Larger scalability
+                                                • More complexity
+                                                • More interactions
+                                                                              29
+https://openinframap.org/#8.29/22.738/114.181
+  Stability Challenge 3: Black-Box Model
+ IP protection turns traction converters into 'black boxes', hiding internal parameters and making
+   traditional modeling impossible.
+                            Theoretically                                                                                     Actually
+        Rin    Lin                                                                    Rin          Lin
+                       ~                                     =                       +        Rn           Ln
+                                                                                                                     ~                                  =+
+         ein     iin                      udc                                   M    een in                                        udc                  udc
+                                                                   ~
+                                                                                                     iin                                    0.5Cd
+                                                                                                                                                                     M
+                                                                                                                                                                   2Rd
+
+                            =                                      ~
+                                                                   ~                 -                          in
+                                                                                                                         =                              - ~
+                                                                                                                                                          ~~
+                                d
+                                                                                                                          d        d
+                       θ                   αβ               PWM            d
+                                     dq           um                                            in      θ                              αβ              PWM     d
+                                                                                                en
+                                                                                                                              dq            um
+                           id                       idref                                                                      Black                    d
+                SOGI                 DQ current                  Voltage                       udc        id                    黑盒            idref
+       iin
+                                      control                    control                       udref SOGI                      boxes解
+                                                                                                                              DQ电流
+                PLL                                 iqref                           iin                                                                 电压控制器
+                           iq                                                                        PLL                       耦控制
+                                ed                           udc       udcref                                        iq                        iqref
+      ein       SOGI                                                                                        ed
+                                                                                                    SOGI                       udc udc ref
+                PLL             eq                                                  ein
+                                                                                                    PLL
+                                                                                                         “can't see inside”
+                                                                                                            eq              DQ电流 解耦控 制
+
+    If all internal parameters are available, a high-                                Internal parameters are not accessible, and
+   fidelity analytical model can be constructed for                                 traditional modeling methods are no longer
+                     stability analysis                                                             applicable.
+                                                                                                                                                                30
+  Stability Challenge 3: Black-Box Model
+System Operator                                                                           IBR Vendors
+                                                                  I can only give
+                              I want all the
+                                                                  you black-box
+                              design details
+                                                                      models
+
+
+
+                                                               Black-box model
+
+
+ Black-box Models             Pros                                    Cons
+ Encrypted binary files for
+                              • Straightforward and reliable          • Very time consuming
+ EMT simulation (time-
+                                waveform results                      • Cannot reveal hidden problems
+ domain)
+
+                              • Much less computation resource
+ Impedance model              • Rich information on stability         • Methodology is not well developed for
+ (frequency-domain)           • Can be measured, from simulation or     large-scale interconnected network
+                                in reality.
+                                                                                                           31
+Will AI technology help us
+analyze power system
+stability? How?
+
+
+                             32
+Using AI for Stability Analyse
+
+            Is my system
+                                            AI model                  Yes, it is.
+               stable?
+
+
+
+
+ • Stability is a study with little tolerance to uncertainty. Any mistake could have significant
+   consequence.
+
+ • We need to understand how AI is delivering the result, i.e., what is the mechanism behind
+   this black box.
+
+ • We need to fully validate AI’s output.
+
+
+
+
+                                                                                                   33
+    Using AI for Stability Analyse
+ • Instead of letting AI model directly give the conclusion, we would like it to produce intermedia results
+   that can be validated. Then we make the conclusion based on the produced results and analytical
+   method.
+                                                  Physics Model (e.g.,            Stability analysis
+                                                   impedance model)
+
+Data (training and        AI model
+validation dataset)
+                                               Time-domain responses
+                                                                                Stability visualization
+                                                towards perturbations
+
+
+
+
+ Q1. What kind of data     Q2. What exact AI model       Q3. How to generate          Q4. Can we trust
+ do we need? How do        we are going to               results which are            them?
+ we sample them?           establish, what are the       more
+                           inputs, what are the          comprehensive?
+                           outputs?
+                      The application of AI in power system stability is an ongoing
+                                                                                                          34
+                      subject, and we are going to study it through some case studies.
+    Case Study 1: Impedance Model Prediction
+➢ Equivalence                      ➢ Expression                              ➢ Format
+           d-axis
+
+                    Remove                                             •                           Transfer functions
+                    Steady-State   Through analytical modelling
+           q-axis
+                                   process [1], or through impedance
+                                   measuring techniques.
+
+•   Thévenin Equivalence
+                        +                                              •                           Frequency spectra (Bode plots)
+          +
+          -                                                                                  20
+
+                       -                                                                     10
+                       +
+
+
+
+
+                                                                            Magnitude (dB)
+          +                                Impedance Model
+                                                                                              0
+          -                                                                                  -10
+                        -
+                                                                                             -20
+
+
+•   Norton Equivalence                                                                       -30
+                                                                                              90
+
+                      +                                                                      45
+
+
+
+
+                                                                       Phase (deg)
+                                                                                              0
+
+                        -                                                                    -45
+
+                        +                                                                    -90
+                                          Admittance Model                              -135
+                                                                                           10-1         100    101               102   103        104
+                        -                                                                                            Frequency (Hz)
+
+
+                                                                                                                                             35
+Case Study 1: Impedance Model Prediction
+                                                           Identification of inverter impedance/admittance:
+                                                           frequency sweep
+
+
+
+
+                 𝑉𝑔 𝑠              1
+    𝐼 𝑠 = 𝐼𝑐 𝑠 −          ⋅
+                 𝑍0 𝑠       1 + 𝑍𝑔 𝑠 /𝑍0 𝑠
+
+
+▪ From the impedance model, we can use
+  eigenvalue method (no right-half-plane pole), or
+  Nyquist criterion (𝑍 = 𝑃 − 𝑁 = 0) to analyse the
+  stability.
+▪ 𝑍𝑔 is treated as an inductor in series with a resistor
+  and is considered known.
+▪ The only unknown is 𝑍0 (𝑠)
+
+                                                                                                          36
+Case Study 1: Impedance Model Prediction
+
+What is the major limitation of impedance model?
+As a linearized model for small-signal stability analysis, impedance model is only valid around a
+                                                              𝑇
+small-range of a steady-state operating point: 𝑃, 𝑄, 𝑉, 𝛿, 𝜔𝑔 . If the operating point is changed, a re-
+measurement is needed.
+
+
+
+
+                   Can we use AI to predict the impedance model
+                        at any given operating point (OP)?
+
+                                                      It is like fitting the impedance
+
+
+                     Neural Network (NN) is suitable for this task
+                                                                                                           37
+      Case 1: ANN-based Impedance Identification
+
+
+
+
+DOI: 10.1109/tpel.2020.3012136                     38
+      Case 1: ANN-based Impedance Identification
+
+
+
+
+    Inputs:                                                     Outputs [at freuqnecy point 𝑓𝑝 ]:
+    • 𝑓𝑝 : frequency point on the impedance spectrum.           • Abs(Z): amplitude of impedance in 𝑑𝑞 axis.
+    • 𝐼𝑑 , 𝐼𝑞 : steady-state current output                     • Ang(Z): phase of impedance in 𝑑𝑞 axis.
+    • 𝑉𝑑 , 𝑉𝑞 : steady-state voltage at the connection point.
+
+DOI: 10.1109/tpel.2020.3012136                                                                             39
+What Data Do We Need for Training
+• Frequency sweeps:
+                          • Training data is determined by the NN’s output:
+                            we want NN predict impedance spectra, so we
+                            trained it with impedance spectra at multiple
+                            operating points (OPs).
+
+                          • The output of NN is 𝑍𝑑𝑞 (𝑗𝜔), so we train it with
+                            𝑍𝑑𝑞 (𝑗𝜔) at multiple OP.
+
+                          • To acquire 𝑍𝑑𝑞 (𝑗𝜔), we need to perform
+                            frequency sweep: injecting sinusoidal waveforms
+                            at different frequencies, and measuring the
+                            response, doing Fourier Transformation.
+
+                          • We also need to select multiple OPs for training.
+                            How do we select them to have the best training
+                            effect?
+
+
+                                                                        40
+How do we design the Loss function?
+• A typical design of Loss for impedance prediction:
+
+                           Predicted          Neural             Input                    Initialize
+               loss
+                            Output           Network            Features                  Weights
+
+                                       Adjust               1 N D
+                                       Weights         MSE =  [ X nd _ pre ( w(l ) , b(l ) ) − X nd ]2
+                                                            N n =1 d =1
+
+
+
+
+• To fit the impedance spectra [curves], MSE, or RMSE/NMSE would be useful.
+• Hyper-parameters tuning is usually done case-by-case.
+
+
+
+
+                                                                                                           41
+      Prediction Results
+
+      • Theoretical results                                       • Predicted results by the trained NN
+
+
+
+
+                How do we validate the NN? Note that in reality we do not have the theoretical model.
+
+DOI: 10.1109/tpel.2020.3012136                                                                            42
+How can we extend AI-based impedance
+identification to power systems?
+• Power systems are interconnected, and the operating space high-dimensional.
+• There are various devices with different control, different parameters (heterogeneous)
+• The impedance model of a power system is a matrix form since it is a multi-input-multi-output system
+
+
+                                                                                                           𝑇
+                                                  𝑂𝑃 = 𝜔𝑔 , 𝑉1 , 𝛿1 , 𝑃1 , 𝑄1 , 𝑉2 , 𝛿2 , 𝑃2 , 𝑄2 , 𝑉3 ⋯
+
+
+
+
+                                                                                                               43
+ Case 2: Grid-Edge Impedance Learning
+
+
+
+
+            • The idea is simple and straightforward: we use an NN for each individual inverter, trained
+              them offline, and connect them together.
+            • For each NN, the design is the same as Case 1.
+            • If devices are the same, they don’t have to be measured.
+            • What would be the drawbacks?
+
+
+DOI: 10.1109/tpel.2024.3399776                                                                             44
+ Case 2: Grid-Edge Impedance Learning
+
+
+
+
+            • The idea is simple and straightforward: we use an NN for each individual inverter, trained
+              them offline, and connect them together.
+            • For each NN, the design is the same as Case 1.
+            • If devices are the same, they don’t have to be measured.
+            • What would be the drawbacks?
+
+
+DOI: 10.1109/tpel.2024.3399776                                                                             45
+ Case 2: Grid-Edge Impedance Learning
+    • Training data collection for grid-edge impedance learning
+
+
+
+
+DOI: 10.1109/tpel.2024.3399776                                    46
+  Case 3: Modular Physics Informed Learning
+             • Frequency sweep is time-consuming: change it into step responses or impulses
+             • Operating space is high-dimensional: reduce the order
+             • Too many devices: identify the critical ones, and find their common terms.
+
+
+                            Supervision Data                                                   Modular PINN                                      Prediction Output
+                  Dataset                                                                Commonly Shared Pole Net
+                                               Predicted
+                                            Step Response
+
+                                                                                                                                              Predicted Transfer Function
+
+                      Sample              Loss Calculation
+
+
+
+
+                                                                    Task Decomposition
+
+
+
+
+                                                                                                                    Output Integrator
+              Meaurment                                                                       Residue Net #1
+            Step Response
+
+
+
+
+                              Model Input                                                                                               Whole-System Admittance Model Assembly
+                                            Machine Index
+            Operating Point
+                                      IBR-1 IBR-2           IBR-N
+                                                                                              Residue Net #N
+
+                                            Channel Index
+
+
+            Any
+
+
+
+https://doi.org/10.48550/arXiv.2607.07523                                                                                                                                        47
+Case 3: Modular Physics Informed Learning
+
+  Multi-Inverter System with IBRs and SG                                                High-Dimensional OP Space (ℝ¹¹)
+
+
+
+
+          [Replace: Fig. 9 — 4-IBR system topology]
+            SG-1 + IBR-2,3,5 (GFL) + IBR-4 (GFM)
+               Source: TPS_paper.pdf, page 9
+
+
+                                                                    Analyze stability   Stability Boundary Identification
+                                                                     across all OPs
+
+
+
+
+    SG (SG-1)            GFL (IBR-2,3,5)              GFM (IBR-4)
+
+
+
+
+                                                                                                                            48
+  Case 4: Frequency Response Prediction
+   • Transformer model is used.                 • Validation
+
+
+
+
+                                             • This kind of application is to let a transformer to
+                                               predict the system frequency dynamics for the
+                                               following few seconds based on the previous
+                                               dynamics.
+                                             • What would be key factor that affect its accuracy?
+https://doi.org/10.1016/j.cpes.2026.04.001                                                  49
+What would be the future of AI-Enabled Stability Analysis
+for Power Systems?
+One idea:
+                                     The Idea
+• Traditional AI (LSTM) processes data as discrete snapshots, like a slideshow
+• Neural ODE models the system as a continuous movie — smooth, no gaps
+• The neural network learns how the system state changes over time: dx/dt =
+f(x, t)
+• An ODE solver (e.g., Runge-Kutta) computes the trajectory at any future time
+
+
+
+
+                  Why It Matters for Power Systems
+• Handles irregular sensor data naturally (no need for uniform time steps)
+• Uses constant memory regardless of prediction horizon (efficient training)
+• Shows 100× better accuracy than traditional methods in inverter modeling
+• Ideal engine for real-time 'digital twins' of the power grid
+
+
+
+
+                                                                                 50
+Challenges
+
+                    Cybersecurity                                           Explainability
+ • AI relies on sensor data — fake data can fool it     • Operators need to understand why AI made a
+ • Defense: adversarial training hardens AI against     decision
+ attacks
+
+
+
+
+                   Sim-to-Real Gap                                    Standards & Regulation
+ • AI trained in simulation may fail on real hardware   • No widely accepted standards for AI in grid
+ • Domain adaptation bridges the gap between sim and    operations yet
+ reality                                                • IEEE and IEC are actively developing frameworks
+
+
+
+
+                                                                                                        51
+Conclusion
+
+     Foundation Models                             Federated Learning                             Digital Twins
+
+      One AI model that works                        Collaborative training                   Real-time virtual replica
+       across different grids                     without sharing private data                   of the entire grid
+
+
+
+
+ Summary
+ ✓ AI transforms grid stability analysis: from minutes to milliseconds
+ ✓ The field is moving toward AI that is physics-informed, interpretable, and provably safe
+ ✓ Key open challenge: building trust for real-world deployment in critical infrastructure
+
+
+
+
+                                                                                                                          52
+

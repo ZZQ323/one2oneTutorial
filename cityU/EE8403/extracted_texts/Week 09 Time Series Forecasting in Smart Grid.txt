@@ -1,0 +1,1213 @@
+EE8403:Machine Learning for Signal Processing Applications
+
+
+
+
+         Week 09: Time Series Forecasting in
+                    Smart Grids
+      Assistant Professor Chaojie Li, Ph.D
+      Department of Electrical Engineering,
+      City University Of Hong Kong
+      Chaojili@cityu.edu.hk
+Theoretical basis
+Time series definition
+
+
+
+
+ Observations are ordered chronologically, usually at a fixed sampling interval.
+ Each interval contains at most one observation, and the recorded data may contain missing
+ values.
+Time series forecasting in the power
+sector
+  Applications include identifying seasonality and stationarity, estimating future distributions, and
+  detecting anomalies.
+
+
+
+
+  Left: Historical photovoltaic output, irradiance, and          Right: Load forecasts at different aggregation levels,
+  temperature are used to estimate future output. The            illustrating variability, forecast error, and the effect of
+  vertical line separates the historical observations from the   aggregation.
+  forecast horizon.
+The composition of time series
+
+
+                          Trend: A long-term increase or decrease.
+
+                          Seasonality: Variations that repeat at regular intervals.
+
+                          Cyclical variation: Fluctuations whose duration is not
+                          necessarily fixed.
+
+                          Random variation: Unexplained disturbances after the
+                          systematic components have been removed.
+Goals and scenarios of time series
+forecasting
+  • Given the observed history, estimate a future value or a probability distribution.
+  • Point forecasts provide one estimate; probabilistic forecasts also quantify
+    uncertainty.
+
+
+
+
+             sales forecast                            load forecasting                     traffic forecast
+  Arrange stocking based on historical demand   Estimating future electricity demand   Estimating future traffic flow
+General models for time series
+forecasting
+             𝑦ො𝑡:𝑡+𝑇 = 𝑓 𝑥𝑡−1 𝑥𝑡−2 … 𝑥1 𝐸
+
+
+  Historical input X                        Future output and exogenous factors
+  The observations and characteristics
+                                           H is the forecast horizon. E denotes
+  of the last L moments include the
+                                           time-related and other exogenous
+  target historical values and other
+                                           factors, such as weather.
+  historical variables.
+  Calendar variables may be known for future periods. Future weather must come
+  from forecast products; future realized observations cannot be supplied in
+  advance.
+The development history of time
+series forecasting methods
+Statistical methods
+                                                                                               lag model: The relationship between observations and
+ smooth: Estimate local level                     component expansion: Trends and Seasons
+                                                                                                                       errors
+
+           SMA / WMA                                        Holt linear trend                            Differential processing
+    Equally weighted or weighted average
+           historical observations                  Update levels and trends simultaneously               Reduce non-stationarity
+  Reduce short-term volatility, form a simple       Extrapolate local slopes into the future    Check the time structure after differentiation
+                   baseline
+
+
+
+ simple exponential smoothing                                Holt–Winters                                     ARIMA(p,d,q)
+ Recent observations are given higher weight        at level, Add seasonal items to trends
+                                                                                                 The autoregressive term describes the observed lag
+      Update current level recursively                Reuse an existing season location           The moving average term describes the error lag
+
+          applicable clues                               Why increase portion size                                   Need to check
+                                                                                                 Differential order, Residual structure and prediction
+  Fluctuations around local levels                    A single level cannot express a
+                                                                                                                      time domain
+   Trends and seasonality are not                   continuous rise, falling or regularly           The seasonal structure needs to be expanded
+              obvious                                    spaced repeating pattern                                      accordingly
+
+
+
+
+                                 common border: Forecasts depend on the assumed temporal structure
+                               Complex external features and nonlinear dependencies require richer modeling methods
+moving average: Smooth short-term
+fluctuations using historical observations
+                                                            𝑛
+ simple moving average                             1
+                                              𝑦ො𝑡 = ෍ 𝑥𝑡−𝑖
+                                                   𝑛
+                                                           𝑖=1
+
+
+ weighted moving                                       𝑛
+ average                                     𝑦ො𝑡 = ෍ 𝑤𝑡−𝑖 𝑥𝑡−𝑖 ,
+                                                      𝑖=1
+                                                      𝑛
+
+                                                    ෍ 𝑤𝑡−𝑖 = 1
+                                                     𝑖=1
+
+ Applicable: When the local level is relatively stable, it can be used as a smoothing tool or a simple prediction baseline.;
+ Sudden changes and continuing trends can cause lags.
+Exponential smoothing
+A special form of weighted average. The longer the observation time, the exponential
+decrease of its weight, so it is called exponential smoothing.
+Single exponential smoothing
+                                                  Suitable for time series without
+           𝑦ො𝑡+ℎ = 𝛼𝑦𝑡 + 1 − 𝛼 𝑦ො𝑡
+                                                  overall trend
+
+Second exponential smoothing
+               𝑦ො𝑡+ℎ = 𝑙𝑡 + ℎ𝑏𝑡
+                                                     Taking into account trend
+       𝑙𝑡 = 𝛼𝑦𝑡 + 1 − 𝛼 𝑙𝑡−1 + 𝑏𝑡−1                  information
+       𝑏𝑡 = 𝛽 𝑙𝑡 − 𝑙𝑡−1 + 1 − 𝛽 𝑏𝑡−1
+Holt–Winters: Add recurring seasonal
+items
+  additive seasonal model: ℓ for level, b for the trend, s for seasonal items, m for the seasonal
+  cycle; α, β, γ* All in[0,1].
+
+   level update
+                                     𝑙𝑡 = 𝛼 𝑦𝑡 − 𝑠𝑡−𝑚 + 1 − 𝛼 𝑙𝑡−1 + 𝑏𝑡−1
+
+   Trend updates                       𝑏𝑡 = 𝛽 𝑙𝑡 − 𝑙𝑡−1 + 1 − 𝛽 𝑏𝑡−1
+
+   seasonal updates
+                                         𝑠𝑡 = 𝛾 𝑦𝑡 − 𝑙𝑡 + 1 − 𝛾 𝑠𝑡−𝑚
+
+   h step prediction                    𝑦ො𝑡+ℎ = 𝑙𝑡 + ℎ𝑏𝑡 + 𝑠𝑡+ℎ−𝑚 𝑘+1
+
+   k for (h−1)/m rounded down value of, Make predictions use last m estimated seasonal components; When
+   the seasonal amplitude expands with the level, Multiplicative form can be considered.
+Autoregressive Integrated Moving
+Average model(ARIMA)
+ARIMA(p,d,q)：
+
+                         𝑝                     𝑞
+
+              𝑦 ′ 𝑡 = 𝑐 + ෍ 𝜙𝑡−𝑖 𝑦 ′ 𝑡−𝑖 + 𝜀𝑡 + ෍ 𝜃𝑡−𝑗 𝜀𝑡−𝑗
+                        𝑖=1                   𝑗=1
+
+
+
+             𝑦 ′ : d−order difference sequence                𝜀𝑡 ~𝑁 0 𝜎 2
+             𝑝: order of autoregressive
+
+             𝑞: order of moving average
+
+ Identify data trends and seasonal changes at the same time.
+Advantages and Limitations of
+Statistical Methods
+
+
+
+
+  Advantages                                     limitations
+                                                 The basic form has difficulty incorporating
+  Intuitive structure, Linear baselines can be
+                                                 rich external features and nonlinear
+  established based solely on historical
+                                                 relationships. Long-term forecasts depend
+  sequences.
+                                                 on trend and seasonal assumptions.
+machine learning
+input construct: Extract time information   function fitting: Learn the relationship between input and target    Effects and applicable boundaries
+
+
+       original time series                               Lasso: constraint coefficient                            Ability to handle larger data
+    historical goals, Calendar and                            squared error plus L1 punish                         Models can exploit artificial
+          external variables                     Compression factor, Alleviating overfitting and producing                    features
+                                                                     sparse solutions                               Some structures are easy to
+                                                                                                                               explain
+
+       feature engineering                    SVR: Constraint functions and out-of-band errors
+                                                     ε No deviation loss is included within the band               Effect is affected by features
+   Seasonal and trend characteristics         Use regularization and out-of-band loss to jointly determine the     missing time relationship
+   Lag values ​and window statistics                                regression function                            Difficult to complete by
+           Category coding
+                                                                                                                        the model itself
+                                               XGBoost: Revise predictions round by round
+                                                                                                                         Further learning
+                                                   Add one tree each round CART regression tree
+  Fixed dimension supervised samples                                                                                      representation
+                                                      Use learning rate to control increment                       Complex sequence dependencies
+   Each row of features is paired with a
+               future goal
+                                                     Accumulate the output of multiple trees                         Introducing deep learning
+Basic form of machine learning
+regression
+
+                           𝑦 =𝑓 𝑥 +𝜀
+
+
+f(x) Represents a deterministic relationship between input and target, ε
+represents random error.
+Learn approximate functions using training samples, Reuse for new input.
+   Lasso Regression and sparse
+   coefficients
+
+
+                                                           min𝑤 𝑋𝑤 − 𝑦 22 + 𝛼 𝑤 1
+                                                             Squared Error Constrained Fit Deviation.
+
+                                                        L1 Penalty shrinks some coefficients to zero, Reduce
+                                                              model complexity, Alleviate overfitting.
+The blue diamond is L1 Constraint boundaries, The red
+ellipse is the equal loss line.                                 α≥0 Control regularization strength.
+The tangent point may fall on the coordinate axis,
+Corresponds to zero coefficient.
+support vector regression
+                                                         Minimize:
+                                                                     𝑁
+                                                        1
+                                                          𝑤 2 + 𝐶 ෍ 𝜉𝑖 + 𝜉𝑖∗
+                                                        2
+                                                                     𝑖=1
+
+
+                                                         Constraints:
+                                                         𝑦𝑖 − 𝑤𝑥𝑖 − 𝑏 ≤ 𝜀 + 𝜉𝑖
+                                                        ቐ𝑤𝑥𝑖 + 𝑏 − 𝑦𝑖 ≤ 𝜀 + 𝜉𝑖∗
+                                                               𝜉𝑖 , 𝜉𝑖∗ ≥ 0
+
+
+
+No deviation loss is included within the band, Out-of-band deviation is given by ξ, ξ* measure.
+ε≥0 Tolerance band half width, C>0 Tradeoff function smoothness versus out-of-band error.
+XGBoost Round-by-round tree
+integration
+
+                 yˆ i( m ) = yˆ i( m −1) +  f m ( xi )
+
+
+
+
+                                                                𝑚           𝑚−1
+                                                          𝑦ො𝑖       = 𝑦ො𝑖         + 𝛾𝑓𝑚 𝑥𝑖
+ γ is the learning rate.A new tree is added each round CART regression tree, Revise existing forecasts,
+ Accumulate round by round to form the final output.
+Feature engineering of traditional
+machine learning
+                                seasonal characteristics: Hour, Week, month
+
+                                trend characteristics: Time indexing and
+                                long-term changes
+
+                                hysteresis characteristics: Observations at
+                                past moments
+
+                                statistical characteristics: window mean,
+                                Fluctuations, etc.
+
+                                Category coding: Zone or device category
+Advantages and limitations of
+traditional machine learning
+
+ Advantages                               limitations
+                                         • Requires targeted feature
+• Ability to handle larger scale data.      engineering.
+
+• Some models have strong                • Cross-scenario generalization
+  interpretability, Checkable feature      ability depends on data and
+  effects and coefficients.                features.
+
+                                         • Nonlinear dependencies between
+                                           complex sequences are difficult to
+                                           express manually.
+deep learning
+                                             state recursion: Encoding history and generating the       temporal convolution: Causal constraints and receptive
+feed forward mapping: fixed window
+                                                                    future                                                     fields
+
+
+  History window flattening                                          RNN                                              causal constraints
+   Merge input at each time into a vector      The current input is combined with the previous hidden
+                                                                                                          The current output only reads the current and past
+   Preserve manually specified window                                   state
+                  ranges                          Pass historical information using recursive state                Block future information leaks
+
+
+
+                 MLP                                                LSTM                                             dilated convolution
+                                                 input gate, Forget gate and output gate
+   Layer-by-layer linear transformation                                                                        Read history at larger intervals
+              and activation                     Control memory retention, Writing and
+                                                                                                          Cover longer time frames with fewer layers
+  Learn the mapping of inputs to outputs                         output
+  No recursive history state is maintained
+
+
+                                                                  Seq2Seq                                Residual connection composition TCN
+     Applicable function                        Encoder compresses history into state                     Convolutional learning of local and multi-
+       Fixed window non-linear                    The decoder inherits state and reads                                 scale patterns
+             comparison                                     auxiliary input                                Bypass cross-layer information transfer
+  Used to compare sequence structures         Corresponds to future multi-step predictions                  Improving training of deep networks
+Motivation for deep learning
+
+
+ ⚫General function approximator
+ ⚫No feature engineering required
+ ⚫Processing complex unstructured data (pictures, text, audio,
+  video)
+ ⚫Accurate representation of non-linear relationships
+ ⚫Deep learning performs well in the image/nlp field
+multilayer perceptron MLP
+                                            The feed-forward structure consists of the input layer,
+                                            Hidden layer and output layer composition.
+                                            Data mapping layer by layer, No recursive state across
+       h[ t ] = o[ t ]  tanh ( s[ t ] )
+                                            time.
+                                                               𝑧 𝑙 = 𝑊 𝑙 𝑧 𝑙−1 + 𝑏 𝑙
+
+                                                                   𝑎𝑙 = 𝜎 𝑧 𝑙
+
+                                           The connecting lines in the figure represent the weights
+                                           between layers.
+                                           z It is the result before activation, a is the output after
+                                           activation.
+                                           When used for prediction, The history window is usually
+                                           flattened into a fixed vector first.
+recurrent neural network RNN
+historical status
+
+
+
+
+Expand by time from left to right, Orange nodes represent recursive states.
+Each step simultaneously receives the current input and the status of the previous
+moment., Pass historical information to the next step.
+The same set of parameters is reused at different time steps.
+RNN The time expansion and output
+method of
+
+
+
+
+                                                            Right picture: Keep the output of the last
+  Left picture: The loop unit is expanded into moment-by-   step, For forecasting from series to single
+  moment calculations                                       values
+
+
+                                 ℎ𝑡 = tanh 𝑊ℎ ℎ𝑡−1 + 𝑊𝑥 𝑥𝑡 + 𝑏
+LSTM Gating and memory update
+
+input gate     𝑖 𝑡 = 𝜎 𝑊𝑖 ℎ 𝑡−1 ; 𝑥 𝑡 + 𝑏𝑖
+
+oblivion       𝑓 𝑡 = 𝜎 𝑊𝑓 ℎ 𝑡−1 ; 𝑥 𝑡 + 𝑏𝑓
+door
+candidate      𝑢 𝑡 = tanh 𝑊𝑢 ℎ 𝑡−1 ; 𝑥 𝑡 + 𝑏𝑢
+memory
+
+output gate     𝑜 𝑡 = 𝜎 𝑊𝑜 ℎ 𝑡−1 ; 𝑥 𝑡 + 𝑏𝑜
+
+memory
+                𝑠 𝑡 = 𝑓 𝑡 ٖ 𝑠 𝑡−1 + 𝑖 𝑡 ٖ 𝑢 𝑡
+update
+
+Hidden state    ℎ 𝑡 = 𝑜 𝑡 ٖ tanh 𝑠 𝑡
+                                                The horizontal line carries the cell state s. The gates control
+                                                retention of old memory, writing of new information, and
+                                                hidden-state output. σ denotes the sigmoid function and ⊙
+                                                denotes element-wise multiplication.
+Seq2Seq Encoders and Decoders
+
+
+
+
+The left encoder reads historical input, form the final state that describes history C.
+The right decoder inherits this state, Combined with auxiliary inputs available in future
+periods, Generate future forecasts step by step.
+This structure is suitable for multi-step prediction, The following residential load cases
+will adopt this idea..
+temporal convolutional network TCN
+                                                Convolution in time series
+                                                Convolution kernel extracts local
+                                                temporal relationships.TCN Expand
+                                                receptive field while maintaining
+                                                causality.
+
+
+
+
+The connections at each layer indicate which inputs the current output can
+read.
+Ordinary convolutions will be explained separately later., causal
+convolution, Dilated convolutions and residual connections.
+Future information in ordinary 1D
+convolutions
+
+
+
+
+ Each output is connected to adjacent inputs.
+ For example y₀ used x₀ and x₁, in x₁ is the future information relative to the output
+ moment.
+ Prediction tasks need to limit the input visible range, Avoid this kind of information
+ leakage.
+Causal convolution only reads the
+current and past inputs
+
+
+
+
+ Time t The output of is only connected to the previous layer t and earlier positions.
+ Each layer obeys the same constraints, so the output cannot see future data.
+Dilated convolution expands the
+temporal receptive field
+                                                                     Increase the sampling interval upward
+                                                                     from the input layer.
+                       k −1
+                 Z t =  W j xt − j + b
+                       j =0
+
+                                                                     The greater the expansion rate, The
+                                                                     longer the time span covered by the
+                                                                     same convolution kernel.
+
+                                                                     No need to simply add a lot of layers, It
+                                                                     can also connect to further history.
+                              𝑘−1
+
+                𝑍𝑡 = ෍ 𝑊𝑗 𝑥𝑡−𝛿𝑗 + 𝑏
+                               𝑗=0
+ k is the convolution kernel size, δ is the expansion rate.δ=1 corresponds to the ordinary causal
+ sampling interval.
+TCN Information transfer of residual
+blocks
+                                                                     Left picture: Two-layer dilated
+                                                                     causal convolution, Cooperate
+                                                                     ReLU, WeightNorm and Dropout.
+
+                                                                     Right picture: Input is passed
+                                                                     across layers via side channels,
+                                                                     Then add it to the convolution
+                                                                     branch.
+
+                                                                     When the channels are
+                                                                     inconsistent, Available 1×1
+                                                                     convolution alignment.
+  Residual connection proved to be an effective method for training deep networks, which
+  allows the network to transmit information in a cross-layer manner. A residual block contains
+  two layers of convolution and nonlinear mapping. WeightNorm and Dropout are added to
+  each layer to regularize the network.
+Implementation of Time Series Forecasting
+  Clear tasks                  Determine historical input, Prediction target and prediction length
+
+
+
+
+Construct sample                  Split data by time, Normalize and generate sliding windows
+
+
+
+
+ Training model           Calculate task loss, Backpropagation, Select a model using the validation set
+
+
+
+
+  Test results     Compare prediction errors on test segments, Check interval, Exceptions and generalizations
+                                                                                                                             Prediction results and validity
+research route                              Research content
+                                                                                                                                         testing
+                               Prediction tasks and sample construction
+                 Purpose: Clarify goals and information boundaries, Form samples that can be supervised for learning               Prediction and testing
+    data
+                     Target and time domain             Time division and scaling                 sliding window                       Test predictions
+ with tasks       predict what, How far forward             Training segment                Historical input paired with      Generate output in independent test
+                         is the prediction?                determination rules                         future
+                                                                                                                                           sections
+
+
+                           Model structure corresponds to task difficulty                                                              Evaluate by task
+                    Purpose: According to single step, Multi-step and cross-regional correlation selection model structure      point error, Interval and event
+   Model          single step point prediction            Multi-step interval                Regional joint forecast                     classification
+                    Sequence model versus                     prediction                     space-time diagram +
+   build
+                           regression                     Seq2Seq + Quantile                         LSTM
+                                                                                                                                     Compare and test
+                        Model output is consistent with the prediction target for each case                                     baseline, peak, ablation and
+                                                                                                                                       generalization
+                                  Parameter learning and model selection                                                        Test whether the model can
+                  Purpose: Learning parameters using prediction errors, Use the validation set to control overfitting
+      train                                                                                                                          predict the future
+  optimization    Calculate loss and update parameters  Validation and model selection                                           and clarify the applicable
+                      Backpropagation, optimizer       Save better parameters, Stop early                                        boundaries of the results
+Solar Irradiance Forecasting
+Case 1 Solar irradiance forecasting
+                    Photovoltaic output is affected by irradiance, Forecast in advance GHI Can provide input for output
+background
+                                                                 forecasting
+
+
+ prediction
+                             past 48 half an hour, 13 Column historical features, Predict the next half hour GHI
+    task
+
+Main difficulties                                                  Corresponding method
+
+   Periodic patterns coexist with sudden changes in
+                                                                    LSTM Learning temporal dependencies via gated states
+                       weather
+
+                                                                    TCN Use cause and effect, Dilated convolution extracts
+  Different time spans have different historical effects
+                                                                                    multi-scale features
+
+    Different dimensions, Preprocessing can easily
+                                                                      Split by time, Fit normalization only on training set
+             introduce future information
+data structure: unified time boundary, Scaling rules and supervision objectives
+continuous time division              MinMax normalization                        Windows and batches                        next half hour GHI
+           Train 80%                                                                                                Target columns scale individually, Save restore
+                                       Fit on train; transform the rest            48 × 13 → 1 step; batch = 100
+   validation 10% / test 10%                                                                                                         parameters
+
+Purpose: Use information from the past day to predict the next moment, Prevent test information from entering preprocessing
+Three types of models under the same prediction task
+
+       LSTM: gated memory                               TCN: Multi-scale historical characteristics                Lasso: linear hysteresis baseline
+     Input (B, 48, 13), single layer,                         6 residual modules, Use causal convolution            History window flattened into a 624-
+                                                             Kernel = 2; expansion rates = 1 / 2 / 4 / 8 / 16 /
+              unidirectional                                                                                                    element list
+                                                                                   32
+ Hidden dimension = 64; retain final h_n                     Take the characteristics of the last moment to            Fit and predict with LassoCV
+  Linear layer generation next step GHI                                    make predictions                        Comparing test error with deep models
+
+
+Deep-model training (LSTM code example)                              Verification and early stopping                 Test, restore, and compare
+MSE compares predictions with labels; Adam learning rate =                                                          Load parameters, Prediction and true value
+                                                                     Aggregate validation loss by batch size
+                         0.001                                                                                                  denormalization
+                                                                      Save better parameters and stop early
+              zero_grad, backward, step                                                                                  Compare RMSE, MAE, MAPE
+
+training purpose: Reduce error and control overfitting; Inspection points: mutation period, original dimension, and near zero MAPE
+Case 1 Solar irradiance forecasting data
+
+Data source      NSRDB, Austin, Texas, USA, 2001 Year
+Samples and
+                 half an hour; 13 List, Includes weather, Irradiance and History GHI
+Fields
+input and target 48 step × 13 feature(past 1 sky); output next step GHI
+
+Data partition   In order of time: train 80%, verify 10%, test 10%
+Data partition: Retention time order
+                              unified numeric type
+                               dataset.values gets the data matrix, and
+                              astype unifies the values ​into float32 .
+
+                              Calculate the boundaries of three intervals
+                              Training accounts for 80%, verification
+                              accounts for10%; int converts sample size to
+                              integer, The remaining data is left for testing.
+                              Continuously split time series
+                              The first three slices are obtained in sequence
+                              train_0 , valid_0 , test_0 , No random
+                              disruption of time.
+Normalization: Fit the scaler only in the training
+segment
+                               Import zoom tool
+                               MinMaxScaler records the minimum and
+                               maximum values ​of the training data in each
+                               column.
+                               Determine the zoom range and fit
+                               feature_range specify 0 arrive 1;
+                               fit_transform only applies to training
+                               segments.
+              ′
+                  𝑥 − 𝑥min
+             𝑥 =               Verify and test reuse rules
+                 𝑥max − 𝑥min
+                               transform inherits parameters from training
+                               set, do not re-estimate extreme values ​of
+                               validation or test data.
+Target scaler: Preserve parameters
+required for prediction restoration
+                              Create a separate target scaler
+                              scaler_target specializes in target columns,
+                              making it easy to predict and recover the
+                              original GHI dimensions.
+                              Take the last column and reshape it
+                              train_0[:, -1] selects the target; reshape(-1, 1)
+                              gets a two-dimensional single-column array.
+
+                              Fit only with training target
+                              fit_transform saves the scaling parameters of
+                              the target column; subsequent
+                              inverse_transform calls use the same
+                              parameters.
+Sliding window: Generate historical
+and future pairs one by one
+                             Determine the legal starting point of the
+                             window
+                             x and y are first saved to lists; arange ensures
+                             that the historical and future windows do not
+                             cross the boundary and move back one step at
+                             a time.
+                             Get historical input and future goals
+                             History retains all features; the target is taken
+                             from the last column of the future window,
+                             and reshape fills out the sample dimensions.
+
+                             Concatenate the entire batch of samples
+                             and return
+                             concatenate joins the lists along the first
+                             dimension, giving X:(N, n_in, F) and y:(N,
+                             n_out).
+Window parameters: Predict the next
+hour and a half from the past day
+                            Specify history and forecast length
+                            n_in = 48 corresponds to one day of half-hour
+                            data; n_out = 1 predicts only the next
+                            moment.
+                            Construct training samples first
+                            generate_windows runs on train, retains 13
+                            input features, and forms the training inputs
+                            and labels.
+                            Reconstruct verification and test samples
+                            Sliding windows are generated separately
+                            within valid and test; different data segments
+                            are not spliced into the same sample.
+Batch load: Feed the windowed
+samples into the training loop
+                             Import data tool and set batch size
+                             BATCH_SIZE = 100 determines the number
+                             of samples used for each update; the last batch
+                             may contain fewer than 100.
+                             Bind input to label
+                             torch.tensor converts the data to tensors;
+                             TensorDataset ensures that each x is taken
+                             together with its corresponding y.
+                             Training samples are shuffled, while test
+                             order is preserved.
+                             train shuffle = True shuffles only the window-
+                             sample order; the chronological order within a
+                             single window remains unchanged.
+LSTM definition: Create recurrent
+layers and linear output layers
+                            Define trainable models
+                            nn.Module manages the network parameters
+                            uniformly; __init__ receives the input
+                            dimension, hidden dimension, and prediction
+                            length.
+                            Create output mapping
+                            super completes parent-class initialization;
+                            Linear maps the hidden_size-dimensional
+                            state to the prediction length.
+                            Create a one-way LSTM
+                            batch_first = True uses (B, T, F); one-way
+                            structures are processed in historical order and
+                            do not read future input.
+LSTM forward calculation: Generate
+predictions using historical end states
+                               Calculate the entire history window
+                               self.lstm(x) returns sequence output and final
+                               state; the code retains only h_n.
+
+                               Select the final layer state and export it
+                               h_n[-1, :, :] gets the final hidden state of the
+                               last layer; the Linear layer then generates the
+                               GHI prediction.
+                               Determine model size from data shape
+                               The input has 13 dimensions, the hidden state
+                               has 64 dimensions, and the prediction length
+                               is determined by y_train; hidden_layer = 1.
+Training objectives: Give the model
+parameters to Adam; renew.
+                              Import optimizer module
+                              torch.optim provides optimization algorithms
+                              for adjusting parameters based on gradients.
+
+
+                              Specify parameter set and learning rate
+                              Adam takes model.parameters(); lr = 1e-3
+                              means 0.001, and the parameters are updated
+                              step by step.
+                              Define mean square error
+                              MSELoss compares predictions to true labels;
+                              by default, the participating elements are
+                              averaged.
+Training loss and backpropagation
+                                 𝑁
+                             1
+mean square error   MSE =      ෍ 𝑦𝑖 − 𝑦ො𝑖 2
+                             𝑁
+                                𝑖=1
+
+
+
+
+                        𝜕𝐿 𝜕𝐿 𝜕𝑦ො
+Backpropagation           =
+                        𝜕𝜃 𝜕𝑦ො 𝜕𝜃
+
+
+
+
+                    Adam updates parameters based on gradients and their historical statistics. The courseware
+Parameter update
+                    sets the learning rate to 0.001; the validation set is used for early stopping and saving better
+                    models.
+Training loop: Each round iterates
+through the training batches in sequence.
+                              Repeat training rounds
+                              for epoch controls the rounds; time.time
+                              records the start time of the round for timing
+                              statistics.
+                              Show progress and initialize statistics
+                              print outputs the round; total_loss and count
+                              are cleared at the beginning of the round.
+
+                              Enter training mode and read the batch
+                              model.train enables training behavior;
+                              DataLoader provides x and y in batches.
+Parameter learning: predict, find the
+error, backpropagate, and update.
+                              Put the current batch on the same device
+                              When CUDA is available, inputs and labels
+                              are moved together to the GPU to avoid
+                              device inconsistencies.
+                              Calculate predictions and losses
+                              forward gets preds; loss_fn compares preds
+                              with the actual y item by item and forms a
+                              scalar loss.
+                              Complete a parameter update
+                              zero_grad clears the old gradient; backward
+                              calculates the new gradient; step updates
+                              parameters according to the Adam rule.
+Validation loss: Aggregate errors by
+actual batch size
+                              Prepare to verify statistics and close
+                              gradients
+                              total_valid_loss and total_num are cleared;
+                              no_grad avoids building computational graphs
+                              for backpropagation.
+                              Check device and variable names
+                              The original drawing uses y_usage.cuda(),
+                              which is inconsistent with the loop variable y;
+                              check this when reproducing.
+                              Get the average loss of the entire validation
+                              set
+                              Use loss × n_batch for the total, divided by
+                              the total number of samples, to avoid giving
+                              the final mini-batch equal weight.
+Stop early: Save parameters with
+smaller validation error
+                             Determine whether this round has
+                             improved
+                             When the current validation error is smaller,
+                             update min_val_loss; print is only a record-
+                             keeping reminder.
+                             Save parameters and reset wait times
+                             state_dict saves model parameters; counter
+                             returns to 0, indicating that a new and better
+                             model has emerged in this round.
+                             End training when there is no continuous
+                             improvement
+                             If there is no improvement, counter increases
+                             by 1; when patience is reached, break exits
+                             the outer training loop.
+Test predictions: Restore the saved
+better model first
+                              Load the weights selected during the
+                              verification phase
+                              torch.load reads model_lstm.pt;
+                              load_state_dict puts the parameters back into
+                              the model.
+                              Initialize error statistics and prediction list
+                              Test loss and sample number zeroing;
+                              all_preds Used to save each batch of output,
+                              Subsequent connection according to the
+                              sample axis
+                              Reasoning by test order
+                              no_grad turns off gradients during the batch
+                              forward pass; input, label, and model should
+                              be on the same device.
+Test results: Accumulate predictions
+and calculate sample weighted mean
+                              Get predictions for the current batch
+                              model.forward(x) returns the predicted values
+                              for all samples in the batch.
+
+                              Save the output and accumulate losses
+                              simultaneously
+                              append keeps batch preds; loss.item takes
+                              n_batch and then adds the total error.
+
+                              Summarize the test set errors and output
+                              Total error divided by total number of
+                              samples, pass again print show cur_test_loss
+Predictive restoration: Convert the
+tensor back to its original dimensions
+                                 Connect all test batches
+                                 torch.cat splices all_preds along the first
+                                 dimension and restores the complete test-
+           Yˆ = Linear(out)      sample order.
+                                 Move to CPU and convert to an array.
+                                 cpu moves back to the host, detach cuts off
+                                 gradient tracking, and numpy gets the array
+                                 used for subsequent evaluation.
+  𝑦ො = 𝑦ො ′ 𝑦max − 𝑦min + 𝑦min
+                                 Both prediction and true values ​are
+                                 restored to their original units.
+                                 Apply inverse_transform twice with
+                                 scaler_target to ensure that the compared data
+                                 has the same dimensions.
+TCN causal convolution: After filling,
+crop the right output
+                               Define a convolution module with weight
+                               normalization
+                               weight_norm wraps the convolution layer;
+                               input channels, output channels, and kernel
+                               size are provided, and the dilation rate is
+                               passed as a parameter.
+                               Fill up the history range with padding
+                               pad =( kernel_size −1)× dilation ; Conv1d
+                               Use this fill level and expansion ratio
+
+                               Cut off right end to maintain cause and
+                               length
+                               Convolve first, Take again x [..., :- pad ], Let
+                               each output depend only on the current
+                               position and the previous input
+TCN residual module: Concatenate
+two sets of causal convolutions
+
+
+
+
+  Receive convolution and regularization    Repeat two sets of convolutions, Activate
+                                                                                        Compose the main branch in a fixed order
+  settings                                  withDropout
+  Module receiving channel, Convolution     The first group changes to the output       Sequential Execute in sequence
+  kernel and expansion rate; dropout        channel number; The second group
+                                            maintains the number of output channels,
+                                                                                        conv1 , relu1 , dropout1 , conv2 ,
+  default0.2. super Complete parent class
+  initialization                            Both use the same expansion rate            relu2 , dropout2
+TCN residual module: Add after
+aligning channels
+
+
+
+
+                                             Describe the order of tensors of input and
+  use1×1Convolution aligned channels                                                      Merge main branch and residual branch
+                                             output
+  Created when the number of channels is     The forward annotation convention is         out comes from the convolution main
+  different downsample ; Set to the same     (B, feature channel, T); the timeline is     branch; res is the original x or projected
+  None , Allow shortcuts to original input   always at the end.                           x. Return ReLU(out + res).
+TCN master model: Expand the range
+of time perception layer by layer
+
+
+
+
+  Set the number of model layers and                                                 Combine networks and build prediction
+                                            Set the dilation rate to a power of 2.
+  convolution kernel                                                                 layers
+  The default is 6 TemporalBlocks,          for traverses each layer;                Sequential Concatenate residual modules
+  convolution kernel 2, and dropout 0.2.    dilation_size = 2**i, in the order 1,    in list order; Linear Map last channel
+  super then creates an empty layer list.   2, 4, 8, 16, 32.                         representation to predicted length
+TCN forward calculation: Swap
+dimensions and take last moment
+
+
+
+
+  Changed from time in the middle to time   Specify the network size for this
+                                                                                         InstantiateTCNCalled by the training loop
+  at the end                                experiment
+  permute(0, 2, 1) changes (B, T, F)        Input dimensions are determined by the
+                                                                                         self.lin_y changes the channel vector at
+                                            data; output channel 64; prediction length
+  to (B, F, T); take the last time          comes from the label; number of layers 6;
+                                                                                         the last moment into pred and returns the
+  position after the network output.                                                     prediction. TCN(...) builds a model.
+                                            convolution kernel 2; dropout 0.2.
+Statistical methods:
+                       Autoregressive andARIMAClass interface
+                       AutoReg , ARDL , ARIMA , SARIMAX
+                       List available models; The screenshot does
+                       not expand its training script
+                       Order selection, Simulation and related
+                       models
+                       The list also contains order selection, ARMA
+                       Analog and UECM Waiting for entrance, Do
+                       not treat the interface list as a completed
+                       experiment
+                       Exponential smoothing interface
+                       ExponentialSmoothing , Holt ,
+                       SimpleExpSmoothing and ETSModel
+                       Corresponds to different smoothing settings
+Machine learning interface: Import
+models that can be used for regression
+from sklearn.linear_model import LassoCV
+from sklearn.svm import SVR
+from sklearn.ensemble.gradient_boosting import GradientBoostingRegressor
+
+
+
+
+LassoCV                                 SVR                                   GradientBoostingRegressor
+                                                                              Gradient boosting regression
+                                                                              interface. The original import path is
+with cross-validation Lasso interface   Support vector regression interface
+                                                                              retained; please check the actual
+                                                                              library version before use.
+Lassoenter: Expand the entire history
+window into one line
+                              Use the same window starting point
+                              parameters and lists; the meanings of legal
+                              starting points and loops are the same as in
+                              sequence models; input and output remain
+                              paired according to time.
+                              Change input shape and keep same target
+                              history from( n_in , F )flattened to n_in × F
+                              columns; y Still take the future goal column
+
+                              Concatenate samples and return 2D input
+                              get X :( N , n_in × F )and y :( N , n_out ), For
+                              use by models that do not directly receive 3D
+                              sequences
+Lassofitting: Instantiate, Training and
+prediction
+                               EstablishLassoCVobject
+                               rfc is only a variable name; what is loaded
+                               here is LassoCV, not a random forest.
+
+                               Fitting using training input and labels
+                               fit learns regression coefficients; check the
+                               target shape and the time-division method of
+                               cross-validation.
+                               Generate predictions for test windows
+                               predict reads the flattened x_test; before
+                               evaluation, ensure that the prediction has the
+                               same dimensions as the true value.
+Evaluation index of prediction error
+
+                                      𝑁
+   root mean square               1
+                         RMSE =     ෍ 𝑦𝑖 − 𝑦ො𝑖 2
+   error                          𝑁
+                                    𝑖=1
+
+                                   𝑁
+   mean absolute                1
+                           MAE = ෍ 𝑦𝑖 − 𝑦ො𝑖
+   error                        𝑁
+                                  𝑖=1
+
+                                  𝑁
+   mean absolute               1  𝑦𝑖 − 𝑦ො𝑖
+                         MAPE = ෎          ×100%
+   percentage error            𝑁     𝑦𝑖
+                                  𝑖=1
+Solar irradiance forecast results
+
+           Model                         RMSE                          MAE                           MAPE
+
+            Lasso                         43.90                         24.27                       27.67%
+
+           LSTM                           40.94                         21.36                       21.85%
+
+            TCN                           39.94                         19.36                       24.85%
+
+
+ TCN: RMSE and MAE are the lowest; LSTM: MAPE is the lowest.
+
+ Both depth models are better than Lasso in terms of indicators.
+
+ When the irradiance is close to zero, MAPE may be unstable, and the specific handling method needs to be verified.
+Residential load multi-step forecasting
+Case 2 Residential load multi-step
+forecasting
+                    Family routines lead to repetitive electricity usage patterns. Random spikes occur when equipment starts
+Background
+                                               and stops, impacting energy storage and dispatch.
+
+
+ Prediction      The courseware results adopt the past 336 steps, predict the next 48 steps, and output the 0.1, 0.5, and 0.9
+    task                                                  quantiles at each step.
+
+Main difficulties                                                    Corresponding method
+
+Historical sequences need to be mapped to future multi-              Seq2Seq encodes the history and initializes the decoder
+                     step outputs.                                                      with the state.
+
+ The sudden difficulty in using electricity is expressed              Quantile loss learns the Median and the nominal 80%
+                 by a predicted value                                                        interval.
+
+Auxiliary input may not be available in advance in the                Separate the target and auxiliary variables, and verify
+                       future                                                       the weather input source.
+     Information Boundary and Sample
+               Construction                           Historical state transfer and future step-by-step decoding
+        Historical input X_e                                      Encoder Ecell
+    336-step historical features; keep                    Single-layer LSTM with hidden                                                        Probability level
+historical loads and check the position of             dimension 64; compress the history into
+         the first Energy column.                        hidden state h and memory state s.                                                      0.1 Quantile
+                                                                                                                                                   Interval lower
+                                                                                     h, s pass directly
+                                                                                                                                                       bound
+                                                                                     Initialize decoder
+                                                                                                                 Time-by-time
+   Future auxiliary input X_d                                     Decoder Dcell                                  linear output                   0.5 Quantile
+ 48 non-target features; exclude the true load. The     Use h and s from the history as the initial           Map the 64-dimensional
+                                                                                                                                                     Median
+  calendar can be known in advance, but weather         state; read the auxiliary quantities step by          state to 3 values; output
+    must be checked against available sources.         step and generate a 48-step representation.                shape (B, 48, 3).
+
+                                                      Purpose: Each future moment utilizes historical memory and available auxiliary
+                                                                                                                                                 0.9 Quantile
+Test: Can the Median follow the trend? Evaluate                                                                                                   Upper bound of
+                                                      information
+interval coverage, width, and peak performance;                                                                                                      interval
+      independent statistics are still needed.        3represents three quantiles, The number of prediction steps is determined by the
+                                                      future input length                                                                     Name 80% interval
+               Real label Y                                                        Quantile loss and parameter learning
+ Future 48-step true load; it participates only           The same true value is paired with three outputs; overestimation and underestimation impose different
+in the loss and is not used as future auxiliary        penalties at the quantile level. Summarize the losses and propagate them back to update the encoder, decoder,
+                     input.                                                                     and linear-layer parameters.
+Case 2 Residential load multi-step
+forecast data
+                  Near Western Victoria Airport, Australia: No photovoltaics, There are photovoltaic 1
+  data object     household
+  time and scale 2017-01-01 to 2018-12-31; half an hour; per household 35,040 strip
+  Variables and
+                  Energy + calendar, weather, common 12 List; history 336 step, future 48 step
+  windows
+  Prediction output every future moment 3 quantiles; 0.1 and 0.9 form a nominal 80% interval
+Load field: First check the target
+column and auxiliary features
+                               View data column names
+                               df.columns is used to check field order; this
+                               line itself does not generate a training
+                               window.
+                               Check the Energy location.
+                               in original list Energy in front of; The
+                               following window code uses the last column
+                               as the label, Need to confirm that the middle
+                               has been rearranged
+                               Distinguish between calendar and weather
+                               auxiliary quantities
+                               Calendar variables can usually be known in
+                               advance; Inputs such as future weather must
+                               have sources available at the time of
+                               forecasting
+Seq2Seqwindow: Prepare three
+sample tensors respectively
+                           Build containers for history, future
+                           auxiliary quantities, and labels.
+                           input_x saves historical input, input_y stores
+                           decoder input, and label_y saves future load
+                           targets.
+                           Traverse available sample starting points
+                           History and future together account for n_in +
+                           n_out steps; the window advances one
+                           moment at a time.
+                           History window retains all features
+                           slice of history reshape become(1, n_in , F ),
+                           as input to the encoder
+Seq2Seq window: Separate future
+labels from future auxiliary input
+                              Real load only serves as supervision label
+                              The last column takes the future n_out steps;
+                              reshape it later to (N, n_out, 1).
+
+                              The decoder reads the remaining future
+                              features
+                              :-1Explicitly exclude the last column of
+                              targets, Preserve future accessibility features,
+                              It cannot be assumed that all these quantities
+                              are known
+                              Connect three sets of samples respectively
+                              and return
+                              Along the first0After dimension splicing,
+                              Return to historical input, Future auxiliary
+                              input and future tags
+Seq2Seq definition: encoder, decoder,
+and output layer
+
+
+
+
+                                                                                        Create two LSTMs and a stepwise
+  Define a two-input model                  Save input and hidden dimensions
+                                                                                        output layer
+  The construction parameters receive the                                               Ecell processing history, Dcell Handle
+  encoded input dimensions respectively.,   three self attributes for later LSTM Used   future auxiliary sequences; Linear Map
+  Decode input dimensions, Hidden and       with linear layer construction              the hidden representation at each step to
+  output dimensions                                                                     three quantiles
+Seq2Seqforward calculation: Pass
+historical status to the future
+                            Distinguish between two input sequences
+                            Xe It's a historical window; Xd is the future
+                            auxiliary feature sequence, The length of time
+                            between the two can be different
+                            Encoding history and initializing the
+                            decoder
+                            Ecell return h_ne , s_ne ; hd0 and sd0
+                            Receive these two final states directly
+
+                            Output predictions at each step in the
+                            future
+                            Dcell keep entire paragraph out , through
+                            lin_usage Time-by-time mapping, at last
+                            return Return all future steps
+Seq2Seqparameter: Three quantiles
+are not equal to three-step prediction
+
+
+
+
+  Read the number of features from
+                                          Let the hidden dimension and
+  each of the two types of inputs                                                       Instantiate model
+                                          quantile output number be
+  Encoder dimension takes                                                               The model receives these four
+                                          hidden_size = 64; pred_size = 3
+  input_x_train.shape [-1]; The decoder                                                 parameters.The number of future
+                                          represents the output of three quantiles at
+  dimension is taken                                                                    prediction steps is given by Xd length of
+                                          each future moment.
+  input_y_train.shape [-1]                                                              time n_out Decide
+Seq2SeqStatus transfer and sequence
+output
+coding history           𝑂𝑒 , ℎ𝑛𝑒 , 𝑠𝑛𝑒   = Ecell 𝑋𝑒                Get the final hidden state and memory
+                                                                    state of the encoder.
+
+
+Initialize decoder        ℎ𝑑0 = ℎ𝑛𝑒 ,     𝑠𝑑0 = 𝑠𝑛𝑒                 The encoder state is directly used as the
+                                                                    decoder initial state.
+
+
+decode future sequence   out, ℎ𝑛𝑑 , 𝑠𝑛𝑑    = Dcell 𝑋𝑑 , ℎ𝑑0 , 𝑠𝑑0   Out keeps a hidden representation for each
+                                                                    future step.
+
+
+Stepwise linear output     𝑌෠ = Linear out                          shape: (B,n_out,64) → (B,n_out,3).
+Quantile loss: Align Probability levels
+to ground truth labels
+                                                 Specify Probability levels for output
+                                                 columns
+                                                 quantiles according to0.1, 0.5,
+                        xti , L = 1, otherwise   0.9arrangement, and converted into tensor,
+                                                 Column order must be consistent with
+                                                 predictions
+                                                 Mobile devices and complement the
+                                                 broadcast dimension
+                                                 cuda move to GPU ; unsqueeze (0)Add
+                                                 dimension, Facilitates alignment with full
+ loss 𝑦 𝑦 𝑝
+                                                 batch predictions
+ = 𝑞 ∗ max 0 𝑦 − 𝑦 𝑝 + 1 − 𝑞 ∗ max 0 𝑦 𝑝 − 𝑦
+                                                 Share true values ​and judge overestimation
+                                                 expand Pair the same real load with three
+                                                 outputs; gt mark pred > true , Subsequently
+                                                 converted to floating point mask
+Quantile loss: Use the error direction
+to determine the penalty weight
+                                                             First make the mask and prediction on the
+                                                             same device
+                                                             cuda Time tau also moved to GPU , avoid
+                                                             with pred Device inconsistency during
+                                                             operation
+                                                             Combining Orientation Mask and Error
+                                                             tau − q Take another ride( pred − true ):
+                                                             Undervalued q punish, Overvalued1− q
+                                                             punish; sum Summarize items
+                                                             Return training loss after normalization
+
+q=0.9: underestimate2The loss is1.8, overestimate2The loss
+is0.2.
+Resident load forecast results
+
+                                 legend
+                                 red line: actual value; black line:
+                                 median; shadow border: 0.1 and 0.9
+                                 Quantile.
+                                 time pattern
+                                 The median in the chart above follows
+                                 the major ups and downs, But some
+                                 spikes are clearly out of range.
+                                 Limitations on Random Behavior
+                                 In the picture below, some of the sudden
+                                 spikes are not covered, Show individual
+                                 load prediction difficulty.
+                                 evidence boundaries for conclusion
+                                 Graphics cannot replace coverage and
+                                 interval width statistics and Cannot
+                                 claim to have reached 80%cover.
+

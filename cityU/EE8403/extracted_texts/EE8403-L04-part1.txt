@@ -1,0 +1,1190 @@
+What is language model: a model that can generate next token/symbol based on the preceding sequence of a specified length.
+A very simple model for this task: Markov chain model (conceptually, not exactly, watch the video)
+A more advanced model with limited scalability RNN. 
+Transformer (3Blue1Brown chapter 5/6)
+Parallel implementation, how many parameters in GPT
+https://youtu.be/wjZofJX0v4M?si=4dSsnt09PCswLmz2
+https://youtu.be/eMlx5fFNoYc?si=MGUoo5_V1reUVg7K
+https://youtu.be/1il-s4mgNdI?si=Exz4QFlK_wsUCYyR
+https://www.youtube.com/watch?v=kCc8FmEb1nY
+Slide Credit
+PENG Cheng
+LI 
+Jianghao
+MOUSTAFA Omar
+QU 
+Fuchuan
+How the N-gram Language Model Works
+• 
+Calculate Probabilities:
+       • 
+ (3 
+sentences start with 
+<s>
+, 2 are             followed by 'I’)
+      
+• 
+ (
+The word 'I' appears 3 times, 2 times it's followed by 'am’)
+             
+In-class exercise
+, what is 
+ 
+• 
+Generating a Sentence:
+       • 
+Start with 
+<s>
+. The next word is likely 'I' (prob 2/3).
+       • 
+After 'I', the next word is likely 'am' (prob 2/3).
+       • 
+After 'am', the next word could be 'Sam' (prob 1/2) -> 
+<s> I am Sam
+.
+       • 
+The model has generated a valid sentence from the corpus!
+Applications
+Common Applications
+Autocomplete / Predictive Text:
+ Suggests the next word based on your previous words (a direct use of N-gram prediction).
+Spell Checking:
+ Identifies which word in a pair is more probable (e.g., 
+their
+ vs. 
+thier
+).
+Simple Chatbots & Dialog Systems:
+ For generating basic, grammatically correct responses.
+Foundation:
+ Served as the foundational technique for statistical machine translation (like early Google Translate).
+Incorporate Neural Network into Language Model
+Neural network recap
+Flatten
+Output
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+Handwritten Digit
+[1]
+Neural Network
+Probability
+Neural Network is a powerful tool to learn the pattern from various data
+Each layer can be seen as a weight matrix and bias.
+[1] credit: MNIST
+Incorporate Neural Network into Language Model
+Word embedding and Neural Language Model
+Word embedding: to associate each word with a high-dimension vector. Semantically close words are also close in the vector space.
+In vanilla neural language model, embeddings of input words are concatenated and 
+the probability of the next word
+ is outputted. However, is N-gram model enough to represent the language?
+Neural network that can pass information within relatively long text is required
+E(rat)
+E(mouse)
+E(rabbit)
+E(City)
+the
+ 
+sky
+ 
+is
+ 
+blue
+red
+green
+yellow
+orange
+purple
+……
+Recurrent Neural Network
+ 
+ 
+ 
+ 
+ 
+ 
+A Single RNN Cell
+Here 
+, 
+, 
+ are the input, output and hidden state of 
+-
+th
+ word respectively.
+, 
+, 
+ are the weight matrices of the RNN cell, while 
+ is the bias. They are learnable and the same when processing each word in the text.
+ 
+Recurrent Neural Network
+ 
+…
+ 
+ 
+ 
+…
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Input
+RNN cell
+Output
+RNN is a class of neural networks that allow previous hidden states (denote as 
+) to be used as inputs.
+It models a lot of the text at once because the hidden states help the model to 
+memorize 
+previous words. 
+When a cell outputs a word, it also output hidden state to the next, which encode information so far.
+A word’s interpretation depends on all the words behind it. 
+(Recurrence)
+ 
+Limitations of Recurrent Neural Networks 
+Struggle to capture long-distance dependencies
+When the text become longer and longer, the hidden states of words long behind may 
+get lost.
+No room for parallelization (MAIN DRAWBACK)
+It requires sequential computations that have to be done one after another
+Fail to scale as GPUs are getting better.
+	
+	
+W
+hat if the text is TOO LONG?
+GPT: 
+Generative
+ 
+Pre-trained
+ 
+Transformer
+GPT is based on the transformer architecture, a deep neural network designed for natural language processing tasks. Due to their impressive performance on natural language processing tasks and ability to effectively converse, GPT have gained significant popularity among researchers and industrial communities, making them one of the most widely used and effective models in natural language processing and related fields.
+Generate
+ new text 
+Transformer
+ architecture
+Pre-trained
+ on a massive amount of data
+GPT model
+INPUT
+I am a student
+Self-Attention
+Feed Forward
+ENCODER
+Self-Attention
+Feed Forward
+DECODER
+Encode-Decoder Attention
+TRANSFORMER
+OUTPUT
+我是学生
+Embedding
+Transformer architecture
+To date, the cleverest thinker was
+To
+date
+,
+the
+clever
+thinker
+was
+Token: 
+Words, or other common character combinations
+est
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Word embedding:
+Each token is associated with a vector, encoding the meaning of the word
+The model has a predefined vocabulary including all possible words (~50k) and their corresponding embeddings.
+ 
+abandon
+aboard
+ 
+zebra
+zero
+absolute
+absorb
+zombie
+zipper
+50,257 words
+12,288-dimensional
+Word embedding
+What is a language model?
+A model that can generate next token/symbol based on the preceding sequence of a specified length.
+London is a city in ____
+Large Language Model
+England
+the
+United Kingdom
+which
+southeast
+Europe
+CityU
+…
+17%
+14%
+12%
+8%
+5%
+3%
+1%
+woman
+man
+E(man)-E(woman)
+aunt
+uncle
+E(uncle)-E(aunt)
+The difference between the vectors for “
+man
+” and “
+woman
+” is very similar to the difference between “
+uncle
+” and “
+aunt
+”
+dog
+cat
+kitten
+house
+The direction in the high-dimensional space of embeddings can correspond to 
+semantic meaning
+The embeddings of semantically similar words tend to be close together in the vector space
+E(uncle)-E(aunt)
+≈
+E(man)-E(woman)
+This direction encodes gender information
+Visualization of word embeddings in 2D
+To
+date
+,
+the
+clever
+thinker
+was
+Position embedding: 
+Encode the position of the word
+est
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Word embedding:
+Encode the meaning of the word 
+Embeddings include the information about the meaning and the position of the word
+1
+ 
+2
+3
+4
+5
+6
+7
+8
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Position embedding
+A machine learning 
+model
+ …
+A fashion 
+model
+ …
+ 
+ 
+The word embeddings do not contain context information
+Self-Attention
+A machine learning 
+model
+ …
+A fashion 
+model
+ …
+The word embeddings do not contain context information
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Attention
+Goal: have a series of computations to produce a new, refined set of embeddings that ingests the context
+Self-Attention
+machine
+ 
+ 
+ 
+ 
+learning
+ 
+ 
+How to include context information (“
+machine
+”, “
+learning
+”) into the embedding of “
+model
+”?
+Solution: append the 
+value 
+of “
+machine
+”, “
+learning
+” to the embedding of “
+model
+”
+ 
+ 
+ 
+A
+machine
+learning
+model
+ 
+ 
+Value vector
+12,288-dimensional
+ 
+Self-Attention
+ 
+How to let the model know which values to be append?
+Solution: take a weighted sum along the values, weighted by the relevance between each pair of words
+ 
+ 
+A
+machine
+learning
+model
+ 
+ 
+machine
+A
+ 
+ 
+ 
+ 
+ 
+ 
+learning
+model
+ 
+ 
+ 
+ 
+ 
+ 
+is
+ 
+ 
+ 
+ 
+a
+type
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+of
+ 
+0.58
+0
+0.58
+0
+0
+0
+0
+0
+Self-Attention
+ 
+ 
+ 
+ 
+A
+machine
+learning
+model
+Any adjectives in front of me?
+I am!
+I am!
+Self-Attention
+ 
+ 
+ 
+ 
+A
+machine
+learning
+model
+Any adjectives in front of me?
+I am!
+I am!
+ 
+Query vector
+128-dimensional
+ 
+Self-Attention
+ 
+ 
+ 
+ 
+ 
+A
+machine
+learning
+model
+Any adjectives in front of me?
+I am an adjective
+I am an adjective
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+machine
+A
+ 
+ 
+ 
+ 
+ 
+ 
+learning
+model
+ 
+ 
+ 
+ 
+ 
+ 
+Key vector:
+Answer the query
+128-dimensional
+Self-Attention
+ 
+ 
+ 
+ 
+ 
+A
+machine
+learning
+model
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+machine
+A
+ 
+ 
+ 
+ 
+ 
+ 
+learning
+model
+ 
+ 
+ 
+ 
+ 
+ 
+If the key matches the query, they closely align with each other in the vector space
+Compute their relatedness by dot product
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Self-Attention
+How does a large language model work?
+The model is given a prompt, containing the user question, and then predicts what the ideal hypothetical AI assistant would say next
+Prompt: 
+User: Where is the City University of Hong Kong?
+AI Assistant: ______
+Large Language Model
+The
+Sure
+Hong
+Here
+Well
+Some
+Certainly
+…
+20%
+18%
+17%
+14%
+10%
+5%
+4%
+ 
+ 
+ 
+ 
+A
+machine
+learning
+model
+ 
+ 
+ 
+ 
+machine
+A
+ 
+ 
+ 
+ 
+ 
+ 
+learning
+model
+ 
+ 
+ 
+ 
+ 
+ 
+If the key matches the query, they closely align with each other in the vector space
+Compute their relatedness by dot product
+Large dot product value means high relatedness
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Self-Attention
+ 
+ 
+ 
+ 
+A
+machine
+learning
+model
+Dot product: 
+Normalization: adjust values to [0, 1] and their sum to be 1
+ 
+ 
+ 
+ 
+ 
+machine
+A
+ 
+ 
+ 
+ 
+ 
+ 
+learning
+model
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Attention pattern:
+Normalized values act as weights
+ 
+ 
+ 
+ 
+Self-Attention
+ Context information
+ 
+machine
+A
+ 
+ 
+ 
+ 
+ 
+ 
+learning
+model
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+A
+machine
+learning
+model
+ 
+ 
+ 
+ 
+ 
+Context-free information
+Refined embedding with contextually rich meaning
+Self-Attention
+A
+machine
+learning
+model
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Self-Attention
+Multi-Head Self-Attention
+There are lots of different ways that context can influence the meaning of a word
+John 
+hit
+ the brakes 
+sharply
+, they 
+screeched loudly
+, and he jolted forward.
+John hit
+ the brakes sharply, 
+they screeched
+ loudly, and 
+he jolted
+ forward.
+John
+ hit the 
+brakes
+ sharply, 
+they
+ screeched loudly, and 
+he
+ jolted forward.
+Multi-Head Self-Attention
+ 
+John hit the brakes sharply, they screeched loudly, and he jolted forward.
+Attention Head 1
+ 
+Attention Head 2
+ 
+Attention Head N
+…
+ 
+ 
+ 
+ 
+ 
+ 
+…
+ 
+ 
+Context-free embedding
+ 
+Refined embedding
+Context information 
+Multi-head attention gives the model the capacity to learn many distinct ways that context changes meaning
+Feed Forward Network
+A
+machine
+learning
+model
+ 
+ 
+ 
+ 
+Multi-head Self-attention
+Linear layer
+Linear layer
+ReLU
+ layer
+Feed Forward Network
+12,288
+49,152
+12,288
+Up-projection
+Down-projection
+Output
+Multi-head Self-attention
+…
+ 
+ 
+ 
+ 
+12,288-dimensional
+All words
+50,257-dimensional
+ 
+ 
+ 
+ 
+SoftMax
+ 
+abandon
+ 
+absolute
+absorb
+zombie
+accurate
+absolute
+Encoder and Decoder
+INPUT
+I am a student
+Self-Attention
+Feed Forward
+ENCODER
+Self-Attention
+Feed Forward
+DECODER
+Encode-Decoder Attention
+OUTPUT
+我
+Embedding
+ 
+ 
+ 
+ 
+ 
+PREVIOUS OUTPUT
+Embedding
+ 
+ 
+ 
+Encoder and Decoder
+INPUT
+I am a student
+Self-Attention
+Feed Forward
+ENCODER
+Self-Attention
+Feed Forward
+DECODER
+Encode-Decoder Attention
+OUTPUT
+我是
+Embedding
+ 
+ 
+ 
+ 
+ 
+PREVIOUS OUTPUT
+Embedding
+ 
+ 
+ 
+我
+How does a large language model work?
+The model can also pick some less likely words at random to sound more natural. This is why the model will generate a different answer if asked the same question.
+Prompt: 
+User: Where is the City University of Hong Kong?
+AI Assistant: 
+Sure
+, ____
+Large Language Model
+The
+Sure
+Hong
+Here
+Well
+Some
+Certainly
+…
+20%
+18%
+17%
+14%
+10%
+5%
+4%
+Encoder and Decoder
+INPUT
+I am a student
+Self-Attention
+Feed Forward
+ENCODER
+Self-Attention
+Feed Forward
+DECODER
+Encode-Decoder Attention
+OUTPUT
+我是学
+Embedding
+ 
+ 
+ 
+ 
+ 
+PREVIOUS OUTPUT
+Embedding
+ 
+ 
+ 
+我是
+Encoder and Decoder
+INPUT
+I am a student
+Self-Attention
+Feed Forward
+ENCODER
+Self-Attention
+Feed Forward
+DECODER
+Encode-Decoder Attention
+OUTPUT
+我是学生
+Embedding
+ 
+ 
+ 
+ 
+ 
+PREVIOUS OUTPUT
+Embedding
+ 
+ 
+ 
+我是学
+Efficient computation of Value
+The number of parameters in the 
+Value
+ matrix is larger than 
+Key
+ and 
+Query 
+by
+ 
+orders of magnitude. 
+ 
+ 
+ 
+: 10ms
+ 
+The time complexity of matrix multiplication is 
+ 
+ :43ms
+ 
+Efficient computation of Value
+Factor the Value matrix as a product of two smaller matrices
+ 
+ :43ms
+ 
+ 
+:11ms
+ 
+Parameters in GPT-3
+Embedding
+d_embed
+ * 
+n_vocab
+ = 617,558,016
+d_query
+ * 
+d_embed
+ * 
+n_heads
+ * 
+n_layers
+ = 14,495,514,624
+d_query
+ * 
+d_embed
+ * 
+n_heads
+ * 
+n_layers
+ = 14,495,514,624
+d_value
+ * 
+d_embed
+ * 
+n_heads
+ * 
+n_layers
+ * 2 = 28,991,029,248
+Key
+Query
+Value
+n_neurons
+ * 
+d_embed
+ * 
+n_layers
+ = 115,964,116,992
+Feed forward
+Unbedding
+n_vocab
+ * 
+d_embed
+  = 617,558,016
+175,181,291,520
+Total
+12,288
+50,257
+128
+128
+128
+49,152
+12,288
+96
+96
+96
+96
+96
+96
+96
+12,288
+50,257
+12,288
+12,288
+12,288
+How does a large language model work?
+The words are encoded as numbers. Each list of numbers is a mathematical representation which somehow encodes the meaning. 
+Prompt: 
+User: Where is the City University of Hong Kong?
+AI Assistant: Sure, 
+the 
+_____
+Large Language Model
+the
+here
+City
+many
+people
+a
+one
+…
+22%
+16%
+13%
+10%
+7%
+4%
+4%
+[0.2, …, 0.5]
+[0.7, …, 0.9]
+[0.1, …, 0.4]
+[-0.2, …, 0.3]
+[0.1, …, -0.5]
+[0.8, …, 0.2]
+[0.6, …, 0.7]
+How does a large language model work?
+The model repeatedly does this until it finishes the response
+Prompt: 
+User: Where is the City University of Hong Kong?
+AI Assistant: Sure, the City University of Hong Kong is in Hong Kong.
+Large Language Model
+<|
+endoftext
+|>
+Which
+may
+of
+in
+.
+‘
+…
+90%
+7%
+1%
+1%
+0%
+0%
+0%
+Start from a simple model:
+N-gram Language Models
+• What?
+     
+A system that 
+assigns a probability to a piece of text
+ (a sentence, a phrase).
+     
+It answers: "How likely is this sequence of words to appear in a given language?”
+• Example:
+     
+Machine Translation: 
+"The cat sat on the mat"
+ is more probable than 
+"Mat the on sat cat the"
+.
+     Speech Recognition: 
+"Recognize speech"
+ sounds like 
+"Wreck a nice beach"
+. An LM helps choose the correct one.
+   
+  
+N-gram Types & The Markov Assumption
+The N-gram
+Unigram (1-gram):
+ "the", "cat", "sat"
+Bigram (2-gram):
+ "the cat", "cat sat"
+Trigram (3-gram):
+ "the cat sat"
+The Markov Assumption
+We simplify the chain rule by assuming that the probability of a word depends 
+only on the previous (N-1) words
+.
+This is a 
+Markov Chain
+ of order (N-1).
+For a Bigram Model (N=2):
+"
+The probability of a word depends only on the previous word."
+ 
+The N-gram Model Formula
+The probability of a sentence 
+ 
+is approximated as:
+Bigram Example (N=2):
+(
+Note: We use special tokens 
+<start>
+ and 
+<end>
+)
+ 
+How the N-gram Language Model Works
+How to Calculate Probabilities?
+We count occurrences in a large text corpus (training data).
+The Maximum Likelihood Estimation (MLE) for a bigram is:
+Worked Example: Corpus
+<s> I am Sam </s>
+<s> Sam I am </s>
+<s> I do not like green eggs and ham </s>
+Building the Bigram Model:
+Count Bigrams:
+Count(
+<s>, I
+) = 2
+Count(
+I, am
+) = 2
+Count(
+I, do
+) = 1
+ 

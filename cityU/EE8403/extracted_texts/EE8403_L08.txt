@@ -1,0 +1,1428 @@
+Security, Reliability, and Privacy
+
+
+Machine Learning for AIoT and CPS
+
+EE8403 Lecture 8
+
+Professor Qun Song
+
+
+
+                                     1
+Security challenges in deployed AIoT
+
+ Make useful decisions and protect
+ private information
+
+
+ Sensors, learned models, and shared
+ messages are exposed
+
+
+
+ Manipulated inputs and information
+ leakage can harm the service
+                                       L07: sensing and deployment challenges
+                                       L08: adversaries and trust boundaries
+
+
+                                                                                2
+Autonomous-driving system pipeline
+                                                  High-definition map
+
+
+                                                                                     planned
+                                                       predicted                       ego
+                          agent states
+  Software
+
+
+
+
+                                                      trajectories                  trajectory
+
+             Perception                  Prediction                  Planning                      Control
+
+
+
+
+                                  Internal and external network interfaces (e.g., CAN)
+  Hardware
+
+
+
+
+               Actuator                                           Speed and                 Cameras,
+                                     GPS, IMU, etc.
+                                                                steering angle               LiDAR,
+                                                                    sensors                 Radar, etc.
+
+
+                                                                                                             3
+Research cases and their challenges
+
+Challenge               Research case           Question
+
+Manipulated
+                        Physical pipeline attack How can an input change a driving decision?
+observations
+
+Vulnerable model                                Can changing ensembles detect suspicious
+                        DeepMTD
+outputs                                         inputs?
+
+Cost of model renewal   Sardino                 How much defense fits the available time?
+
+Unreliable sensor       Uncertainty-aware
+                                                Which observation should the system trust?
+evidence                fusion
+
+Leaked private
+                        SVDefense / PriMask     What does a shared update or input reveal?
+information
+
+                                                                                               4
+Threat model: the roadside scenario
+
+                                                                                            Attacker
+                                                                                                                        In this scenario
+                                                                                            property
+
+                                                                                            Controlled                  Objects near a parked
+                                                                                            object                      vehicle
+
+
+                                                                                            Immediate                   Change the predicted
+                                                                                            objective                   motion
+
+
+                                                                                            System                      A potentially harmful
+                                                                                            consequence                 driving decision
+
+
+[1] Yang Lou et al., “A First Physical-World Trajectory Prediction Attack via LiDAR-induced Deceptions in Autonomous Driving,” USENIX Security, 2024.
+                                                                                                                                                        5
+Attack surfaces and trust boundaries
+    • Main focus: malfunction sensor and network interfaces
+
+                         Internal and external network interfaces (CAN, etc.)        DoS
+                                                                                     attack
+
+
+                       Actuator                        Speed and      Cameras,          Sensor
+                                    GPS, IMU, etc.   steering angle    LiDAR,        interference
+                                                         sensors      Radar, etc.
+
+
+
+
+  GPS Spoofing (Security’ 20)              Camera Blinding (Black Hat’15)           LiDAR Spoofing (CCS’ 19)
+
+                                                                                                               6
+Attacker knowledge, access, and budget
+
+Dimension   Assumption in this example
+
+            Victim architecture and
+Knowledge
+            parameters
+
+
+            Objects placed around the
+Access
+            parked vehicle
+
+
+            Physically feasible
+Budget
+            placements
+                                         Knowing a model does not imply control
+                                         over its software
+                                                                                  7
+Different causes of unreliable observations
+
+ Cause                Example                          What to establish
+
+                                                       Which sensing conditions
+ Adverse conditions   A degraded camera image
+                                                       changed?
+
+
+                      An object outside the training   Does the training distribution
+ Unfamiliar input
+                      experience                       cover it?
+
+
+ Deliberate           An attacker changes a
+                                                       What can the attacker control?
+ manipulation         roadside object
+
+
+
+                                                                                        8
+Adversarial input perturbations
+
+x+δ
+
+
+
+
+f(x + δ) ≠ y                      How much can the input change?
+
+                                                                   9
+Targeted and untargeted outcomes
+True label: Stop. Chosen attack target: Speed limit 30.
+
+
+
+
+Predicted label           Stop                  Turn right   Speed limit 30
+
+Untargeted success?       No                    Yes          Yes
+
+Targeted success?         No                    No           Yes
+
+                                                                              10
+What does the attacker observe?
+
+Setting     Available information          Possible attack route
+
+            Architecture and model         Use the known model to construct
+White box
+            parameters                     inputs
+
+
+                                           Use observed outputs or transfer
+Black box   Outputs from allowed queries
+                                           from a surrogate
+
+
+
+
+                                                                              11
+Adversarial examples in visual sensing
+         •   Vulnerable to adversarial example attack
+             –   Crafted inputs to mislead deep models, unnoticeable to human eyes
+             –   min
+                  𝑎𝑑𝑣
+                      𝑥 − 𝑥 𝑎𝑑𝑣 𝑠. 𝑡. NN 𝑥 𝑎𝑑𝑣 ≠ NN 𝑥
+                 𝑥
+         •   Attacks in real world
+             –   Road sign classifiers, object detectors, lane detectors
+
+
+
+
+        Adversarial            Adversarial traffic
+          example                     cone
+      “Speed limit sign       Invisible to camera                          Credit: Keen Security Lab *
+          45km/h”                 and LiDAR
+         [CVPR’18]                  [S&P’21]
+                                                                                                         12
+Attacks on object-related data
+ •     Attacks manipulate object detection and tracking by hiding, creating or moving road objects.
+
+
+ LiDAR: spoofing / jamming                         Camera: lasers / adv patches                       Radar: metal materials
+
+
+
+
+     e.g., spoofing fake lidar points using
+                                                      e.g., an adversarial patch to
+     a laser receiver and transmitter                                                              e.g., meta-material tags designed to
+                                                      mislead vision-based models
+                                                                                                   modulate millimeter-wave signals
+ [Black Hat’ 15, CHES’ 17, CCS’ 19, CVPR’ 20,         [Black Hat’ 15, CCS’ 21, SP’ 21, Security’
+ Security’ 20, CCS’ 21, SenSys’ 21, AsiaCCS’ 21,      21, Security’ 22, CCS’ 22, MM’ 22, NDSS’
+                                                                                                       [TIFS’ 21, SP’ 23, NDSS’ 23, NDSS’ 24]
+ SP’ 21, SenSys’ 22, Security’ 23, CVPR’ 23, SP’      22, Security’ 23, NDSS’ 24, MobiSys’ 24,
+ 23, NDSS’ 24, Security’ 24, NDSS’ 25, Security’      CVPR’ 24, Security’ 24， AAAI’ 24, SP’ 25]
+ 25]
+                                                                                                                                                13
+LiDAR observations and bounding boxes
+
+                                                      Direct depth perception
+                                                      & precise bounding box
+               Camera              LiDAR
+
+                                                      Enable perception under
+                         Vehicle                        low-light conditions
+
+
+
+                                    Full 360° FOV
+  Mechanical LiDAR
+                                    High resolution                  Industrial vehicles
+
+                                    Low cost $3K
+Semi solid-state LiDAR              Compact design                   Passenger vehicles
+
+
+                                                                                           14
+Hiding and creating objects
+                   Hiding attack     Attack       Creating attack
+                                   perturbation
+
+                 Victim vehicle
+
+
+    Reality
+
+
+     Detection
+      result
+
+
+
+                                                            Fake vehicle
+  Consequence
+
+
+
+                                                                           15
+Physical feasibility and sensor geometry
+
+Constraint   Question
+
+             Does the sensor observe the
+Visibility
+             object?
+
+
+             Is the effect present at the
+Range
+             tested distance?
+
+
+             Does the effect survive a
+Viewpoint
+             change of view?
+                                            An input change must survive the physical
+                                            sensing process
+                                                                                        16
+A pipeline attack scenario
+
+                                                                             : Victim AV
+• Scenarios                                                                  : Adversarial vehicle (roadside parked car)
+
+    • An adversarial vehicle is parked on the roadside
+    • a victim AV is approaching it on the adjacent lane.
+                                                                 Clean
+                                                                 scenario
+                                                                                                               Victim AV
+                                                                                      Parked vehicle
+• Goal: identify the adversarial locations for placing
+  objects that can
+    1.   manipulate victim AV’s perception,                      Attack                           Brake?
+                                                                 scenario
+    2.   that induce the prediction forecast an erroneous           Adv                                       Victim AV
+
+         moving trajectory for the static adversarial vehicle,     objects             Adv vehicle (parked)
+
+
+                                                                                   Our attack scenario
+    3.   and causes planning to decide a dangerous driving
+         decision.
+
+
+                                                                                                                           17
+Two stages of the pipeline attack
+
+         • Propose an efficient two-stage inverse attack framework
+             • adversarial location set → effective, feasible and velocity-insensitivity
+
+
+     •      Main idea:
+               Adversarial                                   Adversarial
+                locations                                      states
+                               Perception                                                  Prediction
+
+
+
+2. Location matching: conduct object-based attacks                1. Prediction-side attack: conduct adversarial attack on
+on perception module to generate adversarial                      prediction model to generate adversarial states
+locations that can result the desired adversarial states
+
+                                                                            Guide
+
+
+                                                                                                                             18
+Pipeline attack: impact
+
+• Attack Effectiveness
+    • Achieve a collision rate of up to 63% in
+      large-scale autonomous driving dataset
+
+
+• Attack Impact
+
+
+
+
+             The impacts of our attacks.         Real-world demo video
+
+
+                                                                         19
+Possible intervention points
+
+
+
+
+ Sensor measurement    Module interface   Driving decision
+
+
+                                                             20
+Model defense after a manipulated input
+
+ Keep a useful prediction and identify
+ suspicious inputs
+
+
+ A single fixed model exposes a stable
+ target
+
+
+
+ Reduce attack success within an
+ affordable runtime
+
+
+
+                                          21
+Moving target defense
+
+
+
+
+    • Static defenses grant the
+      advantage of time to
+      attackers
+
+    • MTD revokes the advantage
+
+
+                                  22
+DeepMTD: changing the model ensemble
+
+
+
+
+                        Factory model                                                                   speed limit
+                                        “speed                                                                              Consistency based
+                                                                                                        stop                 attack detection
+                                         limit”
+                                                                                                         stop
+
+                                                                                                         drive slowly        Majority based
+                                                                                                                            Attack thwarting
+                                                                                                         stop
+                      Manufacture                       In situ training                                   Run time
+
+[2] Qun Song et al., “Moving Target Defense for Embedded Deep Visual Sensing against Adversarial Examples,” SenSys, 2019.
+                                                                                                                                                23
+Prediction and detection are different decisions
+
+
+
+       • Autonomous
+                                                                Yes   Accepted input
+         Base model
+                                                % of majority
+                      Perturb                   outputs ≥ Ts?
+                      & retrain                                 No    Flagged input
+
+                                                        Attack detection
+
+
+
+
+                                       …
+                                               Majority vote      Final classification
+                                                        Attack thwarting
+
+                  input
+                                  new models
+
+                                                                                         24
+What the defense metrics count
+
+
+
+                            Correct                                          Correct
+                            output                                           output
+
+                 False                                            True
+                positive                                         positive
+                                                                                         Successful
+                                        Accuracy
+                            Wrong                                            Wrong        defense
+                            output                                           output
+       Clean                                       Adversarial
+      example                                       example
+                            Correct                                          Correct
+                            output                                           output
+
+                  True                                            False
+                negative                                         negative
+
+                            Wrong                                            Wrong
+                            output                                           output
+
+
+      Ground     Attack      Attack                Ground         Attack      Attack
+       truth    detection   thwarting               truth        detection   thwarting
+
+
+                                                                                                      25
+DeepMTD: base model and evaluation inputs
+
+
+     •   Training and validation accuracy of 99.93% and 96.64% on GTSRB
+
+
+
+
+     •   Effective white-box adversarial attack: C&W attack [S&P ’17]
+                                        Original
+                                        example
+
+
+
+            Adversarial
+            examples
+
+
+            Targeted
+            classes
+
+
+
+
+                                                                          26
+Transferability motivates an ensemble
+   •     Mislead new models with a probability from 7% to 17%
+   •     A single new model may not thwart adversarial attacks
+
+
+
+
+                  OUTPUT CLASS LABEL                                     0.6
+                            1    5     9                                 0.5
+
+
+
+
+                                                           Probability
+                                                                         0.4
+                          10%                                            0.3
+                         5%                                              0.2
+                                                                         0.1
+                                                                         0.0
+                                  85%                                          1     3     5     7     9
+                                                                               The number of distinct outputs
+       New models’ outputs
+       (true class = 1; attack target = 0)
+
+
+                                                                                                                27
+Successful defense rate (%)
+                              100
+                                                                             high perturb
+                              95
+                                                                             Medium perturb
+                              90
+
+                              85                                             low perturb
+
+                              80
+
+                              75
+                                    7 8 9 10 11 12 13 14 15 16 17 18 19 20
+                                           Number of new models
+                 •             Trade-off btw compute overhead & security
+                                                                                              28
+               97.4
+               97.2                                           From scratch
+Accuracy (%)
+
+                97
+                                                              Perturb and retrain
+               96.8
+               96.6                                           Base model
+               96.4
+               96.2
+                      3 4 5 6 7 8 9 10 11 12 13 14 15
+                           Number of new models
+
+           •      Trade-off btw accuracy & compute overhead
+           •      Improved accuracy on clean examples
+
+
+                                                                                    29
+Renewing models also consumes resources
+
+
+
+     •   Retraining new models incurs computation overhead
+     •   Add perturbations to base model and retrain
+
+
+                              The number of epochs for new model
+                                          retraining
+                        scratch
+                           high
+         Perturbation
+
+
+
+
+                        medium
+         intensity
+
+
+
+
+                            low
+
+                                  0       10     20       30      40   50
+                                      MNIST    CIFAR-10        GTSRB
+
+                                                                            30
+Generate parameters for online model renewal
+                                                                                                                     Candidate class
+                                                                                                                     Majority vote
+
+
+
+
+                                                                                          …
+                                                                    Generate                                        Flagged input
+                                                                                                                    Human review
+                                  HyperNet
+                                  generator
+                                                                                      N-model
+                                                                                       dynamic
+                              Fast parameter                                          ensemble
+                              generation
+
+
+[3] Qun Song et al., “Sardino: Ultra-Fast Dynamic Ensemble for Secure Visual Sensing at Mobile Edge,” EWSN, 2022.
+                                                                                                                                       31
+Sardino: training, generation and inference
+
+θ = Hφ(z)                     Stage           Operation                When
+
+                              Train           Learn generator
+                                                                       Offline
+                              generator       parameters φ
+
+
+                                              Sample z and
+                              Generate
+                                              produce model            Online
+                              models
+                                              parameters θ
+
+
+                                              Apply fθ to the sensor
+                              Run inference                            Online
+                                              input
+
+
+
+                                                                                 32
+What work changes with parameter generation?
+
+
+
+
+              Table 1. Comparisons between retraining and HyperNet.
+
+                                  Retraining              HyperNet
+        Computation overhead       Training               Inferencing
+         Renewal operation       Optimization        Parameter generation
+            Local dataset          Required              Not required
+            MTD security             Low                     High
+
+
+
+
+                                                                            33
+Sardino under a real-time constraint
+
+                                 Adversarial examples
+           Camera input
+
+                                                                         Candidate class
+                                 Adversarial patches                     Majority vote
+
+
+
+
+                                 Out-of-distribution data
+
+
+
+
+                                                               …
+Real-time                        N                                      Flagged input
+requirement          Sardino             HyperNet Generate              Human review
+(e.g., 33 ms)        planner             generator
+
+                                                             N-model
+                                                              dynamic
+                   Performance                               ensemble
+                   indicators
+
+                                                                                           34
+Predict cost, then choose an ensemble size
+
+          …
+
+  Ensemble size
+
+
+                                             Ensemble
+   GPU util                                   latency
+
+
+
+
+  GPU power
+
+
+                                                        35
+Sardino across different attack settings
+
+
+
+
+                      Fig. 1. Defense performance of Sardino.
+
+
+
+
+                                                                36
+OOD-like false detections
+
+
+
+
+        Fig. 1. Some OOD samples in detecting traffic sign. (a) pattern on a car; (b)
+        mailbox; (c) plant & mailbox; (d) shop signboard; (e) street light; (f) banner.
+
+
+
+
+                                                                                          37
+Uncertainty from observations and training coverage
+
+
+
+
+Example            Likely source of uncertainty         Useful diagnostic
+Degraded           Task information is difficult to     Would a better sensor measurement
+observation        observe                              help?
+                   Training experience does not cover
+Unfamiliar input                                        Would relevant training data help?
+                   this input
+                                                                                             38
+Multimodal fusion in adverse conditions
+
+
+
+
+[4] Yang Lou et al., “Uncertainty-Encoded Multi-Modal Fusion for Robust Object Detection in Autonomous Driving,” ECAI, 2023.
+                                                                                                                               39
+Trace a proposal through uncertainty-aware fusion
+
+
+
+
+                                                    40
+Privacy in a shared training update
+
+ Learn collaboratively while protecting
+ training samples
+
+
+ Raw data stay local, but model updates
+ are shared
+
+
+
+ An observer may reconstruct private
+ inputs from an update
+
+
+
+                                          41
+      Federated Learning Market is Growing
+
+
+
+
+                                                                                               42
+Source: https://www.grandviewresearch.com/industry-analysis/federated-learning-market-report
+Gradient Inversion Attacks (GIAs)
+
+
+
+
+  Optimization Objective
+  Reconstruct private input data (x) from shared gradients (∇L) by solving an optimization problem:
+  Minimize: D(∇L(x), ∇L(x`)) + λ · R(x`)
+
+                                                                                                      43
+Existing Defenses against GIAs
+
+   • Encryption-based [CCS’17, USENIX’20, PMLR’22]
+       – Employ cryptographic techniques to protect client updates.
+       – Introduce significant overhead.
+
+   • Perturbation-based
+       –   Input perturbation modifies the local training data [PMLR’20, CVPR’21, AAAI’24].
+       –   Gradient perturbation modifies the local gradients [ICDCS’21, INFOCOM’23, NDSS’25].
+       –   Training perturbation perturbs local training processes [WACV’22, AAAI’23, ICCV’23].
+       –   Struggle to balance good defense performance and model utility.
+
+   • Pruning-based [NeurIPS ’19, CVPR’21,AAAI’24]
+       – Selectively remove gradient components.
+
+   • Compression-based [ESORICS’23, CVPR’23]
+       – Mitigate information leakage by compressing gradients.
+
+                                                                                                  44
+Existing Defenses are Vulnerable to Adaptive Attack
+
+
+
+ • Many defenses can be bypassed by adaptive
+   adversaries who have obtained the defense
+   details.
+
+
+
+
+                                                      45
+Existing Defenses are Vulnerable to Adaptive Attack
+
+
+
+ • Take the pruning-based defense as an
+   example.
+
+
+
+
+                                                      46
+Existing Defenses are Vulnerable to Adaptive Attack
+
+
+
+ • Take the pruning-based defense as an
+   example.
+
+ • Adaptive attacker could apply the same
+   defense operations when attacking and get
+   better reconstruction performance.
+
+
+
+
+                                                      47
+Motivation Study
+
+
+ - Pruning-based Defenses:
+   -   Detect zero values in gradients; apply the same pruning to dummy gradients.
+   -   Prune [NeurIPS’19], Soteria [CVPR’21], and DGP [AAAI’24]
+
+
+ - Random Variable-based Defenses:
+   -   Initialize a dummy random vector, optimize it with dummy inputs during attack
+       construction.
+   -   PRECODE [WACV’22]
+
+
+ - CENSOR [NDSS’25]:
+   -   Perturb gradients for few initial epochs
+   -   Attack in undefended epochs.
+                                                                                       48
+Motivation: Results
+
+
+        Defense Performance of Different Methods Under Non-adaptive and Adaptive GIAs
+
+
+        Defense                        Non-adaptive                                     Adaptive
+        Methods                  PSNR                  LPIPS                  PSNR                 LPIPS
+          CENSOR                  8.1940                 0.6958               16.4071              0.2881
+
+         PRECODE                  3.5659                 0.7668               57.4165              0.0001
+
+            Prune                12.9257                 0.4993               36.1273              0.0221
+
+           Soteria               10.8145                 0.6481               38.7447              0.0161
+
+            DGP                   9.7334                 0.6187               35.6383              0.0254
+
+
+
+     *: Higher PSNR and Lower LPIPS Values Mean Stronger Attack Performance
+
+
+                                                                                                            49
+Key Insights
+
+         Pruning-Based                          Random Variable
+                                                                                           Episodic Defenses
+         Defenses                               Defenses
+
+
+  Partial Protection                                                                Short-Term Protection
+                                          Reversible                                Methods like CENSOR leave later
+  Adaptive attackers exploit unaffected
+                                          Random variables used in protection can   epochs exposed, while continuous
+  gradient components to reconstruct
+                                          be obtained via variable recovery         defense application degrades model
+  inputs effectively.
+                                                                                    utility, making it difficult to strike a
+                                                                                    balance.
+
+
+
+
+          Motivation: Introducing Truncated SVD
+
+
+
+
+                                                                                                                               50
+Singular Value Decomposition (SVD)
+
+
+   • Task: Approximate a matrix W with a lower-rank matrix W′ to minimize the
+     difference, with rank(W′) ≤ k.
+
+
+   • Decomposition: UΣ𝑉 𝑇 = SVD(W)
+      •   U: Left singular vectors.
+      •   Σ: Singular values.
+      •   𝑉 𝑇 : Right singular vectors transpose.
+
+
+   • Truncated SVD: Keep top k singular values and vectors → W′ = U′ Σ′ 𝑉′𝑇 .
+     Choose k by energy threshold T.
+
+
+
+
+                                                                                51
+Overview of SVDefense
+
+
+
+
+                        52
+Impact of Non-IID Data on GIAs
+   • Clients with higher degrees of class imbalance are more vulnerable to attacks.
+   • Inadvisable to treat clients with varying degrees of class imbalance uniformly.
+
+
+
+
+                                   Figure 1: Impact of class imbalance on attack
+                                   effectiveness.
+                                                                                       53
+   *: Lower MSE and higher PSNR indicate stronger attack performance.
+Key Challenges
+
+
+
+
+    C1: Adaptive   C2: Privacy-Utility   C3: Robust
+    Thresholding   Trade-off             Aggregation
+
+
+
+
+                                                       54
+System Design: Overview
+
+
+
+
+                          55
+System Design: Overview
+
+
+
+                 1. Local Training
+                 Clients train local models using their private data.
+
+
+
+
+                                                                        56
+System Design: Overview
+
+
+
+                2. Compute Channel-Wise Weights
+                Each client computes channel-wise weights based on
+                gradient magnitudes.
+
+
+
+
+                                                                     57
+System Design: Overview
+
+
+
+                3. SVD & Adaptive Threshold
+                Clients perform SVD on weighted gradients and calculate
+                entropy-based adaptive energy threshold.
+
+
+
+
+                                                                          58
+System Design: Overview
+
+
+
+                4. Gradient Truncation
+                Gradients are truncated according to the client-
+                specific threshold.
+
+
+
+
+                                                                   59
+System Design: Overview
+
+
+
+                5. Client-to-Server Transmission
+                Clients send truncated gradients, weights, and
+                entropy values to the server.
+
+
+
+
+                                                                 60
+System Design: Overview
+
+
+
+                6. Server Aggregation
+                Server reconstructs gradients, computes aggregation
+                weights, and updates the global model.
+
+
+
+
+                                                                      61
+Self-Adaptive Energy Threshold
+
+
+   For challenge C1: Adaptive Thresholding
+   •Entropy of squared singular value          •Adapt energy threshold based on entropy
+   increases with the class balance ratio      values
+
+
+
+
+                                                       where m is the m − th client, l is
+                                                       the l − th layer. β is the sensitivity
+       Fig. 1 Entropy of singular value                parameter.
+       distribution vs. class balance ratio.                                                    62
+Channel-Wise Weighted Approximation
+
+   For challenge C2: Privacy-Utility Trade-off
+
+
+
+
+Larger gradients            Critical information.
+
+
+
+
+                                 Redundant
+Smaller gradients
+                                information.
+
+
+                                                    Fig. 1 Comparison of different gradient perturbation-
+                                                    based defense strategies
+                                                    under GIAs.                                         63
+Channel-Wise Weighted Approximation
+
+
+       - Preserve larger gradients
+       - Apply stronger perturbations to smaller gradients.
+
+
+
+
+                                                              64
+Layer-Wise Weighted Aggregation
+
+
+  For challenge C3: Robust Aggregation
+
+  • Assign higher aggregation weights to clients with more balanced data distribution.
+
+
+
+
+                                                                                         65
+Evaluation Applications and Datasets
+
+
+
+                   Application                     Dataset             Model
+         Image Classification (IC-EMNIST)          EMNIST            ResNet-18
+
+        Image Classification (IC-CIFAR10)          CIFAR-10          ResNet-18
+
+        Human Activity Recognition (HAR)          IMU Dataset        1D ConvNet
+
+             Keyword Spotting (KWS)         Google Speech Commands   ResNet-18
+
+
+
+
+                                                                                  66
+Evaluation Setup
+
+
+                   • FL testbed
+                      • Server
+                         • AMD EPYC 7543@ 3.7GHz,
+                           256G RAM, and 4 RTX
+                           A5000 GPUs.
+
+                      • Client devices
+                         • Two NVIDIA Jetson TX2
+                         • Two NVIDIA Jetson Nano
+                         • Six Raspberry Pi 4
+
+
+
+
+                                                    67
+Defense Performance
+
+
+Table: Comparison of Defense Effectiveness Across Different Defense Methods under adaptive IG Attack.
+
+
+
+
+                                                                                                        68
+Defense Performance
+
+
+
+             Table: Comparison of Defense Effectiveness Across Different
+                 Defense Methods Under Strong Adaptive LTI Attack.
+
+
+
+
+                                                                           69
+Accuracy Performance
+
+
+
+
+        Figure: Comparison of classification accuracy across different defense methods.
+
+
+
+
+                                                                                          70
+Ablation Study
+
+
+
+
+  Figure 1: Impact of varying β on accuracy and defense   Figure 2: Classification accuracy vs.
+  performance for SVDefense.                              communication cost reduction.
+
+
+
+                                                                                                  71
+    Latency Performance
+
+
+
+
+Figure: Comparison of normalized on-device latency across different defense methods on three embedded platforms.
+
+
+
+
+                                                                                                                   72
+SVDefense Summary
+
+ 1. Adaptive Attack
+ We demonstrate the vulnerability of existing defenses to practical adaptive
+ attacks.
+
+ 2. SVDefense
+ We propose a novel truncated SVD-based defense against adaptive GIAs in
+ FL.
+
+ 3. Self-Adaptive Protection
+ We dynamically adjust protection based on class imbalance.
+
+
+
+
+                                                                               73
+Training and inference expose different messages
+
+
+Stage                Visible message                    Private target             Research case
+
+
+Collaborative        An individual client               The client’s training
+                                                                                   SVDefense
+training             update and the model               examples
+
+
+
+
+Cloud                A transformed input and            Sensitive information in
+                                                                                   PriMask
+inference            allowed side information           the original input
+
+
+The observer and trust assumptions determine which protection is relevant.
+                                                                                                   74
+Cloud Inference
+                                                          Stress detection
+• Edge mobiles can not execute                    Alice                  Heartbeat and three-axis
+                                                                         acceleration data
+  complex AI models
+
+            Model name Model          Test time
+                       size           (per
+                                                  Bob                            InferNet
+                                      sample)
+Huawei      MobileNet     20MB        144ms
+P20 Pro
+                                                                                 well-trained stress model
+OnePlus 6   VGG-19        110MB       1999ms
+                                                  Eve
+Nokia 7     SRGAN         310MB       4610ms                               Stress status
+plus        (ResNet-16)
+
+
+• Intellectual property                                   Provide the application
+   • Google costs 1.3 million $
+Raw inference data samples contains privacy！
+                                                                                                        75
+Privacy-Preserving Cloud Inference
+
+• Homomorphic encryption on the inference [ICML’16]
+   • Enterprise setting: Too compute-intensive for edge objects
+
+• Neural masking [Ubicomp’19,EWSN’21,IOTDI’21]
+   • Neural network as the obfuscator
+   • Against external eavesdroppers
+                                                                  Private-sensitive information
+
+           MaskNet                                 AttackNet
+
+                               listening
+
+
+
+
+                     send masked data samples
+                                                                                             76
+Privacy Threats
+
+
+ • Honest-but-curious cloud
+    • Honestly executes the InferNet
+    • Curious about the private information
+
+
+ • Potential Collusion                                      InvNet
+    • between mobiles and ISP                 masked data
+                                                                         “0”
+                                                “0”         InferNet
+
+ • Privacy Attacks                                                     “even”
+
+    • Inversion attack                                      ExtNet
+
+    • Private attribute extraction
+
+
+                                                                                77
+Design Objectives
+
+• Cascadability
+    • Huge training cost of the model
+    • Hardly running on the edge
+    • IP issue
+    • Need no change to the inference model
+
+
+
+• Resilience against the potential collusion
+    • Heterogeneity
+• Executability
+    • Lightweight for mobile devices
+• Scalability
+
+
+
+                                               78
+Approach Overview
+
+
+
+
+• Inference Service Provider (ISP) provides inference service by executing
+  InferNet
+• Privacy Service Provider (PSP) sends MaskNet for each mobile device
+   • Trusted by mobiles and ISP
+• IoT mobiles masks inference data by received MaskNet
+                                                                             79
+Basic HyperNet approach
+
+
+   • Hypernet: A Net generates Nets
+        • Input: a random seed
+        • Output: parameter of MaskNet
+
+
+
+
+Adversarial learning can enhance the privacy protection
+                                                          80
+Hypernet + Adversarial learning
+
+
+      • Adversarial learning
+                 • Adversarial net to supervise target net
+
+                                                        inference loss (+)
+
+                                     Hypernet
+                                                                             Inference model   “1”
+                                                     generates
+
+
+                                     MaskNet
+
+
+                                                                              Virtual ExtNet
+
+
+                                 adversarial reconstruction loss (-λ)                                81
+inference loss
+Evaluation
+
+
+   • Human activity recognition (HAR)
+       • Inertial measurement units (IMU) data
+       • Private information: identity, gender, and age
+Impact of PriMask on InferNet accuracy            Resilience against a single colluding mobile
+
+                                              •    Mean Square Error
+                    Test            Mean             • Raw&&Reconstruction
+                    accuracy                  •    Attack success rate
+                                                     • Private attribute infer
+                    (0.80, 0.90)    0.88      •    Example：
+                         100,000 Mobiles
+
+
+
+
+                                                                                                 82
+Evaluation
+
+
+Impact of the ExtNet architecture   Resilience against multiple colluding mobiles
+   •   Four ExtNet architectures    • The number of colluding mobiles
+                                         •   1,2,4,10……
+
+
+
+
+   •   Results:
+        • Error-bars
+
+
+
+
+                                                                                    83
+Implementations
+
+
+ • ISP && PSP: workstations
+
+
+ • IoT mobiles:
+    • Jetson Nano1
+    • Google Pixels 42
+
+
+                              1
+
+ • Lightweight computation    2
+
+
+
+
+                                  84
+Summary
+
+
+ • Cascadable and collusion-resilient privacy-preserving inference
+    • ISP: provide inference service
+    • PSP: generates MaskNets
+    • IoT mobiles: masks inference data samples
+
+
+ • Defend against
+    • Inversion attack, Private attribute attack
+
+ • Suitable for IoT Edge Devices
+    • Scalable to 100,000 nodes
+    • Computable overhead
+
+                                                                     85
+Evidence for a deployed AIoT service
+
+Question                      Evidence                               Relevant case
+
+                              Attack outcomes and correlated         Physical attacks /
+Is the prediction reliable?
+                              model errors                           DeepMTD
+
+Which sensing evidence is     Quality weighting and fusion under     Uncertainty-aware
+reliable?                     adverse conditions                     fusion
+
+
+Does it arrive in time?       Latency under changing workloads       Sardino
+
+
+What information is           Adaptive reconstruction and retained
+                                                                     SVDefense / PriMask
+exposed?                      task utility
+
+                                                                                           86
+

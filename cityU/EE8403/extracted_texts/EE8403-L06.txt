@@ -1,0 +1,943 @@
+ EE 8403 Machine Learning for
+ Signal Processing Applications
+
+    Lecture 6: Machine Learning for Wireless
+Communications, RF Sensing, and Terahertz Systems
+
+               Professor Geng-Bo Wu
+          YEUNG G6418, bogwu2@cityu.edu.hk, 3442-7802
+
+         https://www.cityu.edu.hk/stfprofile/bogwu2.htm
+                                   Review
+Antenna: the interface between radio waves propagating through free space and
+transmission line
+
+
+
+
+                                              Dipole antenna       Patch antenna
+
+
+
+
+Antenna
+
+
+                                               Horn antenna         Antenna array
+Radiate or receive electromagnetic
+(EM) waves
+
+
+
+                                                                                    2
+                                               Lens antenna          Reflector antenna
+                                  Review
+ Important Antenna Parameters
+• Reflection coefficient measures how much radio frequency (RF) power
+  is reflected back to the transmitter instead of being accepted by the antenna
+• Impedance mismatch between the transmission line (50Ω) and the antenna
+
+
+
+
+  Antenna gain describes how well the antenna converts input power into
+  radio waves headed in a specified direction
+
+            𝑈     𝑈     4𝜋𝑈
+   Gain =      = 𝑃𝑎𝑐𝑐 =        (in dB) where, U = Radiation Intensity
+            𝑈0          𝑃𝑟𝑎𝑑
+                  4𝜋
+                                        𝑃𝑟𝑎𝑑 = Antenna accpted power
+                                   Review
+Radiation Pattern: a graph of the spatial variation of the power density
+along a constant radius (in dB scale)
+3-D Pattern:                              2-D Pattern:
+
+
+
+
+               Microstrip patch antenna          Antenna Array
+                               Review
+
+                                  Advantages:
+                                   • Low Profile & Compact Size
+                                   • Low Manufacturing Cost
+                                   • Easy Integration
+                                   • Conformal Flexibility
+                                   • Multi-Frequency Support
+Microstrip patch antenna
+
+
+
+
+                   Satellite            Base station
+                   Review
+
+Comparison Table
+Feeding      Fabrication   Spurious                  Impedance
+                                       Bandwidth
+Method       Ease          Radiation                 Matching
+
+Microstrip                             Narrow (~2–
+             Very Easy     High                      Very Easy
+Line                                   5%)
+
+Coaxial      Moderate                  Narrow (~2–
+                           Low                       Very Easy
+Probe        (Drilling)                5%)
+
+Aperture                               Moderate
+             Complex       Low                       Easy
+Coupled                                (~10–15%)
+
+Proximity                              High (~13–
+             Complex       Very Low                  Easy
+Coupled                                20%)
+                                   Review
+Various analysis methods for microstrip antennas, including transmission line, cavity,
+and full wave simulations
+
+                                              Computation
+Method           Type         Accuracy                         Best Use Case
+                                              al Effort
+
+Transmission                  Low to          Very Low         Initial rectangular patch
+                 Analytical
+Line                          Moderate        (instant)        design and sizing
+
+
+                              Moderate to                      Understanding field modes
+Cavity Model     Analytical                   Low
+                              High                             and radiation physics
+
+
+                                              High (requires   Final design optimization,
+Full-Wave
+                 Numerical    Very High       simulation       complex shapes, multi-
+(MoM/FEM)
+                                              software)        layer feeds
+       Antenna Forward Design (Traditional)
+
+            L                •    Transmission line
+                             •    Cavity Model
+                             •    Full-Wave
+
+                         W                                    S11
+
+
+
+
+       Geometry                                               EM Response
+
+
+Workflow:
+
+                Geometry         Analytical/          Performance   Manual
+Concept                                                             /Optimization
+                Definition       Simulation           Analysis
+        Antenna Inverse Design (Automated)
+   Challenge: Multiple different geometries can yield the same EM response
+   (one-to-many problem)
+
+
+
+
+        S11                                                   or
+
+
+
+
+        EM Response                                      Geometry
+
+Workflow:
+
+                              Topology/        Automated
+Specific      Object                                               Performance
+                              Optimizati       Geometry
+ations        Function                                             Verification
+                              on               Generation
+Similarity Between Microstrip Antenna
+         and Computer Vision?
+                                     Antenna Inverse Design
+  • Discretize the patch pattern into a M × N binary matrix
+  • Each pixel 𝑥𝑖,𝑗 ∈ {0,1} indicates the presence (“1”) or absence (“0”) of a
+    metallic patch element
+  • The search space expands to 2100 ≈ 1030 (for M=N=10) possibilities,
+    computationally prohibited for exhaustive search
+
+                                                                       Pixel Antenna
+
+
+
+
+Chen, S., Sun, G. H., & Wang, K. (2025). Inverse design of microstrip antennas based on deep learning. Electronics, 14(13), 2510.
+                      Antenna Inverse Design
+Target specification: Design a dual-band microstrip antenna at 2.8GHz and 3.7GHz
+
+Physical layout:
+Substrate: Dielectric constant 𝜀𝑟 = 2.2, thickness h = 2.5mm (chosen for
+wide bandwidth potential)
+Patch Grid: 10 × 10 pixels (6.5mm × 6.5mm each) with a 0.5 mm overlap to
+maintain continuous electrical currents
+Feed Line: The end of the feed line (red line below) is extended to the center of
+the radiating patch to assure impedance matching
+
+                         Overlap to maintain
+                         connection
+
+
+
+
+                   Top view                    Side view
+                   Antenna Inverse Design
+• Convolutional Neural Network (CNN) is a deep learning architecture specifically
+  designed to process grid-like data, such as images
+• Instead of evaluating every pixel independently, CNNs analyze small, spatial
+  patterns—like edges, textures, and shapes—making them as the industry standard
+  for computer vision tasks
+
+
+
+
+                             Typical CNN architecture
+                  Antenna Inverse Design
+ Architecture:
+• Input: 10×10 binary matrix
+• 10 Convolutional Layers (5×5 down to 2×2 kernels, 32 to 128 channels with
+  BatchNorm & ReLU)
+• 4 Fully-Connected Layers (500 → 200 → 50 → 50)
+• Output: Predicted S11 vector (50 points)
+
+
+
+
+   Input layer               Neural Network                   Output layer
+   (Geometry)                  (Deep CNN)                    (EM response)
+                  Antenna Inverse Design
+Replace the slow EM solver with an ultrafast, pre-trained deep CNN surrogate model
+
+
+
+
+                               Surrogate model
+                  Antenna Inverse Design
+Dataset Generation (CST Automation via MATLAB)
+•Total Samples: 150,000 generated across 2.0 to 4.0 GHz (50 frequency points)
+•Resonant Samples: 19,000 samples (12.6%) identified with S11 < -10dB
+(resonant)
+•Split into 80% training, 10% validation, and 10% testing sets
+
+                    Distribution of the antenna resonant frequency
+                    Antenna Inverse Design
+Surrogate Model Training and Validation
+• Loss Function: Mean Squared Error (MSE) between CST simulations (Ground truth)
+  and CNN predictions
+
+
+
+• Hyper-parameter Study1: Learning Rate
+                                           • Small learning rate reduces the
+                                             convergence speed and increase
+                                             training time;
+                                           • Large learning rate cause the
+                                             parameters oscillate the around the
+                                             optimal solution
+
+                                            Piecewise decay (0.01 → 0.001 → 0.0005)
+                                            balances rapid initial loss reduction with
+                                            fine parameter tuning
+
+          Impact of learning rate
+               Antenna Inverse Design
+Hyper-parameter Study2: Batch Size
+                                     • Too small batch size (128 or
+                                       256), the network receives
+                                       insufficient samples per
+                                       iteration, leading to
+                                       unrepresentative statistical
+                                       features and increased noise
+                                     • Too large batch size (1024) may
+                                       trap the model in local optima
+                                       and increase convergence time
+
+
+                                       Set to 512 to achieve noise balance
+                                       stability and prevent trapping in
+                                       local minima
+          Impact of batch size
+                  Antenna Inverse Design
+• Regression Metrics: R2 (coefficient of determination)= 0.94, RMSE (root
+  mean square error) = 0.35dB, MAE (mean absolute error)= 0.28dB
+• Convergence reached after 50,000 epochs (Training Loss: 0.62 | Validation
+  Loss: 0.71) using Adam optimizer
+
+
+
+
+           Non-resonant structure       Resonant structure
+
+
+
+
+           Non-resonant structure       Resonant structure
+                   Antenna Inverse Design
+Inverse Design Framework
+Step 1. Optimization algorithm generates a candidate pixel layout
+Step 2. Pre-trained CNN predicts S11 in ms
+Step 3. Fitness function F(D) evaluates match to targets (primary resonance,
+bandwidth, and non-resonance penalties)
+Step 4. Algorithm updates matrix states until convergence
+
+       Step 1             Step 2
+
+
+
+
+                      Step 4
+                                                  Step 3
+                  Antenna Inverse Design
+• Tested Binary Particle Swarm Optimization (BPSO), Genetic Algorithm
+  (GA), and Simulated Annealing (SA) for a dual-band antenna at 2.8 GHz
+  and 3.7 GHz
+• BPSO converged significantly faster with higher fitness and lower S11 errors
+
+
+
+
+            Fitness function:
+                    Antenna Inverse Design
+Computational Speed:
+• 500 optimization iterations via conventional MATLAB-CST co-simulation: 12.5 hours
+• 500 optimization iterations via CNN Surrogate Model: 30 minutes (25 times speed boost)
+
+
+
+
+          Comparison of the S11 curves under different optimized algorithms
+                                     Antenna Inverse Design
+    Antenna Synthesis Results:
+   • Good S11 agreement between BPSO-CNN predictions and CST full-wave
+   validation
+   • Simulated Gain: 7.07 dBi @ 2.8 GHz | 6.85 dBi @ 3.7 GHz
+   • Radiation Efficiency: 95.3% @ 2.8 GHz | 98.8% @ 3.7 GHz
+
+
+
+
+             Antenna structure                                                              EM performance
+Chen, S., Sun, G. H., & Wang, K. (2025). Inverse design of microstrip antennas based on deep learning. Electronics, 14(13), 2510.
+                 Antenna Inverse Design
+Antenna Radiation Patterns:
+
+
+
+
+                                                  • Boresight radiation null
+                                                    appears at 3.7 GHz due
+                                                    to higher-order cavity
+   2.8GHz (H-plane)            2.8GHz (E-plane)     modes
+                                                  • Solution: add radiation
+                                                    pattern constraints
+                                                    directly into the CNN
+                                                    output and fitness
+                                                    function
+
+
+
+  3.7GHz (H-plane)            3.7GHz (E-plane)
+                 Antenna Design Methods
+Comparison Table
+Method                 Forward Design               Inverse Design
+                       Antenna physical structure   Performance targets &
+Starting Point
+                       & geometry                   boundary constraints
+                       Human intuition &            Optimization algorithms &
+Primary Driver
+                       analytical equations         AI models
+                       Regular canonical shapes     Irregular, organic, or
+Geometry Type
+                       (rectangles, circles)        pixelated structures
+                       Low (bounded by few
+Design Freedom                                      Extremely High
+                       parameter adjustments)
+                                                    High (requires
+                       Low to Moderate (fewer
+Computational Effort                                hundreds/thousands of
+                       simulation runs)
+                                                    iterations)
+                                  Antenna Inverse Design
+ • Besides using optimization algorithm, one can use a Tandem Neural
+   Network (TNN) to realize inverse design of Pixelated Microstrip Antennas
+ • TNN: connects two cascaded neural networks, a forward network and an
+   inverse design network, to solve complex, non-unique inverse design
+   problems
+
+Target S parameter
+
+
+
+
+  Gupta, A., Karahan, E. A., Bhat, C., Sengupta, K., & Khankhoje, U. K. (2023). Tandem neural network based design of multiband antennas. IEEE
+  Transactions on Antennas and Propagation, 71(8), 6308-6317.
+                   Antenna Inverse Design
+Target specification: Design a dual-band microstrip antenna at 14GHz and 18.4GHz
+
+Forward Surrogate CNN Model:
+Input: 12 × 12 pixelated antenna layout
+Output: S11 spectrum (81 frequency points, 10–20 GHz)
+Acts as an ultrafast surrogate for EM solvers (56 total layers, trained with MSE
+loss on 500k samples)
+                 Antenna Inverse Design
+Forward Surrogate CNN Model
+
+
+
+
+               Resonant structure            Non-resonant structure
+
+
+
+
+             Resonant structure              Non-resonant structure
+
+
+
+       Comparison of the predicted S11 spectrum from the trained forward
+       model with the spectrum from EM full-wave simulator (Ground truth)
+                   Antenna Inverse Design
+Inverse Cascade Network:
+• Take the desired spectrum S and generate the intermediate design layout D' via
+dense fully connected layers
+• Feed the predicted layout D' into the pre-trained, frozen Forward CNN Network
+to output reconstructed spectrum S'
+• Benefits: Bypasses non-uniqueness by enforcing loss optimization at the
+spectrum output level
+                      Antenna Inverse Design
+ Smooth Thresholding (ST) Activation Function:
+
+
+
+• Standard activations yield continuous non-
+physical grey-scale values
+• Push pixel values toward binary states {0, 1}
+• Optimal hyperparameter m = 20 to balances
+discrete output against vanishing gradients
+
+
+Loss Function Optimization:
+
+• Ls (Spectrum Loss): Ensures S11 response matches design intent
+• LD (Design Loss): Ensures structural feasibility and feed connectivity
+• LB (Binary Regularization): Eliminates non-physical intermediate material values
+                  Antenna Inverse Design
+Single-band antenna inverse design example
+
+
+
+
+                                             • Gain of 9.63 dBi
+                                             • Radiation eff. of 90%
+                                             • Compact size: 31%
+                                               smaller in area than a
+                                               conventional antenna at
+                                               the same frequency at
+                                               15.8GHz
+                  Antenna Inverse Design
+Dual-band antenna inverse design example
+
+                                           • 31% to 50% footprint reduction
+                                             compared to conventional square patch
+                                             (λ/2× λ/2) designs
+                                           • 18% reduction in substrate thickness
+                                             compared to conventional air-filled
+                                             patches
+
+
+
+
+     14 GHz               14 GHz              18.3 GHz             18.3 GHz
+                   Antenna Inverse Design
+Both CNN + Optimization and Tandem Neural Networks (TNN) represent deep-learning-
+assisted methods for antenna inverse design
+
+
+
+
+ CNN + Optimization:
+
+
+
+
+ TNN:
+                      Antenna Inverse Design
+Key Structural Differences
+
+Feature             CNN + Optimization                      Tandem Neural Network (TNN)
+                    Minutes (100+ generations/iterations Sub-second (<1 second) direct single-pass
+Inference Runtime
+                    across candidate populations)        forward propagation
+                    Relies on the heuristic optimization Solves non-uniqueness natively by linking
+Handling One-to-
+                    algorithm (GA/BPSO) to explore the inverse and forward networks and
+Many Mappings
+                    design space iteratively             minimizing error in the spectrum space
+                                                            Requires custom continuous-to-discrete
+                    Binarization is handled by discrete
+Binary Output                                               mechanisms, such as Smooth
+                    state variables in heuristic algorithms
+Generation                                                  Thresholding (ST) activation and binary
+                    (e.g., binary chromosome strings)
+                                                            loss terms
+                    Iterative population over candidate
+Optimization                                                Immediate feedforward mapping using
+                    structures for each new specification
+Mechanism                                                   static offline-trained network weights
+                    target
+                                          Other Inverse Designs
+
+
+
+
+            Circularly polarized antenna generated by pixelated dielectric resonators bars
+
+
+Trinh-Van, S., Yang, Y., Lee, K. Y., & Hwang, K. C. (2016). A wideband circularly polarized pixelated dielectric resonator antenna. Sensors, 16(9), 1349.
+                                         Other Inverse Designs
+
+
+
+
+    Metalens antenna design generated using the generative adversarial network (GAN)
+    framework
+
+Lyu, Y., Gan, T. H., & Chen, Z. N. (2025). TE-TM balanced wide-angle metacells for low scan-loss metalens antenna using prior knowledge-guided generative deep
+learning-enabled method. IEEE Transactions on Antennas and Propagation.
+                                     Other Inverse Designs
+
+
+
+
+               Compact bandpass pixelated microwave filters via inverse design
+
+
+Gomez, M. A., Jia, W., Blair, S., & Sensale-Rodriguez, B. (2025). Compact bandpass pixelated microwave filters with short-circuited stubs via
+inverse design. Scientific Reports, 15(1), 25606.
+                                       Other Inverse Designs
+
+
+
+
+           On-chip, inverse-designed wavelength division multiplexer at THz frequencies
+
+Digiorgio, V., Senica, U., Micheletti, P., Beck, M., Faist, J., & Scalari, G. (2025). On-chip, inverse-designed active wavelength division multiplexer at THz
+frequencies. Nature Communications, 16(1), 7711.
+                                   Other Inverse Designs
+
+
+
+
+AI-assisted class-F PA design flow, fabricated prototype, and measured versus simulated
+performance
+
+Kouhalvandi, L., Ceylan, O., & Ozoguz, S. (2020). Automated deep neural learning-based optimization for high performance high power amplifier
+designs. IEEE Transactions on Circuits and Systems I: Regular Papers, 67(12), 4420-4433.
+     RF
+AI
+              Analogous computing
+
+• Machine learning greatly expedites RF devices designs,
+  including antennas, circuits, and chips
+• RF systems also inversely nurture machine learning by
+  provide analogous computing
+• Although electronic computing (CPU, GPU, TPU, FPGAs)
+  currently dominates the computing community, wave-based
+  computing features unique advantages, such as light-speed
+  computing, paralleling process, and low power consumption
+                        Neural Network
+• The brain, made up of connected neurons, are the inspirations for artificial
+  neural networks
+• Human cerebral cortex contains approximately 10 billion to 14 billion
+  neurons, 60 trillion synapses, and 1000 trillion connections
+• Neurons are interconnected to form an intricate and flexible neural network
+  system
+
+
+
+
+   www.lifewire.com
+                    Neural Network
+Perceptron is a single layer neural network
+The Perceptron consists of 4 parts:
+• Input values
+• Weights
+• Weighted sums
+• Threshold/Activation functions
+
+
+
+
+         Biological neurons                   Perceptron
+                        Neural Network
+• Multilayer Perceptron (MLP) is a fundamental class of feedforward
+  artificial neural networks
+• Consists of an input layer, one or more hidden layers, and an output layer
+• Every node (perceptron) connects to all nodes in the subsequent layer
+  with associated trainable weights and biases
+• MLP is the foundational building blocks for larger neural architectures
+  (CNN, Transformer, etc.)
+
+
+
+
+     Biological neurons network                            MLP
+                           Wave-based neural network
+• Conventional CPU/GPU calculate matrix multiplications using electronic transistors
+• Diffractive deep neural network (D2NN) compute results via free-space diffraction
+• The optical system acts as a physical representation of an artificial neural network
+                                                                                            Metasurface Diffraction
+
+
+
+
+        Fully-connected electronic neural network                                           Diffractive optical neural network
+                       (CPU/GPU)
+    Diffractive deep neural network (D2NN) consists of multiple cascaded
+    diffractive layers (metasurface) with certain distance
+X. Lin, Y. Rivenson, N. T. Yardimci, M. Veli, Y. Luo, M. Jarrahi, and A. Ozcan, “All-optical machine learning using diffractive deep neural networks,”
+Science, 2018.
+                                                         Metasurfaces
+                                                                                                                     Abnormal refraction
+
+
+
+
+                                                                                                                          https://phys.org/news/
+
+
+
+
+• Meta is a Greek prefix, meaning “beyond”                                                                        Generalized Snell’s law:
+• Metasurface: an interface that manipulates EM wave’s
+  properties through boundary conditions
+N. Yu, P. Genevet, M. A. Kats, F. Aieta, J.-P. Tetienne, F. Capasso, and Z. Gaburro, “Light propagation with phase discontinuities: Generalized laws of reflection and
+refraction,” Science, vol. 334, no. 6054, pp. 333-337, 2011.
+                          Metasurfaces
+Nature lens:                             Metasurface:
+
+
+
+
+   Propagation phase: 𝜙 = −𝑛𝑘0 𝑑            Phase change in the interface
+
+
+• Conventional lenses rely on the accumulated propagation effect in naturally
+  existing dielectric materials, making them bulky and have curved shapes
+• Metasurfaces introduce abrupt phase change in the interface to focus EM
+  waves according to Generalized Snell’s Law
+       Some Metasurfaces developed by CityU
+
+
+                                                                                                                     metasurface - 1
+
+                                                                                                                     metasurface - 2
+
+                                                                                                                     metasurface - 3
+              60GHz, PCB                              300GHz, 3D printing
+                                                                                                                                    300GHz, 3D printing
+
+
+
+
+                                                                                                   Light-field imaging, 60×60 metalens array,
+                      24GHz, Holographic imaging                                                   33,660,000 meta-atom
+[1] G.-B. Wu, Y.-S. Zeng, K. F. Chan, S.-W. Qu, and C. H. Chan, “3-D printed circularly polarized modified Fresnel lens operating at terahertz frequencies,” IEEE Trans. Antennas Propag., 2019.
+[2] H.-T. Hu, G.-B. Wu, K. F. Chan, and C. H. Chan, “V-band dual-polarized filtering transmitarray antenna enabled by a planar filtering illumination source,” IEEE Trans. Antennas Propag., 2022.
+[3] J. C. Zhang, G.-B. Wu, M. K. Chen, X. Liu, K. F. Chan, D. P. Tsai, and C. H. Chan, “A 6G meta-device for 3D varifocal,” Sci. Adv., 2023.
+[4] Lin, R. J., Su, V. C., Wang, S., Chen, M. K., Chung, T. L., Chen, Y. H., ... & Tsai, D. P. (2019). “Achromatic metalens array for full-colour light-field imaging,” Nat. Nanotechnol., 2019.
+           Wave-based neural network
+Huygens' Principle (Secondary Wavelets): Every point on a propagating
+wavefront acts as a source of secondary spherical wavelets
+
+
+
+
+                                                              Metasurface
+
+
+                                                           Perceptron
+
+                              Neuron                          Metasurface
+
+
+
+The transmitted wave of an artificial neuron, multiplied by propagation
+factors Wi, illuminates all artificial neurons in the next layer
+             Wave-based neural network
+Optical neural network
+
+
+
+
+Electronic neural network
+                 Wave-based neural network
+                                    D2NN architecture
+
+                                                                 An incident light wave (or laser beam)
+                                    Input Layer
+                                                                 carrying image/amplitude data
+                                                                 Cascaded metasurfaces spaced at
+                                    Hidden Layers
+                                                                 precise separation along the light path
+
+                                                                 Meta-atoms—subwavelength
+                                    Artificial Neurons
+                                                                 elements on the metasurface
+
+                                                                 The local phase, amplitude, or
+                                    Synaptic Weights             polarization shift imparted by each
+                                                                 individual meta-atom
+                                                                 Free-space light diffraction
+                                    Interlayer Connections
+                                                                 following Huygens' Principle
+                                                                 Focal light intensity spots landing on
+                                    Output / Classification      specific photodetector regions on a
+                                                                 sensor
+
+
+The number of the network layers and the axial distance between the layers are also design parameters
+            Wave-based neural network
+• Input images are encoded into the amplitude of the input field to the D2NN
+• Detector with Maximum power corresponds to the inference result
+
+
+
+
+             Schematic                                         Prototype
+           Wave-based neural network
+Design Process:
+Step1: Training (Digital Phase): The network is designed virtually on a digital
+computer. Input images are fed through a optical wave propagation model
+(Huygens–Fresnel principle). Using standard deep learning algorithms
+(backpropagation and gradient descent), the computer optimizes the
+phase/amplitude shift required at every pixel on each layer.
+                          Wave-based neural network
+
+    Loss function for error backpropagation: mean square error between the output
+    imaging intensity 𝑠𝑖𝑀+1 and the target 𝑔𝑖𝑀+1
+
+
+
+
+    Optimization problem:
+
+
+    Gradient of the loss function:
+
+
+
+    • The gradient of the loss function is used to update the network layers during
+      each cycle of the training phase
+
+
+X. Lin, Y. Rivenson, N. T. Yardimci, M. Veli, Y. Luo, M. Jarrahi, and A. Ozcan, “All-optical machine learning using diffractive deep neural networks,”
+Science, 2018.
+             Wave-based neural network
+Step2: Fabrication (Physical Phase): The learned phase map is converted into
+physical metasurfaces. Varying the geometry or orientation of each meta-atom controls
+the local phase shift.
+              Wave-based neural network
+Step3: Inference (Optical Execution): Light passes through the object (e.g., a
+handwritten digit sample) and hits the first metasurface layer. As light diffracts
+from layer to layer, the structured phase shifts constructively and destructively
+interfere, directing the light energy to focus on a specific target coordinate on the
+final detector plane corresponding to the correct class.
+             Wave-based neural network
+Example 1: Digit Classifier
+
+                              • A five-layer D2NN digit classifier to
+                                perform classification of handwritten
+                                digits, from 0 to 9
+                              • 55,000 images with 5000 validation
+                                images from the MNIST handwritten
+                                digit database
+                              • Input digits were encoded into the
+                                amplitude of the input field to the
+                                D2NN
+                              • The D2NN network was trained to map
+                                input digits into 10 detector regions,
+                                one for each digit
+                              • 0.2 million (200×200×5) neurons, 8
+                                billion connections
+    Wave-based neural network
+
+
+
+
+            Phase profile
+
+
+
+
+Prototype                   Measurement setup
+              Wave-based neural network
+• D2NN has the maximum energy focused on the target detector region of each digit
+• Numerical classification accuracy of 91.75%, and experimental testing accuracy of 88%
+              Wave-based neural network
+Example 2: Image Classifier
+• A five-layer D2NN to perform classification of Fashion-MNIST dataset (t-shirt, coats,
+  bags, sandals, etc.)
+• Input image were encoded into the phase of the input field to the D2NN
+• The D2NN network was trained to map input images into 10 detector regions, one for
+  each image
+
+
+
+ Phase profile:
+             Wave-based neural network
+• D2NN has the maximum energy focused on the target detector region
+• Numerical classification accuracy of 81.13%
+                 Wave-based neural network
+Parameter study
+• Layer number: Classification rate for single diffraction layer 55.6%, 5 layer 91.7%
+• Modulation type: Phase-only modulation 91.7%, complex modulation 93.2%
+     Phase-only modulation, Single Layer                            Phase-only modulation, 5 Layers
+
+
+
+
+                                     Complex modulation, 5 Layers
+             Wave-based neural network
+Key Advantages over Electronic Neural Networks
+•Speed-of-Light Processing Latency: Inference completes as fast as light waves travel
+through the physical layers of the network (typically nanoseconds or picoseconds).
+Electronic processors (GPUs/TPUs) are bottlenecked by clock frequencies and electronic
+switching speeds.
+•Near-Zero Power Consumption: Passive diffractive optical layers consume zero
+electrical power during inference. Power is only required for the light source (e.g.,
+laser/LED) and the sensor photodetector array.
+•Direct Processing of Native Optical Data: D2NNs directly compute on light, optical
+signals, or visual imagery before it hits a sensor. This eliminates the need for power-
+intensive analog-to-digital converters (ADCs) or image sensors prior to processing.
+             Wave-based neural network
+
+
+
+                          Diffractive Optical       Electronic Neural
+Feature
+                          Neural Network (D2NN)     Network (GPU/TPU)
+Primary Medium            Photons (Light waves)     Electrons
+                          Picoseconds /             Microseconds /
+Inference Latency
+                          Nanoseconds               Milliseconds
+                          Extremely Low (Passive    High (Watts to Hundreds
+Power Consumption
+                          optical propagation)      of Watts)
+                          None (Optical wave        High (RC delay, heat
+Interconnect Bottleneck
+                          interference)             dissipation)
+                          Ultra-fast computer       General-purpose training
+Primary Use Case
+                          vision, optical sensing   and dynamic inference
+                        Wave-based neural network
+• Reconfigurable D²NN: reconfigurable architectures update their physical optical
+  weights (such as phase, amplitude, polarization) dynamically without requiring physical
+  remanufacturing
+• Reconfigurability is achieved using dynamically tunable phase-change materials (such
+  as GST or Liquid crystal), spatial light modulators, diodes
+
+
+
+
+ Liu, Che, et al. "A programmable diffractive deep neural network based on a digital-coding metasurface array." Nature Electronics 5.2 (2022):
+ 113-122.
+            Wave-based neural network
+
+
+
+
+Several FPGAs are used to control the gain factor of each artificial neuron, enabling
+a real-time and re-trainable intelligent machine
+               Wave-based neural network
+Each meta-atom is a programmable node for modulating the incident wave amplitude
+(from -22dB to 13 dB) by implementing specific voltages on the amplifier chips
+ Single meta-atom
+
+
+
+
+       Single layer           Single layer + FPGA              Multi layers
+                Wave-based neural network
+Multi-Task Versatility: A single physical setup can execute completely different tasks simply
+by re-loading new weight profiles onto the active layers
+The reconfigurable D2NN can perform different image classification tasks using the same
+hardware by updating of the bias voltages of the artificial neurons using FPGAs
+
+Reconfigurable Task1: Oil-painting recognition
+
+
+
+
+ • The receiver region with the maximum receiving energy corresponds to the kind of
+   classification result
+ • Classification accuracy of 97%
+                  Wave-based neural network
+Reconfigurable Task2: handwritten digit recognition
+
+
+
+
+      •   Training with 60,000 handwritten digit images and testing with 10,000 images
+      •   Classification accuracy of 90.7%
+              Wave-based neural network
+Structural Comparison
+
+                                                     Reconfigurable
+                        Static Diffractive Network
+Feature                                              Diffractive Network (R-
+                        (D2NN)
+                                                     D2NN)
+                                                     Dynamic pixel modulation
+                        Fixed physical relief /
+Weight Encoding                                      (SLM, PCMs,
+                        etching
+                                                     Metasurfaces)
+
+                                                     Multi-task reprogrammable
+Flexibility             Single-task hardware
+                                                     platform
+
+                        Vulnerable to fabrication    Self-correcting via dynamic
+Error Tolerance
+                        drift                        recalibration
+                                                     Depends on mechanism
+Holding Power           Zero power required          (PCMs = Zero; SLMs =
+                                                     Active power)
+                                  Wave-based neural network
+   Plane diffractive deep neural network: integrate artificial neural network layers onto a single
+   microchip or flat substrate by guided wave.
+
+
+
+
+                                                                        On-chip D2NN (1550nm)
+[1] Z. Wang, L. Chang, F. Wang, T. Li, and T. Gu, “Integrated photonic metasystem for image classifications at telecommunication wavelength,” Nat. Commun., vol. 13, no. 1, pp. 2131, 2022.
+[2] T. Fu, Y. Zang, Y. Huang, Z. Du, H. Huang, C. Hu, M. Chen, S. Yang, and H. Chen, “Photonic machine learning with on-chip diffractive optics,” Nat. Commun., vol. 14, no. 1, pp. 70, 2023.
+                            Wave-based neural network
+
+
+
+
+                                                              PCB-based D2NN (10GHz)
+
+Z. Gu, Q. Ma, X. Gao, J. W. You, and T. J. Cui, “Direct electromagnetic information processing with planar diffractive neural network,” Sci. Adv., vol. 10, no. 29, pp. eado3937, 2024.
+                             Wave-based neural network
+• Photonic chiplet (Taichi): adopt a distributed computing architecture rather than
+  simply going deeper (i.e., Shallow-in-Depth, Broad-in-Width)
+• Energy Efficiency: 160.82 teraoperations per second per watt (TOPS/W, over two
+  orders of magnitude higher than conventional silicon processors/GPUs)
+
+
+
+
+ Xu, Zhihao, et al. "Large-scale photonic chiplet Taichi empowers 160-TOPS/W artificial general intelligence." Science 384.6692 (2024): 202-209.
+

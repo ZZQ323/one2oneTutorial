@@ -1,0 +1,1486 @@
+EE8403:Machine Learning for Signal Processing Applications
+
+    Revenue Streams of
+    Intelligent Battery Operations
+    for Ancillary Services
+    Lessons from Australian Electricity Markets
+    Chaojie Li
+    Department of Electrical Engineering
+    City University of Hong Kong
+From renewable integration to intelligent battery profits
+
+
+  01 Renewable development and
+  frequency-security challenges
+
+  02 Hornsdale: operating experience,
+  bidding challenges and simulation
+  highlights
+
+  03 Two research papers: models,
+  algorithms, experiments and lessons
+
+
+
+Physical need → market opportunity → intelligent operation
+Conventional grids were built around centralised generation
+
+
+                                          Centralised supply
+                                          Large power stations supply
+                                          electricity through transmission and
+                                          distribution networks.
+                                          Voltage hierarchy
+                                          Transformers step voltage down as
+                                          power moves from the bulk grid to
+                                          industrial and residential customers.
+
+                                          Operating requirement
+                                          Generation and demand must remain
+                                          balanced in real time. Synchronous
+                                          machines also provide stored
+                                          rotational energy.
+Renewable generation changes the structure of the grid
+
+
+
+
+Predominantly one-way supply                 More distributed interactions
+Central generation feeds consumers through   Wind, solar and storage connect at different levels.
+transmission and distribution networks.      Storage and flexible demand support two-way
+                                             power flows.
+Renewable capacity has more than doubled since 2016
+
+
+     6000
+
+                                                   5155
+                                                                  5,155 GW
+     5000
+                                      4462                       Global renewable capacity at
+     4000                                                        end-2025
+GW
+
+
+
+
+     3000                2811
+
+            2021
+                                                                 2025 technology      GW
+     2000
+                                                                 Solar                2,397
+     1000
+                                                                 Wind                 1,291
+       0
+            2016         2020         2024         2025
+
+
+Installed capacity is growing rapidly; energy output, flexibility and frequency support remain
+different quantities.
+Renewables grow at both utility and customer scale
+
+
+
+
+Utility-scale wind and solar                 Distributed rooftop generation
+Large projects alter regional dispatch and   Local generation changes net demand and
+power transfers.                             distribution flows.
+Variable output increases the need for flexibility
+
+
+
+
+                                                             Emu Downs Solar Farm
+
+
+
+
+                Albany Wind Farm
+
+                                   Renewable Intermittency
+Lower synchronous inertia changes disturbance response
+
+
+ Replacing online synchronous generation can reduce directly coupled
+ rotational energy.
+ Converter-connected wind and PV need appropriate controls and available
+ energy to provide support.
+Local inertia links a disturbance to initial frequency change
+
+
+Nodal equivalent inertia in the supplied material
+
+                                                              𝛥𝑃𝑘
+                                               𝐻𝑘Cal =
+                                                             𝑑𝑓𝑘
+                                                           2     | +
+                                                             𝑑𝑡 𝑡=0
+Symbol         Meaning / convention
+                                                                                   A power deficit gives a negative
+H (nodal)      Nodal equivalent inertia coefficient                                initial RoCoF under this sign
+                                                                                   convention.
+Delta P at k   Signed local power imbalance (generation minus demand)
+                                                                                   With per-unit power and per-unit
+f at node k    Local frequency; use a consistent power / frequency normalisation
+                                                                                   frequency, H is in seconds. For
+0+             The instant immediately after the disturbance                       MW and Hz, the coefficient has
+                                                                                   units MW·s/Hz.
+Frequency disturbances can trigger widespread blackouts
+
+
+Great Britain · 9 August 2019                    South Australia · 28 September 2016
+
+48.8 Hz                                          1,830 MW load lost
+Generation losses after a network fault caused   Storm-related line faults and generation
+frequency to fall. Low-frequency demand          disconnections preceded separation from the
+disconnection operated, interrupting supply in   wider grid. Frequency collapsed and South
+parts of England and Wales.                      Australia lost supply.
+
+
+The supplied event trace records a 1,240         The supplied frequency traces fall below 47
+MW emergency load-shedding instruction.          Hz. The reported lost load is 1.83 GW.
+
+Fast frequency support must work with protection and network security to limit the
+consequences of a disturbance.
+Frequency security requires support at several timescales
+
+
+From the initial disturbance to frequency recovery
+
+    01                                 02                                 03
+
+Inertial / fast                   Primary frequency                   Secondary control /
+response                          response                            AGC
+Arrest                             Stabilise                          Restore
+Limit the initial rate of          Contain the frequency              Return frequency and
+frequency change.                  excursion.                         dispatch towards their
+                                                                      targets.
+
+
+ These functions are complementary. Activation depends on controls and operating conditions.
+Frequency response depends on controls and available energy
+
+
+
+Resource        Source of support               Main qualification
+
+                Rotor energy and/or reserved    Wind conditions, converter controls and
+Wind
+                power                           recovery
+                Upward: reserved headroom;
+Solar PV                                        Irradiance and active-power control
+                downward: curtailment
+                                                State of charge, converter rating and
+Battery         Stored electrochemical energy
+                                                duration
+
+
+          Control response           Available power           Sustainable energy
+Storage supports frequency without relying on wind reserve
+
+
+              Wind-only support                              Combined wind–storage support
+
+
+
+
+Wind-only support uses rotor energy or reserved output. Storage adds a separate
+controllable energy source.
+Wind-only response and combined wind–storage response in the supplied study
+Power and energy jointly limit frequency support
+
+
+                                                𝐸available
+                                     𝑇support ≤
+                                                𝑃support
+
+        Power rating                      Energy / SoC                         Control limits
+        How much?                         For how long?                    Under what conditions?
+Illustration using the paper’s 50 MW / 100 MWh battery
+
+                                 100MWh×(0.8 − 0.2)
+                                                    = 1.2ℎ
+                                      50MW
+Usable SoC window: 20–80%. This is an energy-budget illustration, not an FCAS delivery-duration rule.
+FCAS converts physical response into ten market products
+
+
+Service family                     Raise / lower          Response category
+
+Regulation                         2 products             Continuous AGC tracking
+
+Very fast contingency              2 products             1-second response
+
+Fast contingency                   2 products             6-second response
+
+Slow contingency                   2 products             60-second response
+
+Delayed contingency                2 products             5-minute response
+
+The papers aggregate FCAS into regulation / contingency × raise / lower. That is a modelling
+choice—not the full product list.
+Technical value must be converted into captured revenue
+
+
+
+  FCAS Bidding      Regulation – AGC control      Revenue:
+                                                  Energy + FCAS (Regulation +
+                                                  contingency)
+
+
+
+
+                    Contingency – droop control
+Hornsdale demonstrates utility-scale battery operation
+
+
+                                          South Australia; developed and
+                                          operated by Neoen.
+                                          Tesla Powerpack technology.
+                                          Initially 100 MW / 129 MWh.
+                                          Expanded to 150 MW / 193.5
+                                          MWh.
+                                          Co-located with Hornsdale
+                                          Wind Farm.
+Hornsdale expanded from fast response to inertia services
+
+
+
+Date             Milestone
+
+September
+                 South Australian state-wide blackout
+2016
+
+December 2017 100 MW / 129 MWh commercial operation
+
+2020             Expanded to 150 MW / 193.5 MWh
+                                                             Same asset; broader
+                 Virtual Machine Mode enabled for inertia    service capability
+2022
+                 services
+
+The case shows why market rules and control capabilities must evolve together.
+Contracted security services complement merchant revenue
+
+
+
+ Government security
+                                  Hornsdale battery            NEM energy and FCAS
+      contract
+
+
+Original allocation / agreement    Role
+                                   Reserved for system security under the original
+70 MW / 10 MWh
+                                   agreement
+Up to 30 MW / 119 MWh              Remaining capacity available for market participation
+                                   Contracted payments complemented merchant
+A$41.8 million over 10 years
+                                   revenue
+Accurate regulation response creates operational value
+
+
+                                        HPR closely follows AGC
+                                        commands.
+
+                                        Rapid response supports
+                                        frequency control as supply and
+                                        demand change.
+
+
+                                        The historical report noted that
+                                        service quality was not fully
+                                        rewarded.
+Battery competition reduced South Australian FCAS costs
+
+
+
+
+Average yearly SA regulation FCAS costs (AUD) fell from about A$470/MWh to below
+A$40/MWh.
+Early operating earnings were strong
+
+
+               30        28.28
+
+                                                                                           2018 revenue: A$28.28
+               25
+                                                                22.43                      million.
+               20
+ AUD million
+
+
+
+
+                                                                                           2018 EBITDA: A$22.43
+               15                                                                          million.
+
+               10                                                                          Approximately 79%
+                                                                                           EBITDA margin.
+               5
+
+
+               0
+                        Revenue                                EBITDA
+
+Australia Storage segment. Original: €17.9m revenue / €14.2m EBITDA.
+Converted at 2018 mean ECB reference rate: €1 = A$1.57968. EBITDA is not free cash flow.
+An EBITDA margin is not a project investment return
+
+
+                                            22.43
+                            EBITDA margin =       = 79.3%
+                                            28.28
+
+
+Revenue                    EBITDA                       Cash flow                   Investment return
+
+
+ A$28.28m revenue and A$22.43m EBITDA are converted 2018 Australia Storage segment results.
+
+ Initial HPR cost: A$88.46m equivalent (€56m reported, same presentation FX basis). Project cost and
+ segment EBITDA do not establish project IRR.
+
+ Lifetime returns require dated cash flows, taxes, financing, replacements and a terminal value.
+Consumer savings and operator income must be separated
+
+
+             90
+
+             80
+                      80                     A$116 million
+             70
+
+             60
+                                             Estimated market-wide FCAS
+                                             cost reduction in 2019.
+A$ million
+
+
+
+
+             50
+
+             40                    36        A$102m during
+             30
+                                             interconnected operation;
+                                             A$14m linked to the
+             20
+                                             November separation event.
+             10
+
+             0                               These savings are not battery
+                  Contingency   Regulation   sales revenue.
+Bidding must balance market opportunity and deliverability
+
+                                                                                                      Price spikes
+
+   ① Market uncertainty
+   •   Energy and FCAS prices are highly volatile, with contingency FCAS
+       subject to sudden price spikes.
+   •   Forecast errors introduce substantial uncertainty into bidding returns.
+   •   External events, such as reserve scarcity, network contingencies,
+       and extreme weather, can further alter market conditions and
+       increase price-spike risks.
+   ② Limited BESS flexibility
+   •   BESS operation is constrained by finite energy capacity and State of
+       Charge (SoC).
+   •   Charging and discharging are subject to power limits and
+       degradation costs.
+   •   Energy and multiple FCAS services compete for the same limited
+       battery capacity, requiring careful capacity allocation.
+
+          Therefore, BESS bidding is not only a profit-maximization problem, but a sequential risk-
+          sensitive decision-making problem under market uncertainty.
+Conventional methods leave information and adaptation gaps
+
+
+   Method       Treatment of Uncertainty           Advantages                        Limitations
+
+Predict-then-   Uses point forecasts of prices     Simple, interpretable, easy to    Sensitive to forecast errors;
+  Optimize      and demands                        implement                         uncertainty is not explicitly modeled
+
+
+                Models uncertainty through                                           Requires accurate scenario
+ Stochastic                                        Explicitly considers multiple
+                predefined scenarios / probability                                   generation; computational burden
+Programming                                        possible future outcomes
+                distributions                                                        grows rapidly
+
+                Optimizes against worst-case
+  Robust                                           Provides strong protection        Often conservative; uncertainty sets
+                outcomes within an uncertainty
+Optimization                                       against uncertainty               are difficult to calibrate
+                set
+
+
+                                                   Handles nonlinear and sequential
+Reinforcement   Learns sequential decisions                                         Typically optimizes expected return
+                                                   decision-making without explicit
+  Learning      directly from interactions/data                                     and does not explicitly control risk
+                                                   scenario modeling
+Market information extends beyond numerical time series
+
+    Existing Capabilities of LLMs                           Leveraging LLM Capabilities for BESS Bidding
+
+ ➢ Heterogeneous information understanding:                        Integrate numerical market data with
+   process and integrate information from                            unstructured external information
+   different sources, formats, and modalities.
+ ➢ Contextual understanding and reasoning:                     Interpret market context and identify potential
+   interpret    complex       contexts,      identify                        risk implications
+   relationships, and infer potential implications.
+ ➢ Tool-use capability: interact with external
+                                                                Access updated external information during
+   tools, databases, and software systems to
+                                                                            online operation
+   obtain information and perform tasks.
+ ➢ Multi-agent coordination: enable multiple
+   specialized agents to collaborate on analysis,              Coordinate market analysis, risk assessment,
+   reasoning, and decision-making.                                and strategy evaluation & refinement
+
+                                               motivation
+
+
+              LLMs provide a way to overcome the limited information utilization and market
+              perception of conventional bidding models, enabling more informed adaptation
+              to evolving market conditions and improving bidding profitability.
+The LLM should support—not replace—the bidding controller
+
+                                              LLM
+                                           Challenges
+
+   (1) Limited understanding of          (2) Hallucination and             (3) Lack of domain-
+   physical and market constraints       reasoning uncertainty             specific knowledge
+
+
+                           solutions                           solutions
+
+    ➢ Indirect control through       ➢ Multi-agent workflow:           ➢ Domain adaptation:
+       DRL integration:              Complex decision problems         A task-specific supervised
+    Instead of directly              are decomposed into               fine-tuning dataset is
+    generating bidding actions,      specialized subtasks              constructed to inject
+    the LLM adjusts decision         handled collaboratively by        BESS bidding and market-
+    preferences while the DRL        multiple agents, with             domain knowledge into
+    agent executes constrained       evaluation and feedback           the LLM.
+    bidding decisions.               mechanisms used to
+                                     continuously refine the LLM
+                                     outputs.
+ Task-oriented LLM coordination framework
+
+Goal: Multi-agent collaborative framework for "language understanding + physical world control", breaking
+through traditional power system control boundaries
+
+                               Cognition-Coordination-Execution
+
+    Multimodal information                 Task Planning Engine               Knowledge reasoning engine      Cognitive
+  engine ( multi-modal data fusion,       （goal decomposition, strategy           (domain expertise)          Layer
+          semantic analysis)                      formulation,…)
+
+
+                                                               Semantic commands
+
+      Agent Registry (Agent                   Coordination Hub                Communication Bus(Message       Coordination
+                                         （Negotiation, conflict resolution)     routing, protocol handling)
+   management, capability tracking)                                                                           Layer
+
+                                                                Control Commands
+
+                                                                               Safety Guardian (constraint    Execution
+ Sensor data fusion (multi-modal           Device control interface
+                                                                                violation, emergency stop)
+          data fusion)                     （physical equipment control)                                       Layer
+Domain-specific agent design
+
+ Each agent specializes in a specific domain to achieve deep expertise:
+
+ Generation-Side Agents
+ • Renewable Forecasting Agent: Solar/wind power prediction with uncertainty quantification
+ • Thermal Unit Agent: Conventional generator optimization and commitment decisions
+ • Energy Storage Agent: Battery and pumped-storage optimization strategies
+ Grid-Side Agents
+ • State Estimation Agent: Real-time system monitoring and bad data detection
+ • Power Flow Agent: Optimal power flow calculation and congestion management
+ • Security Analysis Agent: N-1 contingency analysis and preventive control
+ Market-Side Agents
+ • Price Forecasting Agent: Electricity price prediction using market intelligence
+ • Bidding Strategy Agent: Ancillary service bidding optimization
+ • Contract Management Agent: Bilateral contract optimization and risk management
+
+
+
+Generation side Agents                        Grid-side Agents                                Market-side Agents
+
+
+
+
+                            tools                                          tools                                   tools
+Three-phase agent coordination
+
+Phase 1: Information Sharing
+
+•    Each agent shares its status, constraints, and preliminary plans
+•    Agents broadcast their capabilities and resource availability
+•    Common information pool is established for decision-making
+
+
+                                                                             small
+Phase 2: Conflict Detection and Resolution                                   model
+ •   Automatic detection of conflicting objectives or resource conflicts
+
+ •   Priority-based arbitration using predefined hierarchies
+
+ •   Multi-round negotiation to find mutually acceptable solutions
+
+
+                                                                           Large model
+Phase 3: Consensus Building
+•    Final plan validation through consensus algorithms
+
+•    Safety and feasibility checks by specialized validation agents
+ Large–small model interaction
+
+                                                                                                complex reasoning,
+                                                           instruction                          cross-domain coordination,
+                                                                                                conflict resolution and
+                                                                                                cognitively intensive tasks
+
+
+                                    small                                                Large
+                                    model                                                model
+domain calculations,
+real-time control,
+data processing
+execution-intensive tasks                        Semantic info, error correction
+
+
+
+   •   Small→Large: Domain-specific small models convert structured data to natural language descriptions, large model performs
+       semantic understanding
+   •   Large→Small: Large model's decision instructions passed to small models for execution via API calls
+Building the agent collaboration workflow
+
+
+                                    Small model               Large model
+      Initial state             processing (domain-           global integration
+      (Task request)              specific analysis)          (Information fusion)
+
+                               Multi-modal data fusion
+
+                               Agent info sharing
+
+
+
+
+Plan Verification                  Small Models
+                                                          •   Conflict detection
+(Safety & Feasibility Check)     Local Adjustment
+                                                          •   Coordination strategy
+                                (Domain Optimization)
+
+
+
+
+     Large Model                    Small Models
+                                                         Typical Large-small model
+    Final Decision             Execution Confirmation
+   (Global Consensus)                                    Collaboration procedure
+                               (Implementation Ready)
+Paper I: better features improve simulated bidding profit
+
+
+            35
+                                     31.50
+                                                 32.77
+                                                             Trend and periodic
+                            29.89
+            30
+                  29.41
+                                                             features are fused by
+                                                             cross-attention.
+            25
+
+                                                             Net profit is $32.77m
+$ million
+
+
+
+
+            20
+                                                             versus $29.41m without
+            15
+                                                             feature extraction.
+            10
+                                                             This is a feature-module
+            5                                                comparison—not the
+                                                             isolated effect of an LLM.
+            0
+                 Baseline   Trend   Periodic   Cross-attn.
+Paper II: dynamic risk selection improves simulated profit
+
+Why dynamic LLM adjustment performs better?
+The improvement mainly comes from the contingency FCAS market, where external risk signals are
+more informative of sudden price spikes. By dynamically shifting the risk preference, the LLM-adjusted
+strategy can increase exposure when such opportunities emerge, instead of using a fixed risk attitude.
+
+
+                 Profit of regulation/contingency FCAS across Different Risk Preferences
+
+
+
+
+Reported total profit: +11.66% relative to the fixed risk-neutral baseline.
+Keep historical returns and simulation evidence distinct
+
+
+
+Evidence            What it demonstrates              What it does not demonstrate
+
+                    Commercial operation and
+Hornsdale history                                     Guaranteed future project IRR
+                    system-service value
+                    Feature extraction, dDRL and
+Applied Energy                                        All gains caused by LLM alone
+                    agent coordination
+                    External-risk-informed adaptive
+TASE                                                  Live deployment at Hornsdale
+                    bidding
+ Paper I: an LLM-coordinated auto-bidding system
+
+LLM-coordination in auto-bidding of frequency regulation:
+Cross-attention distributional reinforcement agentic learning
+Borui Zhang · Chaojie Li · Guo Chen · Zhao Xu · Zhaoyang Dong
+Applied Energy 401 (2025), 126702 | DOI: 10.1016/j.apenergy.2025.126702
+
+
+                                                                          Background
+                                                                          High battery investment makes revenue
+                                                                          important. Energy and FCAS markets offer
+                                                                          opportunities, but prices are volatile.
+
+                                                                          Research challenge
+                                                                          Capture trend and periodic patterns, learn
+                                                                          uncertain returns, and translate user
+                                                                          requirements into bidding settings.
+
+                                                                          Approach and advantages
+                                                                          Cross-attention and distributional SAC
+                                                                          improve market learning. LLM agents add
+                                                                          instruction handling, validation and
+                                                                          explanations.
+Figure 1. Overall framework, reproduced from the paper.
+ Prices and operating conditions enter through different paths
+
+A cross-attention distributional reinforcement learning method is proposed for BESS optimal bidding.
+It captures market features and learns the distribution of historical experience.
+
+
+Time / frequency feature extraction          Cross-attention                 Distributional SAC
+
+
+       Market-price window                                                     Actor network
+                                                 Trend Q
+                                               Periodic K, V
+                                                                             Energy + FCAS bids
+      Trend            Periodic
+    component         component                  Periodic Q
+                                                 Trend K, V               Critic / return distribution
+      RevIN          FFT / periods
+       MLP            TimesNet
+  Denormalisation     2D feature           Concatenated features          Replay buffer · policy update
+                       learning
+Revenue is stacked across energy and FCAS services
+
+
+                   𝑅total = 𝑅energy + 𝑅regulation + 𝑅contingency
+
+
+Revenue
+                     Operating mechanism           Economic trade-off
+component
+                     Buy and sell across energy
+Energy arbitrage                                   Price spread versus cycling cost
+                     prices
+                     Continuously track AGC        Regular service income and
+Regulation FCAS
+                     commands                      energy throughput
+                     Reserve response for          Standby capacity versus rare
+Contingency FCAS
+                     disturbances                  high prices
+Power and SoC define the feasible bidding region
+
+                    −𝑃𝑚𝑎𝑥 ≤ 𝑃𝑡,𝐸 ≤ 𝑃𝑚𝑎𝑥                        Energy power limit
+
+
+                 𝑃𝑡,𝐸 + 𝑃𝑡,𝑅𝑅 + 𝑃𝑡,𝑅𝐶 ≤ 𝑃𝑚𝑎𝑥                   Raise-service headroom
+
+
+                𝑃𝑡,𝐸 + 𝑃𝑡,𝐿𝑅 + 𝑃𝑡,𝐿𝐶 ≥ −𝑃𝑚𝑎𝑥                   Lower-service headroom
+
+
+                 SoC𝑚𝑖𝑛 ≤ SoC𝑡 ≤ SoC𝑚𝑎𝑥                        SoC operating range
+
+
+                            σ𝜏∈ℐ𝑡( 𝜂𝑐 𝑃𝜏,𝐶 + 𝑃𝜏,𝐷 /𝜂𝑑 )𝛥𝜏
+        SoC𝑡+1 = SoC𝑡 −                                        SoC update
+                                        𝐸𝑚𝑎𝑥
+
+Positive energy power = selling; P_C ≤ 0 charges, P_D ≥ 0 discharges.
+A penalty-based learning objective is not a formal safety guarantee.
+Degradation must be included in the operating objective
+
+
+                         𝑁DoD = 𝑁100% (DoD)−𝑘𝑝
+
+
+                        𝐶cap (1 − SoC𝑡 )𝑘𝑝 − (1 − SoC𝑡−1 )𝑘𝑝
+                𝐶half =
+                                      2𝑁100%
+
+                                               The model represents a nonlinear depth-
+                                               of-discharge cost.
+
+                                               The numerical comparison uses the
+                                               linear special case kp = 1.
+
+                                               Ignoring degradation changes the learned
+                                               trade-off.
+The bidding problem is formulated as an MDP
+
+
+
+MDP element        Representation in the paper
+                   SoC; rolling energy / FCAS prices; service capacity limits; ROI
+State
+                   target
+Action             Energy and four aggregated FCAS bidding capacities
+
+Transition         Market realization and physical battery response
+                   Energy and FCAS income less degradation and constraint
+Reward
+                   penalties
+
+   Observe state       Select capacities      Dispatch / settle       Update policy
+Rewards combine profit, feasibility and user preferences
+
+
+                           𝑟𝑡 = 𝑟𝑡,𝐸 + 𝑟𝑡,𝐹 + 𝑟𝑡,𝐷 + 𝟏 𝜒=1 𝑟𝑡,𝑃
+
+
+Market income                      Degradation cost                     Constraint penalty
+Energy and FCAS revenues           Battery wear reduces the             Power, SoC and ROI
+contribute to the reward.          operating reward.                    penalties discourage
+                                                                        undesirable outcomes.
+
+
+  Power and SoC violations receive a large negative reward.
+
+  An episode-end soft penalty discourages missing the user’s ROI threshold.
+  Capacity limits and the ROI target condition the policy on user preferences.
+Four LLM agents divide the automation workflow
+
+An LLM-coordination framework decomposes complex tasks into multiple subtasks handled
+cooperatively by multiple LLM agents, enabling user interaction, automated bidding and
+interpretability.
+
+ BESS auto-bidding              Multi-LLM-agent coordination                Tools and feedback
+
+ Profit components         User instruction                                 Data correction
+ • Energy                                                                   Parameter updates
+ • Regulation                    Agent 1                Agent 2             DRL bidding
+ • Contingency                 Instruction           Data processor
+                               interpreter
+ ROI target                                                                      Agent 4
+ Capacity limits                                                             System explainer
+                                   Agent 3 · Action validator
+                                Check tools, variables and values
+                                                                                Logs → user
+ Validation separates language interpretation from execution
+
+Example of LLM-agentic coordination
+  User intent and confirmation            Data processing and validation            Bidding and explanation
+
+User: “Contingency returns aren’t        System tool: parameter_updates         DRL action
+looking great. Should we reallocate      Regulation raise / lower: 35 MW        Energy: 8 MW
+some capacity?”                          Contingency raise / lower: 15 MW       Regulation raise / lower: 30 / 35 MW
+                                         Energy price: missing                  Contingency raise / lower: 12 / 10
+Agent 1: Clarifies whether the user                                             MW
+wants to shift capacity from
+                                         Agent 2: “Missing value detected for
+contingency to regulation.
+                                         p_E.”                                  Environment
+                                         Agent 3: Validates the data-           Realised market rewards and
+User: “Yes, let’s do 35 MW regulation,   correction tool call.                  degradation are recorded in the
+15 MW contingency.”                                                             system operation log.
+
+                                         System tool: data_correction
+Agent 3 validates the parameter update   Corrected p_E: 78.21                   Agent 4 explains bidding
+before execution.                                                               performance and ROI to the user.
+ Domain adaptation improves instruction reliability
+
+LLM-agent implementation                               Supervised fine-tuning
+
+Prompt
+                                                               𝒟LLM = {(𝑀𝑖 , 𝑅𝑖 , 𝐺𝑖 )}𝑁
+                                                                                       𝑖=1
+Memory: static and dynamic memory
+Reasoning: task reasoning and step-by-step
+analysis
+Grounding: agent actions aligned with the                                 𝑁
+environment                                             ℒLLM = − ෍            log 𝑃𝜗 (𝑅𝑖 , 𝐺𝑖 ∣ 𝑀𝑖 )
+                                                                          𝑖=1
+Theory of Mind prompting
+
+Infer ambiguous intentions and ask for clarification   Memory → reasoning → grounded tool action
+before making parameter changes.
+
+LoRA: frozen base model + trainable low-rank           Instruction examples improve responses and tool
+adapters                                               interaction.
+Trend and periodic branches capture different market patterns
+
+             Market-price window → average-pooling decomposition
+
+
+
+Trend component · 1D temporal features      Periodic component · 2D temporal
+                                                        features
+
+                                                  FFT → dominant periods
+    RevIN          MLP          Denorm.
+
+
+                                            Reshape → TimesBlock / Inception →
+ Normalise the sequence, learn the trend,
+                                                        reshape
+ then restore the original scale.
+                                            Parameter-efficient temporal feature learning
+Cross-attention exchanges information between branches
+
+                                𝑄𝐾 𝖳                 Q Queries
+      Att(𝑄, 𝐾, 𝑉) = softmax            𝑉            K Keys
+                                  𝑑𝑘                 V Values
+
+
+ Enhance the trend branch
+
+ Trend queries                 Periodic keys / values            Enhanced trend
+                                                                 features
+
+ Enhance the periodic branch
+
+ Periodic queries              Trend keys / values               Enhanced periodic
+                                                                 features
+                                                     ~   ~
+                               𝐹fusion = Concat(𝐹𝑃 , 𝐹𝑇 )
+Distributional SAC learns more than an expected return
+
+                            𝐷
+                   𝑍(𝑠, 𝑎) = 𝑟 + 𝛾 𝑍(𝑠 ′ , 𝑎′ ) − 𝛼log𝜋(𝑎′ ∣ 𝑠 ′ )
+
+                                     ^ target ′ ′
+                  𝑦𝑗 = 𝑟(𝑠, 𝑎) + 𝛾   𝑞𝑗      (𝑠 , 𝑎 ) − 𝛼log𝜋(𝑎′ ∣ 𝑠 ′ )
+
+
+  Uncertainty                                Response in the study
+                                             Online learning adds new market
+  Epistemic: limited experience
+                                             experience
+                                             Quantile estimates represent the return
+  Aleatoric: inherent market randomness
+                                             distribution
+Experience replay supports continuous policy improvement
+
+
+                                                                             Sample replay
+   Observe / act              Compute reward        Store transition
+                                                                                batch
+
+
+
+
+Setting             Value        Setting       Value
+                                                                   27 ms
+Replay buffer       1,000,000    Batch size    256                 Average bidding decision
+Actor / critic LR   0.001        Quantiles     32
+
+Discount factor     0.99         Soft update   0.005               41 ms
+Hidden layers       2 × 256      Activation    ReLU                Average online update
+The case study uses a 50 MW / 100 MWh battery
+
+
+Item                 Setting
+
+NEM prices           South Australia; 1 March 2022–1 March 2023
+                     3 months offline pre-training; 9 months online evaluation with policy
+Learning protocol
+                     updates
+Battery              50 MW / 100 MWh; SoC 20–80%; efficiency 95%
+
+Cost assumptions     $30m capital; 4,580 cycles; kp = 1
+
+Response simulation PJM RegD for regulation; simulated load disturbances for contingency
+
+Episode              24 hours; 288 five-minute intervals
+
+These are model assumptions and historical simulation conditions—not Hornsdale plant
+parameters.
+Cross-attention closes part of the perfect-information gap
+
+
+                                                                       Distributional SAC shows
+                                                                       superior performance by fully
+                                                                       considering the aleatoric
+                                                                       uncertainties in DRL problem
+
+       Reward comparison of different DRL algorithms during the training
+
+
+
+                                                                                    Cross-attention
+                                                                                    distributional SAC
+                                                                                    reaches 79.74% of the
+                                                                                    perfect-information
+                                                                                    benchmark.
+
+        The long-term cost-benefit analysis with perfect benchmarks.
+The ablation study isolates the contribution of feature modules
+
+
+Module                Energy    Regulation        Contingency       Degradation      Net profit
+
+Baseline              3.35      15.73             11.91             −1.58            29.41
+
+Trend                 2.93      13.69             15.04             −1.77            29.89
+
+Periodic              3.98      17.03             12.86             −2.37            31.50
+
+Cross-attention       3.69      16.22             14.78             −1.92            32.77
+
+      35                           31.50       32.77
+            29.41       29.89
+      30                                                        Trend and periodic features are
+      25
+      20
+                                                                complementary.
+ $m
+
+
+
+
+      15                                                        This is not an LLM-only
+      10
+       5                                                        ablation.
+       0
+           Baseline     Trend     Periodic   Cross-attn.
+Robustness is tested beyond the main NEM case
+
+
+                                                       35
+
+                                                       30   28.63
+                                                                             27.38          26.89        26.44
+                                                       25       22.50            22.27
+                                                                                                 20.61       20.55
+
+
+
+
+                                           $ million
+                                                       20
+
+                                                       15
+
+                                                       10
+
+                                                       5
+
+                                                       0
+                                                               400              600            800         1000
+                                                                        With detection   No detection
+
+                                          Injected price spike ($/MWh); probability 10%
+
+PJM: about 20% higher profit with a        Residual-based detection mitigates
+separately trained policy—not zero-shot    revenue loss under targeted false-price
+transfer.                                  spikes.
+ Paper II: external information guides risk-sensitive bidding
+
+Large Language Model-Assisted Autonomous Bidding for Battery Energy Storage Systems:
+An Agentic Approach for Smart Power Industrial Decision-Making
+Chaojie Li · Borui Zhang · Guo Chen · Jian Huang · Zhaoyang Dong
+IEEE TASE 23 (2026), 18290–18304 | DOI: 10.1109/TASE.2026.3740512   From Paper I to Paper II
+                                                                    Learning historical market patterns leaves a
+                                                                    further question: how should bidding
+                                                                    respond to new external risk signals?
+
+                                                                    Research challenge
+                                                                    Reserve scarcity, weather and network
+                                                                    events can change market risk. A fixed risk
+                                                                    preference cannot adapt to every scenario.
+
+                                                                    Approach and advantages
+                                                                    LLM agents assess external evidence and
+                                                                    adjust risk parameters for the DRL bidder.
+                                                                    Reported profit rises 11.66% against the
+                                                                    fixed risk-neutral baseline.
+Figure 1. Overall framework, reproduced from the paper.
+A bi-level model captures the battery’s market influence
+
+
+
+         Mechanism                              Risk-Aware                       Cognitive
+         Modeling                             Decision-Making                  Enhancement
+
+
+
+    Mechanism Modeling                               Research content 1
+    ① BESS Bidding Model                                                             Market operator
+    Formulate joint BESS bidding in the energy and multiple FCAS markets
+    considering market rules, physical constraints, and battery degradation.        Cost minimisation
+    ② Market-Clearing Model
+    Model the FCAS market-clearing process to characterize the interaction
+    between BESS bids, market dispatch, and clearing prices.                        Bid             Dispatch
+    ③ Bi-level Reformulation
+    Reformulate the bi-level bidding problem into a tractable single-level
+                                                                                          BESS bidder
+    model using KKT conditions and linearization techniques.                        Profit maximisation
+The upper level optimises energy and FCAS profit
+
+                          𝑇
+                                     𝑚     𝑚        𝑒    𝑒          𝑐ℎ       𝑑𝑖𝑠
+             𝑚𝑎𝑥 𝐸𝜔 ෍           ෍ 𝑐 𝑝𝜔,𝑡 𝑒𝑐𝜔,𝑡,𝑖 − 𝑝𝜔,𝑡 𝑃𝜔,𝑡,𝑖 − 𝜇(𝑃𝜔,𝑡,𝑖 + 𝑃𝜔,𝑡,𝑖 ) 𝛥𝑡
+                          𝑡=1      𝑚
+
+
+
+        10                                                                10
+              𝑚           𝑚                                   𝑚                 𝑚       𝑚
+    ෍        𝑏𝜔,𝑡,𝑘 = 1, 𝑏𝜔,𝑡,𝑘 ∈ {0,1}                     𝑒𝑐𝜔,𝑡,𝑖 =෍         𝑏𝜔,𝑡,𝑘 𝑏𝑐𝑡,𝑖,𝑘
+        𝑘=1                                                               𝑘=1
+
+
+              𝑚         𝑚                                            𝑚         𝑚
+        0 ≤ 𝑏𝑐𝑡,𝑖,𝑘 ≤ 𝑏𝑐𝑡,𝑖,𝑘+1                                0 ≤ 𝑏𝑝𝑡,𝑖,𝑘 ≤ 𝑏𝑝𝑡,𝑖,𝑘+1
+
+
+    b: selected band; bc: cumulative capacity; bp: band price (k = 1,…,9).
+    FCAS income − energy purchase cost − degradation cost.
+Joint power constraints and SoC ensure deliverability
+
+
+                       𝜂𝑐 𝑃𝑡𝑐ℎ 𝛥𝑡 𝑃𝑡𝑑𝑖𝑠 𝛥𝑡                      SoC update
+       SoC𝑡+1 = SoC𝑡 +           −
+                        𝐸𝑚𝑎𝑥       𝜂𝑑 𝐸𝑚𝑎𝑥
+
+              SoC𝑚𝑖𝑛 ≤ SoC𝑡 ≤ SoC𝑚𝑎𝑥                            SoC operating range
+
+
+
+                 𝑙𝑟     𝑙𝑐
+               𝑏𝑐10 + 𝑏𝑐10 + 𝑃𝑒 ≤ 𝑃𝑚𝑎𝑥                          Lower-service headroom
+
+
+                 𝑟𝑟     𝑟𝑐
+               𝑏𝑐10 + 𝑏𝑐10 − 𝑃𝑒 ≤ 𝑃𝑚𝑎𝑥                          Raise-service headroom
+
+Lower services use charging headroom; raise services use discharging headroom.
+Market clearing determines enabled capacity and price
+
+                                      Market-clearing response
+               𝑚
+ 𝑚𝑖𝑛 𝐸𝜔 ෍ ෍ ෍ 𝐶𝜔,𝑡,𝑛
+                 𝑡   𝑚       𝑛
+
+
+
+         10
+    𝑚        𝑚 𝑚
+   𝐶𝑛 = ෍ 𝑏 𝑝𝑛,𝑘 𝑞𝑛,𝑘
+         𝑘=1
+
+
+
+           10
+                 𝑚
+𝑒𝑐𝑛𝑚 = ෍        𝑞𝑛,𝑘 , ෍ 𝑒 𝑐𝑛𝑚 = 𝐷𝑚
+           𝑘=1           𝑛
+
+                                      More BESS capacity displaces costlier
+                                      external capacity in this experiment.
+KKT conditions encode the lower-level market response
+
+                           ∗           Marginal cost of meeting an additional
+                 𝑚
+                        𝜕𝐺
+               𝑐𝑝𝜔,𝑡 =    𝑚            unit of FCAS demand, where the
+                       𝜕𝐷𝜔,𝑡           value function is differentiable.
+
+
+               𝛻𝑥 ℒ = 0, 𝑔(𝑥) = 0, 𝑠 = −ℎ(𝑥) ≥ 0
+
+
+                           𝜆 ≥ 0, 𝜆𝖳 𝑠 = 0
+
+            0 ≤ 𝜆 ≤ 𝑀𝑧, 0 ≤ 𝑠 ≤ 𝑀(1 − 𝑧), 𝑧 ∈ {0,1}
+
+Fixed bids give a feasible, bounded lower-level LP. Strong duality and valid M bounds are
+required; the formulation is not unconditional.
+The DRL environment embeds market and battery constraints
+
+
+
+Component           Implementation
+
+Observed state      SoC, energy price, FCAS prices and demand
+
+Action              Energy power and multi-band FCAS capacity bids
+
+Reward              Settled energy / FCAS profit less degradation; clipped for training
+
+Feasibility         Clip bids to monotonic and joint-power bounds; block SoC violations
+
+
+
+   Bidding action        Market clearing         Physical update        Profit / next state
+Distributional learning makes risk preference controllable
+
+
+                 𝑄(𝑠, 𝑎) = 𝐸[𝑍(𝑠, 𝑎)]                   Expected return
+
+
+                         𝐷
+              𝑍(𝑠, 𝑎) = 𝑟 + 𝛾𝑍(𝑠 ′ , 𝑎′ )               Return distribution
+
+
+                             1
+                         −1                             Risk-weighted value
+          𝑄𝜑 (𝑠, 𝑎) = න 𝐹𝑍(𝑠,𝑎) (𝜏)𝑑𝜑(𝜏)
+                             0
+
+
+
+   Return distribution           Quantile weighting   Risk-sensitive action
+Two Kumaraswamy parameters control the risk attitude
+
+
+                             𝜑(𝜏; 𝑢, 𝑣) = 1 − (1 − 𝜏 𝑢 )𝑣
+
+                        −1                                            1Τ𝑣 1Τ𝑢
+                    𝜑        (𝜏; 𝑢, 𝑣) = 1 − (1 − 𝜏)
+
+
+                                                         1
+Parameters      Interpretation                          0.8
+
+
+
+
+                                             Quantile
+                                                        0.6
+
+(1, 1)          Risk-neutral                            0.4
+                                                        0.2
+                                                         0
+(1, v), v > 1   Risk-averse                                   0.0        0.2       0.4        0.6           0.8     1.0
+                                                                          Uniform input probability
+(u, 1), u > 1   Risk-seeking
+                                                                    Averse (1,3)    Neutral         Seeking (3,1)
+The actor and critic are conditioned on risk parameters
+
+
+              𝛿𝑖𝑗 = 𝑟 + 𝛾𝑍𝜃′ (𝑠 ′ , 𝑎′ , 𝑥 ′ ; 𝜏𝑗′ ) − 𝑍𝜃 (𝑠, 𝑎, 𝑥; 𝜏𝑖 )
+                                                                                        Temporal-difference
+                                                                                        error
+x = (u, v): risk parameters; critic samples are uniform, actor samples are risk-transformed.
+                         𝑁   𝑁             ′
+                    1
+              ℒ𝜃 =    ′ ෍ ෍      𝜏𝑖 − 𝟏 𝛿𝑖𝑗<0                     𝛿𝑖𝑗                   Critic loss
+                   𝑁𝑁    𝑖=1 𝑗=1
+
+
+
+
+                                   1 𝑁             ^
+         ℒ𝜓 = 𝐸 𝛼log𝜋𝜓 (𝑎 ∣ 𝑠, 𝑥) − ෍ 𝑍𝜃 (𝑠, 𝑎, 𝑥; 𝜏𝑖 )                                 Actor loss
+                                   𝑁 𝑖=1
+
+
+
+Risk pairs are sampled in training and fixed within each episode. The learned policy
+accepts changing risk inputs.
+The risk-approximation bound depends on explicit assumptions
+
+                                1
+                             න |𝑔(𝜏) − 𝑔𝑥 (𝜏)|𝑑𝜏 ≤ 𝜀
+                               0
+
+                             𝜌𝑔 (𝜋𝑔∗𝑥 ) − 𝜌𝑔 (𝜋𝑔∗ ) ≤ 2𝐿𝑍 𝜀
+
+
+
+Tested measure        Reported approximation                  Assumes an available ε-
+CVaR                  Error below 0.025                       approximation and an LZ-
+                                                              Lipschitz quantile function.
+Wang                  Error below 0.004
+                                                              Not a proof that any risk
+Power                 Exact match in tested cases             function is arbitrarily
+Outcome correlation   Above 0.995 in reported settings        approximable.
+Three agents connect risk evidence to adaptive bidding
+
+
+LLM Agent 1 · Market Analyst
+    Online sources              Information retrieval             Market analysis               Numerical
+    AEMO notices /              Textual risk signals           Prices · news · weather        market state
+       weather
+          Market analysis
+
+
+LLM Agent 2 · Risk Manager                                                           DRL agent
+                                                                   Control
+                                             Risk preference       vector                  Action
+ Market analysis       Risk analysis
+                                                                                 Actor              Environment
+                                                   (u, v)
+                                                                                 network
+
+                                          Feedback
+                                                                               State and reward feedback
+
+Agent 3 · Strategy Evaluator
+          Risk preference → Reward → Feedback
+ ReAct retrieves evidence before selecting a risk response
+
+Thought → Action → Observation
+
+Action                               Reserve-scarcity example              Weather-related example
+Select a tool and query relevant
+external information.                Action                                Action
+                                     Search for South Australian reserve   Search South Australian weather
+                                     notices.                              warnings for 15 October 2024.
+Observation
+Retrieve market notices, weather     Observation                           Observation
+alerts or other risk signals.        Forecast LOR1 in South Australia on   A non-credible contingency is
+                                     5 August 2024.                        reclassified following severe
+                                                                           weather.
+Thought
+                                     Thought                               Thought
+Interpret observations, assess       Assess tight reserve margins and      Assess outage risk and market
+market risk and determine the next   possible price volatility.            volatility.
+action.
+ Fine-tuning aligns textual risk signals with control parameters
+
+
+•Data Source: AEMO market notices and corresponding historical
+FCAS market data in South Australia.
+•External Risk Signals: 98 AEMO market notices, covering reserve          Risk signal         Potential market impact
+scarcity, weather-related disruptions, system changes, and other
+uncertain events.
+•Supervision Labels: For each historical scenario, candidate risk-        Forecast / actual   Tighter reserve margins;
+                                                                          LOR                 possible scarcity and
+parameter pairs are evaluated, and the best-performing pair is selected                       price volatility
+as the supervision label.
+                                                                          Severe weather      Outages, renewable-
+•Reasoning Samples: The dataset includes risk reasoning chains, as                            output changes and
+well as incorrect assessments followed by feedback and correction, to                         network restrictions
+improve the model’s ability to revise its judgments.                      Contingency         Changed system risk and
+•Data Augmentation: Textual expressions are paraphrased to increase       reclassification    reserve requirements
+diversity and reduce overfitting.
+                                                                          Network / system    Different operating
+•Final Dataset: 1,576 Instruction–Input–Output samples are                changes             constraints and market
+constructed for LoRA-based supervised fine-tuning of LLaMA-3.1-8B-                            conditions
+Instruct.
+Market-data training and testing use separate periods
+
+
+Item                        Setting
+
+Market records              South Australia: August 2023–December 2024
+
+Train / test split          Before February 2024 / February 2024 onwards
+
+Risk-distribution evaluation 30 days starting 1 February 2024
+
+Battery                     50 MW / 100 MWh; SoC 20–80%; efficiency 95%
+
+Cell-cost assumptions       $0.3/Wh; maximum 5,000 cycles
+
+Decision interval           Five minutes; one day per episode
+
+Market-data dates are reported; a separate temporal holdout for the LLM fine-tuning samples
+is not clearly specified.
+Risk aversion and risk seeking change capacity allocation
+
+
+                                                                                  Loss
+                                     High-risk setting   CV ↓   Tail profit $ ↑
+                                                                                  prob. ↓
+
+                                     Averse (1,5)        2.61   6,467.03          1.06%
+
+                                     Neutral (1,1)       3.03   4,460.82          2.13%
+
+                                     Seeking (5,1)       3.37   809.37            6.38%
+
+
+                                     Tail profit = mean profit in the worst 5%
+                                     of outcomes (CVaR₅%). Higher is better
+                                     here.
+
+                                     Risk-seeking increases return dispersion
+                                     and extreme-loss probability in this test.
+ Dynamic risk selection improves the overall cost–benefit balance
+
+
+
+Risk preference   Parameters     Energy    Regulation   Contingency   Degradation   Total
+
+Neutral           (1,1)          352,689   669,742      406,761       −225,798      1,203,394
+
+Averse            (1,2)          340,229   757,374      403,775       −235,051      1,266,327
+
+Averse            (1,3)          336,224   778,191      396,696       −235,313      1,275,798
+
+Averse            (1,4)          333,490   788,697      392,046       −236,159      1,278,074
+
+Averse            (1,5)          331,529   790,927      390,904       −236,637      1,276,723
+
+Seeking           (2,1)          404,302   496,049      471,876       −191,176      1,181,051
+
+Seeking           (3,1)          427,012   427,403      480,481       −181,887      1,153,009
+
+Seeking           (4,1)          435,859   411,514      481,691       −179,663      1,149,401
+
+Seeking           (5,1)          436,667   405,667      480,132       −179,212      1,143,254
+
+Dynamic           LLM-adjusted   372,375   728,065      475,584       −232,262      1,343,762
+
+
+ Dynamic: +11.66% vs neutral; +5.14% vs the best fixed pair (1,4).
+External evidence improves the timing of risk-taking
+
+
+
+
+➢ Case study on a real South Australian                Item                Reported value
+  event:
+                                                       Date / region       19 June 2024 / South Australia
+We examine an actual market event in South
+Australia. Based on the reserve-scarcity               Risk signal         Forecast LOR1 notice
+signal and high market volatility, the LLM
+                                                       Market volatility   Energy std: 964.29; contingency raise
+selected a moderately risk-seeking                                         std: 10.80
+preference x=(3,1). A contingency raise price          Risk parameters (u, v) = (3, 1)
+spike subsequently occurred, and the
+strategy achieved $92,360.71, compared with            Realised            Contingency FCAS spike: 200; std:
+                                                       outcome             19.31
+the $73,565.32 baseline.
+                                                       Profit              LLM-selected: $92,360.71; neutral:
+                                                                           $73,565.32
+                                                       Improvement         $18,795.39 in this event case
+
+
+19 June 2024 case: $92,360.71 versus $73,565.32 (neutral baseline).
+Fine-tuning improves tool use and decision reliability
+
+
+Metric                                        Pre-trained          Fine-tuned
+Observation utilisation                       66.67%               100%
+TAO-chain completion                          23.33%               100%
+Total bidding profit                          $1.15m               $1.34m
+
+             1.6
+             1.4                   1.34
+             1.2
+                      1.15                             The DRL controller makes the
+ $ million
+
+
+
+
+               1                                       final bid. LLM errors can reduce
+             0.8
+                                                       returns even when the controller
+             0.6
+             0.4                                       prevents direct constraint
+             0.2                                       violations.
+               0
+                   Pre-trained   Fine-tuned
+The reported workflow fits inside a five-minute interval
+
+
+                                                                51.74 seconds
+          45
+                40.74
+          40
+
+          35
+
+          30                                                      Most latency comes from
+                                                                  retrieval and reasoning.
+seconds
+
+
+
+
+          25
+
+          20
+                                                                  Notices need not be retrieved
+          15                                                      every trading interval.
+          10
+                                           5.60
+          5
+                              5.38
+                                                                  Validation in other markets
+          0
+                                                     0.02         remains future work.
+                Analyst   Risk manager   Evaluator   DRL
+
+
+
+
+           A reported mean below 300 seconds is encouraging, but deployment also
+           needs timeout and fallback handling.
+Two complementary research contributions
+
+
+                                Applied Energy                                          IEEE TASE
+
+                                                                                        How to adapt risk using external
+Primary question                How to automate and improve bidding?
+                                                                                        evidence?
+                                User interaction, coordination and                      Risk perception, parameter selection
+LLM role
+                                explanation                                             and feedback
+                                                                                        Bi-level model + risk-conditioned IQN /
+Numerical core                  Cross-attention + distributional SAC
+                                                                                        SAC
+                                                                                        Historical simulations, risk and SFT
+Evidence boundary               Historical simulation and ablation tests
+                                                                                        comparisons
+Selected references
+[1] Zhang et al. Applied Energy 401 (2025), 126702. DOI: 10.1016/j.apenergy.2025.126702
+[2] Li et al. IEEE TASE 23 (2026), 18290–18304. DOI: 10.1109/TASE.2026.3740512
+[3] Aurecon. Hornsdale Power Reserve: Year 1 (2018) and Year 2 (2020) case studies.
+[4] Neoen. 2019 Universal Registration Document, p. 63. [5] AEMO ancillary-service guidance.
+From fast physical response to better commercial decisions
+
+
+                                                    Renewable integration increases the
+                                                    importance of controllable frequency
+                                                    support.
+
+                                                    Hornsdale shows the commercial value of
+                                                    combining energy and ancillary services.
+
+                                                    Paper I improves automation and market-
+                                                    feature learning; Paper II adds context-
+                                                    aware risk adaptation.
+
+                                                    Profitability still depends on physical limits,
+                                                    market conditions and reliable
+                                                    implementation.
+Chaojie Li · Department of Electrical Engineering
+City University of Hong Kong
+

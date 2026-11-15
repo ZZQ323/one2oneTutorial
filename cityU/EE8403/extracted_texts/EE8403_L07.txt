@@ -1,0 +1,1356 @@
+Machine Learning for AIoT
+
+
+Learning, adaptation, and timely inference
+
+EE8403 Lecture 7
+
+Prof. Qun Song
+AIoT sensing within a physical system
+
+
+
+
+             Where can a wrong measurement change an action?
+
+                                                               2
+Characteristics of AIoT sensing
+AIoT
+                    Goal              Actual conditions            Challenge
+characteristic
+
+Physical            Recognize the     Readings also reflect the
+                                                                   C1. Useful signal
+measurements        intended state    sensor and surroundings
+
+
+Data collected in   Obtain reliable   Ground truth needs visits,
+                                                                   C2. Labeling cost
+the field           training labels   measurement or checking
+
+Different
+                    Keep the task     Devices and environments     C3. Changing
+deployment
+                    working           differ from training         conditions
+settings
+
+A running           Produce useful    Compute and workload can
+                                                                   C4. Timely inference
+application         results on time   change
+
+                                                                                          3
+C1. Useful information in complex signals
+
+ Recognize an activity, event or          Why the measurements vary
+ physical state
+
+
+ The signal mixes task information with
+ other effects
+
+
+ Learn a representation that keeps
+ useful information
+
+
+
+
+                                                                      4
+C2. The cost of reliable labels
+
+ Learn from enough reliably labeled      Recording a trace does not supply its
+ examples                                label
+
+
+
+ Ground truth may require fieldwork at
+ collection time
+
+
+ Reduce repeated collection and
+ manual labeling
+
+
+
+
+                                                                                 5
+C3. Changing measurement conditions
+                                    Device change
+ Keep task performance when
+ conditions change
+
+
+ A new device or session produces
+ different measurements
+                                    Session change
+
+ Generalize or adapt beyond the
+ training conditions
+
+
+
+
+                                                     6
+C4. Inference within a time budget
+
+ Return a useful prediction before the   A rise in processing delay
+ deadline
+
+
+ Available compute and processing
+ workload can vary
+
+
+ Adapt computation to the available      What prediction quality fits the available time?
+ time budget
+
+
+
+
+                                                                                            7
+Evidence beyond a test-set score
+
+Challenge              Evaluation question                  Evidence to inspect
+
+                       Can the representation predict the   Performance on separate test
+C1. Useful signal
+                       task?                                measurements
+
+
+                       How much preparation does it         Data, labeling effort and achieved
+C2. Labeling cost
+                       require?                             performance
+
+
+C3. Changing           Does it work beyond training         Held-out devices or environments
+conditions             conditions?                          and allowed adaptation
+
+
+                                                            Accuracy and latency under the
+C4. Timely inference   What quality fits the time budget?
+                                                            stated workload
+                                                                                                 8
+Four challenges and the research cases
+
+Challenge              Research case   Main idea
+
+                       DeepRoom /
+C1. Useful signal                      Learn room and location information
+                       EchoLoc
+
+C2. Labeling cost      ELF-SLAM        Use relationships along a journey
+
+
+C3. Changing           ZA-SLAM         Transfer across environments
+conditions             PhyAug          Adapt to sensing devices
+
+
+C4. Timely inference   LeapNet         Adapt execution to the time budget
+
+
+                                                                             9
+Why indoor location matters
+
+
+
+
+ Museum guide                 Indoor service robot
+
+
+
+
+                                                     10
+A phone already contains many sensors
+
+ • Perception is fundamental for intelligent systems in real-world environments
+ • Modern mobile devices provide rich multimodal sensing capabilities.
+ • These sensing capabilities support key tasks, including localization, mapping, and activity
+   understanding
+
+
+
+                                           Cameras                         GPS
+                                                                                 Barometer
+                                       Gyroscope
+                                                                                 Ambient light
+                                    Magnetometer
+                                                                                 Wi-Fi
+                                    Accelerometer                                NFC
+                                                                           Microphone
+  Localization and Mapping (SLAM)            Bluetooth                     (Acoustic)               Activity Recognition
+
+
+                                       Mobile devices are equipped with rich sensing capabilities
+
+                                                                                                                           11
+Why use acoustic sensing?
+
+      Limitations of existing sensing modalities
+
+        GPS                                       Camera                                      Wi-Fi
+
+
+
+
+ Signal attenuation and localization drift      Raise privacy concerns              Highly sensitive to environmental dynamics
+
+
+
+
+  •     Acoustic sensing requires no additional infrastructure, avoids camera imagery, and is readily deployable on
+        commodity mobile devices.
+  •     Despite these advantages, acoustic sensing remains relatively underexplored for SLAM and human activity
+        recognition.
+
+
+
+
+                                                                                                                                 12
+What should an acoustic location system achieve?
+     Localization method   Approach      Probe/rcvd signal
+         EchoSLAM                         Acoustic echos
+           VoLoc           Analytical      Human voice
+          EchoSpot                       18-23kHz FMCW
+       SurroundSense                     Ambient acoustic
+          Batphone                          0-7kHz ABS
+                           Fingerprint
+                                                                Nearby wall(s)
+         RoomSense                         0-24kHz MLS       [EchoSLAM, VoLoc,
+            Ours                         20kHz single tone       EchoSpot]
+
+
+
+
+                                                                                 13
+From a phone's sound to a location label
+
+
+                                 Probe
+                                                                                             Process echo
+                                                              Input: echo data
+
+
+
+                                                                                                  DNN
+                                                              Output: location
+                           Echoes                             label
+
+    • Those used in existing studies                                         • Short-time single-frequency tone
+          • Sine sweep, maximum length sequence                                     • 2ms
+            (MLS), multi-frequency tones                                              Short probe duration
+            Audible, wide-band                                                      • 20kHz
+                                                                                      near-ultrasonic probe signal
+                                                                                    • Challenge: limited information carried by
+                                                                                      echoes
+[1] Qun Song et al., “Deep Room Recognition Using Inaudible Echos,” IMWUT (UbiComp), 2018.
+                                                                                                                                  14
+EchoLoc as a complete system
+
+
+
+
+[2] Dongfang Guo et al., “Demo Abstract: Infrastructure-Free Smartphone Indoor Localization Using Room Acoustic Responses,” SenSys (Demo), 2021.
+                                                                                                                                                   15
+Finding the weak room response
+                                   chirp
+                                                                      Received acoustic signal in a room
+                          30000
+                          20000
+      Amplitude
+                          10000
+                             0
+                          -10000
+                          -20000
+                          -30000
+
+
+                                       100× weaker
+                             300
+                             200
+                             100
+              Amplitude
+
+
+
+
+                            -100
+                            -200
+                            -300
+                            -400
+
+
+
+                                      echoes
+                                                     Correlation with the chirp template in the room
+                            1500
+                            1000
+     Correlation
+
+
+
+
+                             500
+                              0
+                            -500
+                           -1000
+                           -1500
+
+
+
+                                                         Correlation with the chirp template outdoor
+                            1500
+                            1000
+     Correlation
+
+
+
+
+                            500
+                              0
+                            -500
+                           -1000
+                           -1500
+
+
+
+
+                                                                                                           16
+Signal processing and learned representations
+
+Signal processing prepares the input
+
+
+
+
+Spectrograms describe the measured          Training learns which patterns distinguish
+echoes                                      rooms
+
+
+A useful representation keeps information about the task
+
+                                                                                         17
+Learning a room's acoustic fingerprint
+
+
+
+
+        Room L1                Room L2
+
+
+• Room L1 and L2 have the same size.         • Convolutional neural network to
+   • A room gives stable spectrogram           differentiate the subtle difference in
+   • Perceptible differences for different     room’s acoustic responses
+     rooms
+
+
+
+                                                                                        18
+From recognizing rooms to finer locations
+
+ • Sine sweep from 15k to 20kHz.
+
+
+
+
+                                            19
+The signal used for finer localization
+• Excitation signal                  • Echo extraction
+   • Length: 10ms                        – Length: 50ms
+   • near inaudible chirp: 15kHz –       – STFT to obtain spectrogram
+     20kHz                            Discard direct path
+
+                                                            50ms
+
+                                                                      Echo
+                                                               STFT
+
+
+
+
+                                                                             20
+Location labels and physical position error
+
+
+ Question                                        Metric              Interpretation
+
+
+ Did we predict the correct room or              Classification
+                                                                     Higher is better
+ reference label?                                accuracy
+
+
+
+ How far is the estimate from the true           Position error in
+                                                                     Lower is better
+ position?                                       metres
+
+
+A wrong label can refer to a physically near or far location
+                                                                                        21
+What the localization experiments measured
+ • Room-level localization:
+     •   99.7%: 22 residential/office rooms
+     •   97.7%: 50 residential/office rooms
+     •   99.0%: 19 spots in a quiet museum
+     •   89.0%: 15 spots in a crowded museum
+
+ • Higher-resolution indoor localization:
+     • 0.5 m error: 61 locations in a 16 x 28 m2 university lab.
+     • 0.9 m error: 101 locations in Singapore National Gallery.
+
+ • Much improved robustness against interferences
+
+
+
+
+                                                                   22
+The National Gallery field experiment
+
+
+           – 101 positions studied (50 spots in front of
+             artworks inside gallery room + 51 spots in public
+             foyers, corridors, etc.)
+           – Overall accuracy: 86%
+
+
+
+
+                                                                 Ground truth label
+                                                                                      Predicted label
+
+                                                                                                        23
+Echo fingerprinting in the gallery
+
+
+
+
+                                     24
+C2. Labeling cost motivates ELF-SLAM
+
+  Build an accurate location reference map
+
+
+
+  Collecting and labeling every reference
+  point takes work
+
+
+  Use relationships along a walk to reduce
+  manual labels
+
+
+ELF-SLAM: learned place similarity and loop closure
+[3] Wenjie Luo et al., “Indoor Smartphone SLAM with Learned Echoic Location Features,” SenSys, 2022.
+                                                                                                       25
+Useful echoes, expensive reference data
+                                                   Location 1    Location 2
+• Acoustic echoes exhibit spatial
+  distinctness
+• Fingerprint approach achieves sub-               spectrogram   spectrogram
+  meter location recognition accuracy
+• Fingerprint approach requires
+  intensive data collection and labelling
+  Use SLAM to unleash the fingerprint approach     Location 3     Location 4
+  from blanket labelled training data collection
+
+
+                                                   spectrogram    spectrogram
+                                                                                26
+Self-supervision for loop closure
+
+Loop closure recognizes a place visited before
+
+                                                                1. TRAINING PAIRS
+                                                                Near / matched and far / mismatched
+                                                                samples
+
+
+                                                                2. LEARNED FEATURES
+                                                                Preserve place similarity
+
+
+                                                                3. LOOP CANDIDATES
+                                                                Identify possible revisits
+
+
+Training is still required when per-sample location labels are absent
+                                                                                                      27
+Motion estimates drift over a walk
+
+• User trajectory estimated from inertial measurement unit
+  (IMU) is prone to sensor errors
+
+
+
+
+Acoustic echoes to detect loop closures and regulate the user trajectory
+
+                                                                           28
+Learning features for loop closure
+• Ineffectiveness of generic features   • Contrastive learning designs
+                                           – Near/far data pairing
+                                           – Data augmentation using simulator
+                                           – No labeled data is needed
+
+                     raw data
+                       PSD
+
+                   spectrogram
+
+
+                      t-SNE
+
+                      PCA
+
+
+                                                                                 29
+An echo feature can signal a revisited place
+
+
+
+
+                 echo
+
+
+
+
+                                               Loop closure detection
+
+
+
+
+                                                                        30
+Cleaning up loop-closure candidates
+
+       • Loop closure curation
+
+
+
+
+                   slicing            clustering   curated results
+       • Regulate user trajectory via
+         graph optimization
+
+
+
+
+                                                                     31
+Loop closures help correct the trajectory
+
+      • Regulate user trajectory via graph optimization
+
+
+
+
+                                                          32
+Using the reconstructed map for localization
+
+
+   • Demo of trajectory localization
+
+
+
+
+                                               33
+Combining trajectory maps across a floor
+
+ • Floor-level contrastive learning for map superimposition
+
+              Positive samples:
+              (echo: loc a, user 1, dir x)
+              (echo: loc a, user 1, dir y)
+                          …
+              (echo: loc a, user k, dir z)
+
+
+              Negative samples:
+              (echo: loc a, user 1, dir x)
+              (echo: loc b, user 1, dir y)
+                          …
+              (echo: loc c, user k, dir z)
+
+
+
+
+                                                              34
+Map superimposition improves localization
+
+
+  • Real dataset                • Synthetic dataset
+
+
+
+
+                                                      35
+What deployment tests tell us
+ • Sensitivity analysis
+    – Speaker volume (works in 20% to 100% phone volume)
+    – ELF sequence length (best when ELF length >= 0.6s)
+    – Nearby moving people (up to 4 people in 60𝑚2 living room)
+    – Map aging (no salient aging issue within one month)
+    – Audible noise (robust to audible noise)
+    – Space layout changes (tolerate up to 4 objects movements in 60𝑚2 living room)
+ • System overhead
+    – Localization response time on smartphone: ~1.1s
+    – Processor utilization: ~20%
+    – Network bandwidth usage: 90kbps
+    – Battery usage: 270mAh (Google map is 280mAh)
+
+
+
+                                                                                      36
+What ELF-SLAM adds
+
+
+• Develop an indoor smartphone SLAM system using acoustic
+  echoes
+• Contrastive learning for:
+  – Loop closure detection
+  – Trajectory map superimposition
+• Sub-meter accuracy
+• Outperforms both the Wi-Fi and Geomagnetic SLAM systems
+
+
+
+                                                            37
+C3. Generalization to a new environment
+
+  Localize and map in a previously
+  unseen building
+
+
+  The geometry and echo patterns differ
+  from training
+
+
+  Transfer useful features without a new
+  training campaign
+
+
+ZA-SLAM response: align representations before deployment
+[4] Zhuochen Yu et al., “ZA-SLAM: Leveraging Vision-Language Model for Zero-Shot Acoustic SLAM,” MobiSys, 2026.
+                                                                                                                  38
+What happens in a new environment?
+
+
+
+  Data and Generalization Challenges
+
+
+
+
+                                       New environment
+
+
+
+
+    •   Extensive data collection      •   Model retraining in unseen environments
+    •   Time consuming and costly      •   Performance degradation in new areas
+
+                                                                                     39
+ZA-SLAM: acoustic sensing in unseen environments
+
+
+
+     The phone emits a short chirp.
+
+
+
+      Different places produce different echoes that can be
+      used for localization and mapping.
+
+
+
+      By aligning acoustic signals with a VLM, the system can
+      generalize to unseen environments without data
+      collection or model retraining.
+
+
+
+
+                                                                40
+Alignment before deployment, sensing after deployment
+
+
+
+
+        We use contrastive learning to align the acoustic and visual modalities.
+
+        We propose a module for selecting higher-quality alignment data, as well as a module that integrates IMU
+        features with acoustic features to improve accuracy.
+
+                                                                                                                   41
+The trajectory result and its deployment condition
+
+
+
+       We are the first zero-shot acoustic SLAM system,
+       requiring no data collection or model retraining in
+       unseen environments.
+
+
+
+
+      Figure: An illustration of trajectory reconstruction results
+         Blue: reconstructed trajectories; Red: ground truth.
+
+                                                                     42
+Generalization has measurable limits
+
+
+                       Table 2: Mapping and localization performance of ZA-SLAM and different baselines.
+
+
+
+
+         Figure 2: Impact of moving people.      Figure 3: Impact of movements of          Figure 4: Impact of using different
+                                                           furniture items.                             phones.
+
+
+
+
+                                                                                                                                 43
+The challenges in the acoustic cases
+
+
+Challenge           Research case         Contribution
+
+
+C1. Useful signal   DeepRoom / EchoLoc Learn a room or location fingerprint
+
+
+
+C2. Labeling cost   ELF-SLAM              Use place similarity and loop closure
+
+
+C3. Changing
+                    ZA-SLAM               Support sensing in unseen environments
+conditions
+
+
+                                                                                   44
+C3. A different sensing device
+
+
+
+
+  New device                                                                                         Later measurements
+  Hold out whole devices                                                                             Hold out sessions
+[5] Wenjie Luo et al., “PhyAug: Physics-Directed Data Augmentation for Deep Sensing Model Transfer
+in Cyber-Physical Systems,” IPSN, 2021.
+                                                                                                                          45
+Why labeled sensing data are expensive
+   Factors                                    CV/NLP/Voice           IoT sensing
+   Massive labelled training datasets              ✓                       
+   Data homogeneity                                ✓                       
+    Separable data collecting and labeling   Inseparable data collecting and labeling
+
+
+
+                               “Dog”
+
+
+                               “Hello”
+                                                                         Label ?
+                                                                                        46
+Different sensors produce different data
+Factors                                CV/NLP/Voice     IoT sensing
+Massive labelled training datasets          ✓                 
+Data homogeneity                            ✓                 
+     Homogeneous data (image)        Heterogeneous data of diverse
+       with common features
+                                       modalities in IoT sensing
+                                                     Data can be affected by:
+                                                     • Gender
+                                                     • Age
+                                                     • Sensor quality
+                                                     • Sensor location
+
+                                                                                47
+The input distribution changes after deployment
+   Run-time domain shift in IoT sensing systems
+
+  • Sensor characteristic variations • Discrepancy between design-phase model
+                                       and test-phase model
+
+           Mic A          Mic B              Offline                             Online
+
+
+
+
+                                                                Wifi radio signal heat map (link)
+
+    IoT microphones respond to same     Temporal changes of WiFi signal at offline/online
+    excitation differently [IPSN’19]    phase [Pan, TKDE 2010]
+
+                                                                                                    48
+Using physical knowledge to reduce new data collection
+
+ Approaches in addressing domain shift:
+  Category       Solution                   Target-domain data volume
+                 FADA [NeurIPS’17]          ████
+  Physics-       ADDA: TransAct [IPSN’19]   ████████
+  regardless     Mic2Mic [IPSN’19]          █████████
+                 MetaSense [SenSys’19]      ███
+  Physics-driven PhyAug                     █
+
+
+ How to exploit first principle as a form of prior knowledge ?
+                                                                        49
+Adapting an existing model through its training data
+
+
+Physics-constrained machine learning:
+• Free-fall law [AAAI’17]
+• Fluid dynamics equation [Sun et al. 2020]
+➔ Require new neural network design and/or training algorithm
+
+ How to exploit first principle as a form of prior knowledge to
+ reduce the demand on target-domain data for transferring the
+ legacy DNNs?
+
+                                                                  50
+The PhyAug workflow
+                                first principle governed domain shift
+
+
+                                                        1
+                                  𝑥 ′ = 𝑎1 𝑥 + 𝑎2 𝑦 + 𝑎3 𝑥𝑦 + 𝑎4 𝑥 2 + 𝑎5 𝑦 2
+      source domain               𝑦 ′ = 𝑏1 𝑥 + 𝑏2 𝑦 + 𝑏3 𝑥𝑦 + 𝑏4 𝑥 2 + 𝑏5 𝑦 2
+                                                                                      target domain
+
+       transform existing                                    2 first principle fitting using limited data
+                            3
+         Source-domain             ageneral   = 0, a3 =shift
+                                    1 = 1, a2 domain           = 1, a5 = −1
+                                                        0, a4 learning
+              data                 𝑏1 = 0, 𝑏2 = 0, 𝑏3 = 2, 𝑏4 = −1, 𝑏5 = 0
+                                     Excessive training data!!!
+
+
+                                           transfer existing DNN
+                                                        4
+      augmented target
+                                                                                  domain-adapted DNN
+      domain data
+                                                                                                            51
+Keyword spotting with different microphones
+
+Keyword spotting with a CNN
+Google Speech Commands: 12 output classes
+10 keywords + silence + unknown
+
+
+                                                Oracle accuracy: 90%
+
+                                                         Yes
+                                            G
+                                                         No
+                                                         …
+                                                         Go
+  Raw audio          MFCC            Neural network
+                                                                       52
+Changing the microphone reduces recognition accuracy
+
+                                                              KWS Accuracy On
+  M1
+                                                               Microphones
+                                                                      Oracle: 90%
+  M2                                                   100%
+
+
+
+
+                                            ACCURACY
+                              G                         90%
+  M3                                                    80%   74%   74%   72%   71%   74%
+                                                        70%
+  M4                    Pre-trained model               60%
+  M5                                                    50%
+                                                              M1    M2    M3    M4    M5
+
+
+                                               16–19 percentage-point accuracy
+  How to exploit the first principle to        drop
+                                               (relative to the 90% oracle reference)
+  recover KWS’s accuracy
+                                                                                            53
+Microphone response guides data augmentation
+
+ 1 Physical model: microphone                        3 Target domain data augmentation
+     magnitude response
+
+        H(f) = |Y(f)| / |X(f)|
+                                                     Source domain: x(𝒕)          Target features
+ 2   Fast microphone FRC profiling                            STFT
+                                                     𝑋𝑖 𝑓 , 𝑖 = 1,2, … 100     𝑌𝑖 𝑓    = 𝐻 𝑓 ⋅ 𝑋𝑖 𝑓
+
+                                                      4 CNN model transfer via retraining
+
+
+ n(𝒕)           𝒚𝒏 (𝒕)                 |𝑭[𝒚𝒏 (𝒕)]|                                          G
+                                 𝑯 𝒇 =                            Re-train model
+                                        |𝑭[𝒏(𝒕)]|    Augmented target
+                                                     domain Y(𝒇)
+
+                                                                                                      54
+PhyAug recovers part of the accuracy gap
+
+Compared approaches                  KWS test accurcy using various approaches
+• PhyAug                      100%
+                               90%
+                                                                     Oracle accuracy: 90%
+
+• Calibration                  80%
+                               70%
+• CycleGAN [IPSN’19]           60%
+                               50%
+• Conventional Data            40%
+                               30%
+  Augmentation [IPSN’18]       20%
+                                       M1        M2         M3         M4          M5
+• FADA [NeurIPS’17]
+                                         Unmodified   Calibration   PhyAug
+                                         CycleGAN     CDA           FADA
+
+       PhyAug recovers accuracy losses by 64%, 67%, 72%, 53%, and 56%
+       respectively for five microphones
+
+                                                                                            55
+From keywords to continuous speech
+DeepSpeech2 [ICML’16]:
+• Model: CNN + LSTM ➔175x of KWS model
+• Prior mentioned baseline approach have not been evaluated on
+  such complicated model
+• Dataset:
+   • Librispeech: 1,000 hours transcribed utterances
+                                                  Oracle WER: 8.25%
+
+                                                 “HE COULD WAIT
+                                                   NO LONGER”
+ Raw audio       spectrogram     Deepspeech2            …
+                                                                      56
+Microphone changes also affect speech recognition
+                                         40%                      39% 39%
+  M1                                     35%                29%
+                                         30%
+  M2                                     25%   21% 20%
+                                         20%
+                                         15%
+  M3                                     10%
+                                          5%
+  M4                                            M1   M2     M3    M4   M5
+                         Deepspeech2
+  M5                                           Unmodified     Oracle WER
+                            Model
+                                        Oracle WER: 8.25%
+                                        All five microphones show higher WER
+
+    how to exploit the first principle of microphone frequency
+    response curve to recover WER?
+                                                                            57
+Speech recognition after adaptation
+
+Compared with:                              WERs using various approaches on
+• Unmodified baseline                             tested microphones
+• Calibration
+• Conventional augmentation           60%
+
+                                      40%
+CycleGAN did not yield usable
+features                              20%
+in this experiment (3.5 h of target
+                                      0%
+data).
+                                             M1          M2          M3       M4      M5
+Oracle WER: 8.25% (reference)               Unmodified        Calibration   PhyAug   CDA
+
+
+WER-gap recovery toward the oracle: 60%, 41%, 37%, 70%, 42%
+Recovery = (baseline WER − PhyAug WER) / (baseline WER − oracle WER)
+
+                                                                                           58
+Which physical changes remain difficult?
+ Microphone location: Microphone-         Environment:
+                      speaker distance:
+                             25cm         Meeting room (MR)      Tutorial room (TR)
+
+
+
+                             50cm
+      A    B    C
+                             75cm
+
+
+
+
+                                                         Open area (OA)
+
+
+
+      Insensitive          Insensitive                    Sensitive
+                                                                                      59
+What PhyAug contributes
+
+  • Proposed PhyAug to deal with domain shifts governed by
+    first principle in IoT sensing
+  • Apply PhyAug on three case studies
+     I. Audio sensing (KWS and ASR)
+         ▪ Recover significant portions of accuracy losses caused
+            by sensors’ characteristics
+     II. Seismic source localization
+         ▪ Reduce target-domain training data sampling
+            complexity
+
+                                                                    60
+C4. A useful result within its time budget
+
+  Return a useful vision result within the
+  application deadline
+
+
+  A slower processor or more objects adds
+  processing time
+
+
+  Adapt the model execution to the current time
+  budget
+
+
+                                                                                                          Predicted results
+[6] Zimo Ma et al., “Dynamic Layer Routing Defense for Real-Time Embedded Vision,” TECS (EMSOFT), 2025.
+                                                                                                                              61
+Adversarial Inputs in Embedded Vision
+  • DNN-based embedded systems are vulnerable to adversarial attacks
+
+                                  Model leakage
+                                                                                Prediction:
+                                                                                  “Yield”
+    Camera sensor    Perception model          Adversary
+
+
+
+
+                    Human: 100.0% stop sign           Human: 100.0% stop sign
+                    Machine: 99.7% stop sign          Machine: 0.9% stop sign
+                                                                                              62
+Dynamic Defense
+ Dynamic defense: introduce some randomness
+
+
+                        1
+
+
+                       2
+
+
+
+
+         It is difficult for attackers to exploit defense behavior
+
+                                                                     63
+Efficient Dynamic Defense
+
+
+                                            Original
+                                            model
+
+
+
+
+                      Vote
+                             “Stop Sign”
+
+                                           Dynamic
+                                           ensemble
+     Dynamic ensemble [EWSN’22]
+                                                                   Overhead
+
+
+                 Design target
+                                           Dynamic
+                                           defense
+                                                                   Overhead
+                                                       Efficient
+                                                                              64
+Changing Compute Availability
+
+                High power
+     Original      mode         Low power
+     system                       mode
+                                              1GHZ
+                                            → 400MHZ
+
+
+
+
+    Expected
+
+
+
+
+                                                       65
+A fixed model and an adaptive execution path
+
+Approach                      When computation is selected   Training requirement
+
+                                                             Train or fine-tune the smaller
+Fixed compression             Before deployment
+                                                             model
+
+
+Adaptive execution            While processing an input      Train the allowed execution paths
+
+
+
+
+Evaluate both accuracy and latency for the allowed paths
+                                                                                                 66
+Layer Dropping
+• Layer dropping can reduce computation cost
+                                             Overhead
+        Skip    Executed
+
+
+
+         Original model         LeapNet
+                                                         Original   LeapNet
+                                                         model
+• Adversarial attacks are difficult to transfer across different model structures
+
+                                                                              Succeed
+
+
+
+       Inference path
+                                                                              Failed
+                                       Adversarial
+                                        attacks
+                                                                                        67
+Deterministic Layer Routing
+  • Directly use a decision network to generate inference path of target model
+
+                                         1
+                                         0
+                                                  …
+             1                           1
+                                         …
+                                         0
+                          Decision
+                                                         Access
+                          network                                 Construct
+                                                                   attack
+                                     …       “children
+             2                               crossing”
+                                                                              …
+
+
+
+
+                          Still vulnerable to adaptive
+                                     attacks
+                                                                                  68
+LeapNet-1 Routing Distributions
+                                    1
+                                    0
+      Strawman                      1               …
+      proposal                      …
+                                    0
+                         Decision
+                         network
+
+• LeapNet-1 generates layer dropping distributions and then stochastically
+  samples an inference path during inference
+                                                         1
+                                                         0
+                                                         1   …
+                                                         …
+                                    0.5 Sample at each   0
+
+                                    0.4   inference
+                                                         0
+                                                         0
+      LeapNet-1                     0.9                  1   …
+                                                         …
+                                    …                    0
+                                    0.1                  0
+                        Decision                         1
+                                                         1   …
+                        network                          …
+                                                         0
+
+
+
+                                                                             69
+Latency-Aware Routing
+   • Dynamic layer dropping leads to uncontrolled latency performance
+
+
+
+
+   • Dynamic layer dropping aligns with variable embedded environments
+
+                                  Required latency
+                                    adjustment
+
+
+
+
+                                                                         70
+LeapNet-2 Training and Inference
+                 Latency
+               requirements
+                                                                   …
+                                          0.5          Keep
+    Training
+   Inference                              0.2 Sample   Drop
+                                                                   …   …
+                                                                           Average
+                                          0.9          Keep
+     stage                                                                 Latency
+                                          …             …
+                                          0.1          Drop        …
+                          Decision
+                          network
+                                                                            Latency
+                                                                            Predictor
+
+                              Average latency 1
+                              Average latency 2
+                              Average latency 3
+                                                       Latency
+                                                       Predictor
+                     Latency predictor’s training
+                                                                                        71
+Evaluation Settings
+
+    • Datasets: CIFAR10: 10 classes
+                 GTSRB: 43 classes
+                 Tiny-ImageNet: 200 classes
+    • Models: MobileNetV1 (4.2M), ResNet-18 (11.7M), ResNet-34 (21.8M), ,
+      ResNet-101 (44.5M), and ResNet-152 (60.2M)
+    • Attacks: FGSM [arXiv’2014], PGD [ICLR’2018], BIM [arxiv’2018], Square
+      attack [ICML’2020], AutoAttack [ICML’2020]
+    • Devices: Jetson Orin, Jetson Xavier and NVIDIA RTX 2080Ti
+
+
+
+
+                                                                              72
+Clean and Adversarial Accuracy
+    • Adaptive attack: assume pre-known model’s structure and its defense method
+    • Baseline methods: BlockDrop (static layer dropping) [CVPR’18] and Sardino
+      [EWSN’22], …
+
+          Under no attack                   Under adaptive PGD attack
+
+          Method     Accuracy
+        no defense    98.5%
+         Blockdrop    96.4%
+          Sardino     96.0%
+         LeapNet      97.3%
+
+        Similar clean accuracy              Better adversarial accuracy
+
+
+
+
+                                                                                   73
+Latency Tracking During Frame Processing
+     LeapNet-2 can meet varying latency requirements.
+
+
+
+
+                  Runtime and average latency of continuous frames processing
+                              under varying latency requirements
+                                                                                74
+Traffic Sign Recognition Pipeline
+     Deploy LeapNet-2 on a two-stage traffic sign recognition system
+
+                             Frame 𝑖
+
+
+                      𝑡𝑑Detection              Traffic sign
+                           time                 detector
+
+          Frame                                         …
+        processing 𝑡𝑔 𝑡𝑐 1                                                          98.5%   99%
+       time budget                    1          2            N             91.2%
+                      𝑡𝑐 2                 LeapNet-based
+                                             Classifier
+                      …
+
+
+
+
+                                               “Predicted
+                      𝑡𝑐 N                                              LeapNet-2 adapts to diverse
+                                                results”
+                                     𝑡𝑔 − 𝑡𝑑                          processing requirements without
+                    Time      𝑡𝑐 =                   Classification
+                                        𝑁                              sacrificing too much accuracy
+                                                     time budget
+
+
+
+                                                                                                        75
+Layer Execution Under Different Budgets
+
+
+
+               98.5%      99%
+      91.2%
+
+
+
+
+      Frame processing time (ms)
+
+
+
+
+                                   LeapNet-2 adjusts layer   LeapNet-2 adapts to diverse
+                                    dropping distributions    processing requirements
+                                   based on requirements
+
+
+
+                                                                                           76
+LeapNet Findings
+
+
+
+  ▪   Security challenge against adaptive adversarial attacks AND Real-
+      time challenge of embedded systems
+
+      •   LeapNet-1 proposes dynamic layer dropping to counteract adaptive
+          attacks and improve computational efficiency
+
+      •   LeapNet-2 furthermore adapts to dynamic conditions in real time
+
+
+
+
+                                                                             77
+Connecting the research cases
+                                            • Efficiency
+                                                • Computation efficiency
+                                                • Generalization capability
+                                                • System sustainability
+                                                • Domain adaptiveness
+
+                                            • Thoroughness
+                                                • Performance
+                                                • Security
+                                                • Safety
+                                                • Privacy
+
+                                            • ETTO exists in various domains
+      Hollnagel, Erik. The ETTO                 • Smart grids
+      principle: efficiency-thoroughness        • Smart cities
+      trade-off: why things that go right       • Smart homes
+      sometimes go wrong. CRC press,            • Autonomous vehicles
+      2017.
+                                                                               78
+

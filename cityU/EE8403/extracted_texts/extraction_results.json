@@ -1,0 +1,86 @@
+[
+  {
+    "file": "EE8403-L01.pdf",
+    "type": "PDF",
+    "success": true,
+    "message": "成功提取PDF: EE8403-L01.pdf",
+    "output": "D:\\Projects\\one2oneTutorial\\cityU\\EE8403\\extracted_texts\\EE8403-L01.txt"
+  },
+  {
+    "file": "EE8403-L02.pdf",
+    "type": "PDF",
+    "success": true,
+    "message": "成功提取PDF: EE8403-L02.pdf",
+    "output": "D:\\Projects\\one2oneTutorial\\cityU\\EE8403\\extracted_texts\\EE8403-L02.txt"
+  },
+  {
+    "file": "EE8403-L03.pptx",
+    "type": "PPTX",
+    "success": true,
+    "message": "成功提取PPTX: EE8403-L03.pptx (3071 个文本元素)",
+    "output": "D:\\Projects\\one2oneTutorial\\cityU\\EE8403\\extracted_texts\\EE8403-L03.txt"
+  },
+  {
+    "file": "EE8403-L04-part1.pptx",
+    "type": "PPTX",
+    "success": true,
+    "message": "成功提取PPTX: EE8403-L04-part1.pptx (1190 个文本元素)",
+    "output": "D:\\Projects\\one2oneTutorial\\cityU\\EE8403\\extracted_texts\\EE8403-L04-part1.txt"
+  },
+  {
+    "file": "EE8403-L04-part2.pptx",
+    "type": "PPTX",
+    "success": true,
+    "message": "成功提取PPTX: EE8403-L04-part2.pptx (1099 个文本元素)",
+    "output": "D:\\Projects\\one2oneTutorial\\cityU\\EE8403\\extracted_texts\\EE8403-L04-part2.txt"
+  },
+  {
+    "file": "EE8403-L05.pdf",
+    "type": "PDF",
+    "success": true,
+    "message": "成功提取PDF: EE8403-L05.pdf",
+    "output": "D:\\Projects\\one2oneTutorial\\cityU\\EE8403\\extracted_texts\\EE8403-L05.txt"
+  },
+  {
+    "file": "EE8403-L06.pdf",
+    "type": "PDF",
+    "success": true,
+    "message": "成功提取PDF: EE8403-L06.pdf",
+    "output": "D:\\Projects\\one2oneTutorial\\cityU\\EE8403\\extracted_texts\\EE8403-L06.txt"
+  },
+  {
+    "file": "EE8403_L07.pdf",
+    "type": "PDF",
+    "success": true,
+    "message": "成功提取PDF: EE8403_L07.pdf",
+    "output": "D:\\Projects\\one2oneTutorial\\cityU\\EE8403\\extracted_texts\\EE8403_L07.txt"
+  },
+  {
+    "file": "EE8403_L08.pdf",
+    "type": "PDF",
+    "success": true,
+    "message": "成功提取PDF: EE8403_L08.pdf",
+    "output": "D:\\Projects\\one2oneTutorial\\cityU\\EE8403\\extracted_texts\\EE8403_L08.txt"
+  },
+  {
+    "file": "EE8403_L11.pdf",
+    "type": "PDF",
+    "success": true,
+    "message": "成功提取PDF: EE8403_L11.pdf",
+    "output": "D:\\Projects\\one2oneTutorial\\cityU\\EE8403\\extracted_texts\\EE8403_L11.txt"
+  },
+  {
+    "file": "Week 09 Time Series Forecasting in Smart Grid.pdf",
+    "type": "PDF",
+    "success": true,
+    "message": "成功提取PDF: Week 09 Time Series Forecasting in Smart Grid.pdf",
+    "output": "D:\\Projects\\one2oneTutorial\\cityU\\EE8403\\extracted_texts\\Week 09 Time Series Forecasting in Smart Grid.txt"
+  },
+  {
+    "file": "Week 10 Revenue Streams Analysis of Intelligent Battery Operations for Ancillary Services.pdf",
+    "type": "PDF",
+    "success": true,
+    "message": "成功提取PDF: Week 10 Revenue Streams Analysis of Intelligent Battery Operations for Ancillary Services.pdf",
+    "output": "D:\\Projects\\one2oneTutorial\\cityU\\EE8403\\extracted_texts\\Week 10 Revenue Streams Analysis of Intelligent Battery Operations for Ancillary Services.txt"
+  }
+]
