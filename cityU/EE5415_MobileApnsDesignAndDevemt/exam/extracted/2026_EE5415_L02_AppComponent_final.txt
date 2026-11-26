@@ -1,0 +1,833 @@
+----- page 1 -----
+AndroidApp Components
+EE5415MobileAppsDesign&Implementation
+Dr.Chris Xing TIAN
+DepartmentofElectricalEngineering 
+CityUniversityofHongKong
+
+----- page 2 -----
+Focus on programming and design skills
+No worry on the marks.
+2
+
+----- page 3 -----
+CourseProjectGrouping
+•Thisisjustafriendlyreminder.Studentsneedtoformagroup of 6 members 
+for the groupproject in Canvas onorbeforeWeek 3 Sat11pm.
+•We need this information to schedule the group project proposal 
+presentation on week 6.
+•Registeryourgroup: Canvas – People - Group
+2
+
+----- page 4 -----
+Week6:GroupProjectProposalSubmission
+•Thisisagroupsubmission,soeachprojectteamneedstoassigna 
+projectleadertosubmittheproposaltoCANVAS. 
+■Filenameformat:GroupNumber_ ProjectName_Proposal.pdf
+■Filenameexample:Group01_BMI_ Proposal.pdf
+■Submission Deadline: Week7Lecture Day 11pm
+    (You may need adjust your proposal report after presentation)
+■The oral presentations will be conducted during the class in week 6
+
+----- page 5 -----
+Group App requirements
+Essentially, we don't have any specific constraints regarding the app 
+you propose to develop, as long as:
+1.The app isfunctionally complete in terms of its core functionalities. 
+E.g., A chatting app must be able to facilitate chats, a game app must 
+be playable, and a tool app must be able to complete its basic tasks.
+2.It showcases your own thoughts in certain aspects, such as UI/UX 
+design or the story behind the app etc. Just ensure it is not merely a 
+copy or simulation of some existing apps, as that would be pointless.
+3.The workload is adequate for the team size, ensuring everyone 
+collaborates effectively. 
+4.Basic tool apps like To-Do List, Calendar, Billing, Timer, Notes etc., 
+are not welcomed unless they include distinctive and genuinely 
+interesting features.
+It should look and behave like a complete software product intended for 
+real users, rather than an unfinished prototype or a typical student 
+programming exercise. In one sentence: You should be proud to show 
+your app to your friends and family after this semester.
+Try to explore AI-enhanced features in your app. Meaningful integration of AI may earn bonus points.
+
+----- page 6 -----
+Week7:IndividualProjectProposalSubmission
+•Thisisan individualsubmission.
+■Filenameformat:StudentNum_StuName_ProjectName_Proposal.pdf
+■Filenameexample:56263457_Chris_BMI_Proposal.pdf
+■Submission Deadline: week7 lecture day 11pm
+
+----- page 7 -----
+7
+Individual App requirements
+Essentially, we don't have any specific constraints regarding the app 
+you propose to develop, as long as:
+1.The app isfunctionally complete in terms of its core func. E.g., A 
+chatting app must be able to facilitate chats, a game app must be 
+playable, and a tool app must be able to complete its basic tasks.
+2.It showcases your own thoughts in certain aspects, such as UI/UX 
+design or the story behind the app etc. Just ensure it is not merely 
+a copy or simulation of some existing apps, as that would be 
+pointless.
+3.The workload is adequate for individual project.
+4.You can also choose the Tic Tac Toe game example and MUSTadd 
+new features to it. However, we will award bonus points to students 
+who choose to develop their own unique idea (though this will not 
+exceed the total points available).
+Try to explore AI-enhanced features in your app. Meaningful integration of AI may earn bonus points.
+
+----- page 8 -----
+IndividualProjectExample: TicTacToe Game
+•Studentscouldusebuttonstorepresentthe
+gameboardandaTextViewtodisplaythestatus
+ofthegameatthebottomofthescreen.
+■Thebuttonswillhavenotextonthemwhenthegame 
+starts,butwhentheuserclicksonabutton,itwilldisplay 
+aredX.
+■Theappwillthemmoveandturntheappropriatebutton 
+texttoagreenO.
+•TheTextView willindicatewhoseturnitisand 
+whenthegameisover.
+•Fancier UI/UX design?  
+•Different level of difficulties? 
+•Record System?
+•AI players ? 
+Warning
+Copying from online open-source projects or previous 
+students’ submissions is easy to detect and will result in 
+an F grade for this course.
+
+----- page 9 -----
+IndividualProjectExample: TicTacToe Game
+•AbasicTicTacToeGameimplementationisprovided
+whichisbasedon anopen-sourceJavaConsole
+program:
+■http://cs.harding.edu/fmccown/android/TicTacToeConsole.java
+•Commandstocompileandexecutetheconsole
+game
+■javacTicTacToeConsole.java
+■java TicTacToeConsole
+
+----- page 10 -----
+Plagiarism Warning
+Submitting copied work from past students 
+or online open-source projects 
+will result in an automatic grade of F if detected.
+
+----- page 11 -----
+ReviewofLastLecture
+•AndroidSoftwareStack(Platform)consistsof
+■OperatingSystem(Linux Kernel)
+■Middleware
+•NativeC/C++Libs,
+•Android Runtime
+          - CoreLibs (re/implementmost Java SE APIs & Android CustomizedAPIs),
+            - Android Virtual Machine(ARTorDVM),
+•JavaAPIFrameworks(ApplicationFrameworks): Activity manager; Resource 
+manager etc. 
+■SystemApplications(Home,Contacts,Phone, etc)
+•AndroidStudio
+■ItistheofficialIDEforAndroidappdevelopment
+■SetupAndroidStudioinyourPCorlaptop
+
+----- page 12 -----
+AndroidSoftwareStack
+6
+Key 
+Applications
+Middelware
+Operating 
+System
+Question: Why need configure JDK in Android Studio?
+
+----- page 13 -----
+JavaandKotlin
+•AndroidappcanbedevelopedbyJavaorKotlinandtheyareboth JVM(Java
+Virtual Machine)Languages.
+•TheirsourcecodearecompiledtoDalvikByteCode(DEX)thatexecuteonART
+VM.
+JavaSourceCode
+Java 
+Compiler
+JavaByteCode
+JavaByteCode
+JavaVM
+DexExecutable
+DalvikorARTVM
+DexByteCode
+DexExecutable
+DalvikorARTVM
+KotlinSourceCode
+Kotlin 
+Compiler
+JavaByteCode
+Dex
+Compiler
+DexByteCode
+JavaSourceCode
+Java 
+Compiler
+JavaByteCode
+Dex 
+Compiler
+
+----- page 14 -----
+Today’sContent
+•IntroductionofKotlinProgrammingLanguage
+•AndroidAppArchitecture
+■UnderstandingtheAndroidComponentsforbuildingAndroidApps:
+•Activity
+•Service
+•BroadcastReceiver
+•ContentProvider
+•Intent
+•Lab02:TobuildasimpleBMICalculatorapp
+
+----- page 15 -----
+KotlinProgramming
+https://www.youtube.com/watch?v=VEqhzCFmEQI&list=PLlxmoA0rQ-LwgK1JsnMsakYNACYGa1cjR&index=1
+
+----- page 16 -----
+KotlinHighlights
+•KotlinisnowOfficialAndroidProgrammingLanguage
+■KotlinisdevelopedbyJetBrains
+■JetBrainsbuiltIntellijIDEA, andAndroidStudioisbuiltontopofIntellijIDEA
+•KotlinisaJVMLanguage (Scala, JPython etc)
+•Itsupportshigh-orderfunctions,Lambdaexpressions,StringTemplates, and 
+soon…
+•KotlinandJavaareInteroperableinAndroidproject
+■Theybothcanbeusedtogetherinthesameproject
+•You cancallintoJava languagefrom Kotlincodes,and youcan callinto Kotlin 
+fromthe Javalanguage
+
+----- page 17 -----
+JavaandKotlin
+•AndroidappcanbedevelopedbyJavaorKotlinandtheyareboth JVM(Java
+Virtual Machine)Languages.
+•TheirsourcecodearecompiledtoDalvikByteCode(DEX)thatexecuteonDalvik 
+orARTVM (since Android 5).
+JavaSourceCode
+Java 
+Compiler
+JavaByteCode
+JavaByteCode
+JavaVM
+DexExecutable
+DalvikorARTVM
+DexByteCode
+DexExecutable
+DalvikorARTVM
+KotlinSourceCode
+Kotlin 
+Compiler
+JavaByteCode
+Dex
+Compiler
+DexByteCode
+JavaSourceCode
+Java 
+Compiler
+JavaByteCode
+Dex 
+Compiler
+
+----- page 18 -----
+IsitmeanttoReplace Java?
+•Not100%, but Google expectmostoftheAndroidappstobe developedby
+Kotlin in the further
+•KotlinisjustmoreflexibleJava
+•Kotlinisamorepowerfullanguage
+•Kotlin support lightweight coroutines. 
+•TheAndroidappscanbebuiltonKotlinalongwithusingJavaandC++ alongside
+In this course, if you have other course projects that require you to use Java, 
+or if you aspire to be a developer in various fields (e.g., Full-stack / Backend 
+developer), you may stickto Java in this course to reduce your learning 
+burden.
+•https://blog.csdn.net/hjnln/article/details/147686909   (page in Chinese)
+•https://www.bacancytechnology.com/blog/kotlin-vs-java
+
+----- page 19 -----
+WhylearnKotlin
+•Completenullsafety
+•UseallJavalibrariesinKotlin,too
+•Kotlinhascoroutines(multi-threading )
+•LesscodeinKotlin
+https://www.youtube.com/watch?v=QsrQV0wXh2E&list=PLQkwcJG4YTCRSQikwhtoApYs9ij_Hc5Z9
+
+----- page 20 -----
+LearningKotlinusing AndroidStudio
+•CreateaprojectinAndroidStudiousing
+■Kotlinprogramminglanguage
+■NoActivityTemplate
+
+----- page 21 -----
+CreateKotlinClassFile
+•RightclickthepackagenamefoldertocreateaKotlinclassfilewith 
+nameofBasics
+
+----- page 22 -----
+Convert Java to Kotlin Automatically
+
+----- page 23 -----
+KotlinHello Work!!
+Clickheretorunthemain()function
+
+----- page 24 -----
+AndroidStudioKotlinREPL
+•AndroidStudioincludesatoolcalledKotlinREPL
+■ReadEvaluatePrintLoop
+
+----- page 25 -----
+LearnKotlininAndroid StudiousingKotlinREPL
+
+----- page 26 -----
+TheFIVEBasicConcepts
+•VariablesandTypes
+•ControlFlows
+•Functions
+•Collections
+•ClassesandObject
+
+----- page 27 -----
+KotlinVariablesandDataTypes
+•ImmutableVariable
+valname:String=“Peter” 
+valname=“Peter”
+•MutableVariable
+varage=24
+varage:Int=24
+varheight:Double=1.756 
+varjob:String=”Developer”
+varisDeveloper:Boolean=true
+Data typeis inferredinthissyntax
+Data typeis inferredinthissyntax
+KotlinisstillStatic Typing
+
+----- page 28 -----
+Kotlinvariables declaration
+valname: String
+name = ’peter’
+varage: Int
+age = 10
+❌for non-null variables, can NOT 
+declare without init value 
+lateinit var age: TextView
+✅ val name: String = ’peter’
+var age: Int = 10
+
+----- page 29 -----
+KotlinNULLsafety
+•Nullcannotbeavalueofanon-nullablevariable
+valname:String=null
+•Nullsafety
+valname:String?=null 
+name!!.length
+error
+name?.length
+null
+valname:String?=“Peter” 
+name?.length
+5
+valstrlength=name?.length?:0
+https://www.youtube.com/watch?v=80C7e9SHsK0
+ThisisnotallowedinKotlin.
+nullablevariable is declared by the <type>?
+?: is the Elvis operator, usually used together with ?.
+!! is the non-null assertion operator
+
+----- page 30 -----
+Java vs Kotlin in Android Studio
+Nullable 
+variable
+
+----- page 31 -----
+Java vs Kotlin in Android Studio
+Kotlin
+Java
+
+----- page 32 -----
+KotlinifExpression(1)
+•InKotlin, ifisanexpression,i.e.,itreturnsavalue. 
+•Therefore,thereisnoternary operatorè (condition?then:else)
+//Traditionalusage
+varmax=a
+if(a<b)max=b
+//Withelse
+varmax:Intif(a>b){
+max=a
+}else{
+max=b
+}
+//Asexpression
+valmax=if(a>b)aelseb
+https://kotlinlang.org/docs/reference/control-flow.html
+
+----- page 33 -----
+KotlinifExpression(2)
+•ifbranchescanbeblocks,andthelastexpressionisthevalueofablock:
+valmax=if(a>b){ 
+print("Choosea") a
+}else{
+print("Chooseb") b
+}
+
+----- page 34 -----
+Kotlinfunction
+•Functionsaredeclaredwiththefunkeyword.
+•Fortheparameters,youmustdeclarenotonlytheirnames,butalsotheirtypes,and 
+youmustdeclarethetypeofthevaluethefunctionisintendingtoreturn.
+funhappyBirthday(name:String,age:Int):String{ 
+return"Happy${age}thbirthday,$name!"
+}
+//Calling
+valgreeting=happyBirthday("Anne",32)
+
+----- page 35 -----
+Kotlinforloop
+•Forloopiteratesthroughanythingthatprovidesaniterator.Hereisafor-loopbased 
+oniteratingnumbers.Theresultwillbe1236420
+•Wemayalsoloopthroughanarraywithitsindices.Inthis case,as thearrayconsist 
+ofthreeelements,theindicesare0,1,2.Ateachroundofloop(i.e.round0,1,2), 
+elementofarray[index]isprinted.Theresultwillbeabc.
+.. & downTo create a closed-interval
+
+----- page 36 -----
+Kotlinwhileloop
+•ThesyntaxofwhileloopinKotlinisassameasinJava.
+
+----- page 37 -----
+KotlinwhenExpression(1)
+•whenreplacestheswitchoperatorofC-likelanguages.Inthesimplest 
+formitlookslikethis
+when(x){
+1->print("x==1")
+2->print("x==2")
+else->{//Notetheblock 
+print("xisneither1nor2")
+}
+}
+https://kotlinlang.org/docs/reference/control-flow.html
+
+----- page 38 -----
+KotlinwhenExpression(2)
+•Ifmanycasesshouldbehandledinthesameway,thebranchconditionsmay 
+becombinedwithacomma:
+when(x){
+0,1->print("x==0orx==1") 
+else->print("otherwise")
+}
+•Wecanusearbitraryexpressions(notonlyconstants)asbranchconditions
+when(x){
+parseInt(s)->print("sencodesx") 
+else->print("sdoesnotencodex")
+}
+
+----- page 39 -----
+KotlinClass
+•LikeJava,Kotlinalso allows to createseveralobjectsofa class andyouarefreeto 
+includeitsclassmembersandfunctions.
+https://kotlinlang.org/docs/reference/classes.html
+
+----- page 40 -----
+KotlinClass
+https://kotlinlang.org/docs/reference/classes.html
+class Person(val name: String, var age: Int) {
+fun introduce() {
+        println("Hello, I'm $name, $age years old")
+    }
+}
+fun main() {
+    val person = Person("Alice", 25)
+    person.introduce()
+}
+
+----- page 41 -----
+KotlinArrayCollections
+•Collectionsofonlythesame 
+element
+■IntArray–Integer
+■BooleanArray–Boolean
+■DoubleArray –Double
+■LongArray –Long
+■ShortArray–Short
+■FloatArray-Float
+•Collectionsofonlythesameor 
+differentelement
+■arrayOf<String>
+■arrayOf<Fruit>
+■array(1,2,”Jone”,”Doe”,0.5,Fruit())
+
+----- page 42 -----
+KotlinArrays
+•Array:MutablebuthasSameDataTypeandFixedSize
+varmyArray:IntArray=intArrayOf(0,0,0,0,0) 
+varmyArray=intArrayOf(0,0,0,0,0)
+varmyArray=arrayOf(0,0,0,0,0)
+
+----- page 43 -----
+KotlinCollections
+Collections–groupsofavariablenumberofitems
+•ImmutableCollections:ReadOnlyOperations
+■ImmutableList:listOf
+■ImmutableSet:setOff
+■ImmutableMap:mapOf
+•MutableCollections:ReadandWriteBoth
+■MutableList:ArrayList,arrayListOf,mutableListOf
+■MutableSet:mutableSetOf,hashSetOf
+■MutableMap:HashMap,hashMapOf,mutableMapOf
+https://www.youtube.com/watch?v=Je_YXshSFmY
+
+----- page 44 -----
+KotlinList,Set,Map(Immutable)
+•Kotlin’scollectiontypes:
+■Listisanorderedcollectionwithaccesstoelementsbyindicesand 
+elementscanoccurmorethanonceinalist.
+■Setisacollectionofuniqueelements.
+■Map(ordictionary)isasetofkey-valuepairs.Keysareunique,and 
+eachofthemmapstoexactlyonevalue.
+https://kotlinlang.org/docs/reference/collections-overview.html
+https://www.youtube.com/watch?v=aFXfZH4RRfQ
+
+----- page 45 -----
+KotlinList
+•List:ImmutableandFixedSize,butanydatatypes
+
+----- page 46 -----
+KotlinArrayList
+•Mutable,NotFixedSize,CanAddorRemoveElements
+
+----- page 47 -----
+CoroutinesinKotlin
+•WhatisCoroutines?
+■Coroutines=Co+Routines
+•Here,ComeanscooperationandRoutinesmeansfunctions
+•Itmeansthatwhenfunctionscooperatewitheachotheriscalled 
+Coroutines.
+THREAD1
+ THREAD2
+Function1
+Function1 resume
+on thread 2
+Function2
+Func1 suspended
+We will introduce Kotlin coroutines in deep in the coming weeks
+
+----- page 48 -----
+Android AppComponents
+
+----- page 49 -----
+Procedural vs. Event-Driven
+•Procedural programming – a list of procedures is executed in the order as they 
+are listed. (Predefined execution workflow)
+•In event-driven programming, code is executed upon activation of events. (E.g., 
+user rotate their phone)
+Proceduralprogramming
+Event-drivenprogramming
+
+----- page 50 -----
+What are EventsinAndroid ?
+•An event can be defined as a type of signal to the program that something has 
+happened. An event is a signal indicating that something has happened and 
+may require the app to respond.
+•In Android, events can be triggered by:
+•User interactions — tapping a button, touching or swiping the screen, typing text, etc.
+•System events — screen rotation, permission results, connectivity changes, lifecycle 
+changes, etc.
+•External inputs — sensor updates, location updates, Bluetooth data, incoming 
+notifications, etc.
+•Android applications are largely event-driven: instead of continuously checking 
+whether something has happened, your app typically registers a listener or 
+callback and responds when the corresponding event occurs.
+Button button = findViewById(R.id.myButton);
+button.setOnClickListener(v -> {
+    // This code runs when the button is clicked
+});
+Event → Listener / Callback → Your Code
+
+----- page 51 -----
+AndroidBasic ApplicationComponents
+•Activities
+■AnactivityrepresentsasinglescreenwithUIelementstointeractwithusers.
+•Services
+■Alongrunningbackgroundprocesswithoutanyuserinteraction,e.g.Alarm 
+Service,MediaPlayer,etc.
+•BroadcastReceivers
+■Broadcastreceiversareregisteredforsystemannouncements.
+•ContentProviders
+■Contentproviderisusedtosharethedatabetweenmultipleapps.
+https://www.youtube.com/watch?v=ByT3AyQZj6U
+
+----- page 52 -----
+37
+Activities
+•AnActivityrepresentsascreenorawindowforuser
+interaction
+■Itisthe basiccomponentofmostAndroidapps
+■Mostappshaveseveralactivitiesthatstarteachotherasneeded
+■EachactivityisimplementedasasubclassofthebaseActivity 
+class
+-PreferenceActivity
+-ListActivity
+-AppCompatActivity
+-….
+MainActivity
+Another 
+Activity
+Another 
+Activity
+Android App
+
+----- page 53 -----
+38
+Activitiesstarteachother
+
+----- page 54 -----
+39
+ActivityLifeCycle(1)
+•Activityishaving6states
+■Created
+■Started
+■Resumed(Running)
+■Paused
+■Stopped
+■Destroyed
+•Followingarethe7majormethodsinActivityclasswhichwillparticipatein 
+Activitylifecycle
+■onCreate(),onStat(),onResume(),onRestart(),onPasue(),onStop(),and 
+onDestory()
+
+----- page 55 -----
+ActivityLifeCycle(2)
+https://www.youtube.com/watch?time_continue=388&v=Lhk8WSUSw8g&feature=emb_logo
+(Non-existent)
+(a.k.a. Running)
+Why need so many lifecycle states?
+Mobile interaction changes quickly. A screen can remain visible after losing focus, disappear 
+temporarily, or require recreation.  A good mobile app developer need balance a smooth user 
+experience with efficient use of system resources.
+
+----- page 56 -----
+ActivityState
+&Created
+&Started losefocus
+
+----- page 57 -----
+Activity lifecycle methods
+Activity 
+launched onCreate()
+onStart()
+onResume()
+Activity running
+onPause()
+onStop()
+onDestroy()
+Activity 
+shut down
+onRestart()
+
+----- page 58 -----
+Activitylifecycleexamples
+•Startforthefirsttime=>Resumed akaRunningstate
+■onCreate()=>onStart()=>onResume()
+•OpenanotheractivityandthenpresstheBackbutton=>Resumed state
+■onPause()=>onStop()=>onRestart()=>onStart()=>onResume()
+•RotatetheScreen=>Resumedstate
+■onPause()=>onStop()=>onDestroy()=>onCreate()=>onStart()=>onResume()
+•PresstheHomebutton=>Stoppedstate
+■onPause()=>onStop()
+
+----- page 59 -----
+Services
+43
+•Servicesareprocessesthatrunsinthebackground
+■Theycanbestartedandstopped.Servicesdoesn’thaveUI.
+•Toperformlong-runningoperations
+•Tosupportinteractionwithremoteprocesses
+MusicPlayer 
+Activity
+Audio 
+Service
+stopService()
+UIfortheplayer
+Playsthemusic
+TheMusicServiceisa typical Foreground Service(shown in the notification bar)
+Music AppstartService()
+
+----- page 60 -----
+Services
+Shopping
+Exploration
+Activity
+Audio 
+Service
+Shopping App
+Goods list UI 
+Listen for 
+keywords to 
+wake up
+Remote
+Recommendation
+Algorithm
+Updateproductlist
+startService()
+•Even if the appquitted, some started services could still run in 
+background.
+Upload
+Keyword 
+count to 
+cloud
+
+----- page 61 -----
+ServiceLifeCycle
+•Servicealsohasalifecycle,butit’s 
+muchsimplerthanactivity’s
+•Anactivitytypicallystartsandstopsa 
+servicetodosomeworksforitinthe 
+background,suchasplaymusic.
+
+----- page 62 -----
+BroadcastReceiver
+•BroadcastReceiversareregisteredfor receiving announcements 
+from system or app.
+■Componentthatlistensforandrespondstoevents
+■Thesubscriberinpublish/subscribepattern
+■EventsrepresentedbytheIntentclassandthenbroadcast
+■BroadcastReceiverreceivesandrespondstobroadcastevent
+■GreatforlisteningsystemeventssuchasSMSmessages.
+•E.g.:Headsetplugin,chargerconnected/disconnected,etc
+2.OnReceive()
+45
+Android 
+System
+Broadcast 
+Receiver
+1. Registers for certain eventbroadcast
+
+----- page 63 -----
+Send / Receive Broadcast
+// SendBroadcast in Activity
+fun onPlayClick() {
+    val intent = Intent("com.example.ACTION_PLAY_MUSIC")
+    sendBroadcast(intent)
+}
+// Register a receiver in Service
+class MusicService : Service() {
+    private val playReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            startPlayMusic()
+}
+    }
+    override fun onCreate() {
+        super.onCreate()
+        registerReceiver(playReceiver, 
+                         IntentFilter("com.example.ACTION_PLAY_MUSIC")
+        )
+    }
+}
+
+----- page 64 -----
+ContentProviders
+•ContentProviderisusedtosharethedatabetween 
+multipleapps.
+■InAndroidoneofthesecurityfeatureiswecannotaccessthe 
+otherappsdataintoourappdirectly,butiftheappis 
+providingcontentprovider,thenwecanaccessthedatainto 
+ourapp.
+•Examplesofbuilt-inContentProvidersare
+■Contacts,Callog,Media,Setting,Calendar,etc
+Content 
+Provider
+ContentURI
+Insert()
+update()
+delete()
+query()
+
+----- page 65 -----
+ContentProviderExample
+47
+Contacts 
+App
+Contacts 
+Activity
+Content 
+Provider
+Content 
+Provider
+Contacts 
+Data
+Database
+
+----- page 66 -----
+Intents
+•AnintentisanIntentobjectwithamessagecontentused to 
+pass message /execute actions between components.
+•Intentsrepresenteventsoractions.
+•Intentscanbeexplicit(specified target) or implicit (system 
+default app)
+48
+EmailApp
+Message 
+Listing 
+Activity
+View 
+Message 
+Activity
+Web 
+Browser 
+App 
+(Firefox)
+WebView 
+Activity
+Intent
+YouTube 
+App
+VideoView 
+Activity
+View 
+Message
+View 
+Webpage
+Intent
+View 
+Video
+Intent
+
+----- page 67 -----
+Intentsexamples
+Intra-Appcommunication
+Broadcast
+Inter-Appcommunication
+explicit
+implicit
+
+----- page 68 -----
+AdditionalAndroidApplicationComponents
+•Manifest:Configurationfilefortheapplication.
+•Fragments:RepresentsaportingofuserinterfaceinanActivity.
+•Views:UIelementsthataredrawnon-screenincludingbutton,text,etc.
+•Layouts:Viewhierarchiesthatcontrolscreenformatandappearanceofthe views.
+•Resources:Externalelements,suchasstrings,constantsanddrawable pictures.
+
+----- page 69 -----
+Android project anatomy
+•The project structure answers one practical question: where should each file go?
+app/
+├── manifests/
+│   └── AndroidManifest.xml
+├── java or kotlin/
+│   └── MainActivity.kt
+├── res/
+│   ├── layout/
+│   ├── drawable/
+│   └── values/
+│       ├── strings.xml
+│       └── colors.xml
+└── build.gradle.kts
+Manifestdeclares components and 
+permissions
+Java/Kotlincontains app behavior
+resstores UI, images and reusable 
+values
+Gradleconfigures the build and 
+dependencies
