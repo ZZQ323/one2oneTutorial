@@ -1,0 +1,761 @@
+----- page 1 -----
+Android
+Activity & Fragment 
+EE5415 Mobile Apps Design & Implementation
+Dr. ChrisXingTIAN
+Department of Electrical Engineering 
+City University of Hong Kong
+Some slides content are from Google Android official tutorials: 
+Training |Get started |Android Developers
+
+----- page 2 -----
+Group & Individual Project
+Consider cutting down some features proposed, only keep the core 
+functionalities and highlighted features.
+(It is ok to be different from your proposal)
+Make use of Codex-like tools to assist you.
+
+----- page 3 -----
+3
+Group ProjectFinal Oral Presentationin Week 12
+•The group project final oral presentation will be held in Week 
+12 class.
+•Prepare an Android device with your App installed, so that our 
+TAs can get hands-on experience of your app during the 
+presentation. 
+•Week 10 Progress Check (Not Graded) To encourage 
+steady progress and avoid leaving development until the final 
+weeks, each group will be asked to submit :
+•3–5 screenshots showing the current UI and workflows
+•A brief progress summary of completed features and remaining work. 
+(In short paragraphs)
+•The current source code.
+The submission deadline of Final Report along with APK, Source-code
+will be week14.
+
+----- page 4 -----
+Programming Exam in Week 13
+The duration of the programming exam is three hours (9AM to 12AM).
+•Students are required to develop a simple Android application whose 
+complexity is similar to our tutorial assignments.
+•This is an open book online exam. Students can have hardcopy 
+textbooks related to Android, as well as all course notes in hardcopy or 
+in your PC.
+•The ChatGPT-like LLMs are not allowed to use.
+(Once caught, you will automatically get a F score)
+•Wewilluse lab PC for programming exams
+YEUNG-B7701 will be available for our class 
+in Week 9-Week 11 10am-12am.
+
+----- page 5 -----
+5
+Grading
+Lectures: High-level concepts & designs &Software
+Engineering(Appliable to other Courses/Fields)
+•Final exam
+•Reports
+Labs: Android programming techs (Specific to Android)
+•Programming Test
+•Project (Individual & Group)
+•Tutorial assignments
+
+----- page 6 -----
+6
+Grading
+•5% - Five times of tutorial assignments
+•8% - Individual Project
+-3marks: Proposal report 
+-3 marks: Final code with report 
+-2 marks: demo & marketing presentation materials
+•12% -Group Project
+-3marks: Proposal report & oral presentation
+-5 marks: Final productwith report 
+-4marks: Final oral presentation with demo
+•25% - Programming Exam (Week 13)
+-Develop the target specific app within 3 hours, open-book
+•50% - Final Exam(paper-based, close-book, Week 14)
+
+----- page 7 -----
+Focus on learning programming and design skills
+No worry on the marks.
+2
+This course involves intensive programming practice. 
+By completing it, youshallgain the skills to adapt to any programming project —the most valuable outcome.
+
+----- page 8 -----
+revisitActivity
+
+----- page 9 -----
+Activity lifecycle
+●Preserve user data and state if:
+○User temporarily leaves app and then returns
+○User is interrupted (for example, a phone call)
+○User rotates device
+●Avoid memory leaks and app crashes.
+When a user moves in and out of our app, the Activity instances in our 
+app go through different states,  we call it the Activity lifecycle.
+
+----- page 10 -----
+Simplified activity lifecycle
+Activity launched
+App is running
+Activity shut down
+onCreate()
+
+----- page 11 -----
+Activity lifecycle methods
+Activity launched onCreate()
+onStart()
+onResume()
+Activity running
+onPause()
+onStop()
+onDestroy() Activity shut down
+onRestart()
+
+----- page 12 -----
+Activity states
+Activity is running
+CREATED
+STARTED
+RESUMED/RUNNING
+PAUSED
+STOPPED
+DESTROYED
+
+----- page 13 -----
+onCreated()
+●Activity is created and other initialization work occurs
+●Inflate activity UI and perform other app startup logic
+●Mustimplement this callback
+Onlygetcalledthis first time this Activity instance get initialized.
+
+----- page 14 -----
+onStart()
+●Activity becomes visible to the user
+●Called after activity:
+○onCreate()
+or 
+○onRestart()if activity was previously stopped
+Get called evetime the Activity becomes visible to user from invisible state.
+
+----- page 15 -----
+onCreate() vs onStart()
+●onCreate()
+○Time-consuming setup operations
+○Pre-Verifications (E.g., permission check)
+●onStart()
+○Quick/ small UI updates
+○May change when re-enter.
+Wheretoput?
+MOBAgameapp:  enter thegamingUI to view battlefield map.
+Map app:                      enter the map UI to see user’s current location cursor.
+
+----- page 16 -----
+onResume()
+●Activity gains input focus:
+○User can interact with the activity
+●Activity stays in resumed state until system triggers activity to be
+paused
+Wheretoput?
+QRcodescan?
+
+----- page 17 -----
+onPause()
+●Activity has lost focus (not in foreground)
+●A call comes in
+●User lock screen
+●Split-screen
+●System dialogue pop-up
+●Activity is still visible, but user is not actively interacting with it
+●Counterpart to onResume()
+•First time to consider releasing resources (e.g., release lock on Camera)
+•Refrain from starting any long running synchronous tasks
+
+----- page 18 -----
+onStop()
+●Activity is no longer visible to the user
+●Release resources that aren’t needed anymore
+●Save any persistent state that the user is in the process of 
+editing so they don’t lose their work
+•Good place to stop refreshing UI, running animations, and other visual changes. 
+•Activities in a stopped state are not gone
+
+----- page 19 -----
+onStart() vs onResume()
+●onStart()
+○FromInvisibletoVisible
+○Data update
+●onResume()
+○From Paused to Resumed/Running(e.g., In-App dialogue 
+popup)
+App: AmainAct
+App: B
+Step1. onPause()
+Step2a. onResume()
+Step2b. onStop()
+Step2b -Step3. onStop() -> onRestart() -> onStart()->onResume()
+
+----- page 20 -----
+onStart() vs onReStart()
+●onStart()
+○Every time the Activity gets visible to User 
+(including the first time)
+●onReStart()
+○Every time the Activity gets visible to User (the 
+first time not included)
+Question: Where to put? 
+A bank app placed in the background for a certain period 
+will require the user to re-login.
+
+----- page 21 -----
+onDestroy()
+●Activity is about to be destroyed, which can be caused by: 
+○Activity has finished or been dismissed by the user
+○Configuration change (e.g., Rotated, Language switched)
+●Perform any final cleanup of resources.
+●Don’t rely on this method to save user data (do that earlier)
+
+----- page 22 -----
+Summary of activity states
+State Callbacks Description
+Created onCreate()Activity is being initialized.
+Started onStart() Activity is visible to the user.
+Running/ Resumed onResume()Activity has input focus.
+Paused onPause() Activity does not have input focus.
+Stopped onStop() Activity is no longer visible.
+Destroyed onDestroy()Activity is destroyed.
+
+----- page 23 -----
+Activity State
+
+----- page 24 -----
+Activity Life-Cycle Examples
+•Start for the first time => Resumed state
+■onCreate() => onStart() => onResume()
+•Open Another Activity and then press the Back button => 
+Resumed state
+■onPause() => onStop() => onRestart() => onStart()=> onResume()
+•Rotate the Screen => Resumed state
+■onPause() => onStop() => onDestroy() => onCreate() => onStart() => onResume()
+•Press the Home button => Stopped state
+■onPause() => onStop()
+Question: Change from English to Chinese?
+
+----- page 25 -----
+Save state
+User expects UI state to stay the same after a config change or if the app is 
+terminated when in the background.
+●Activity is destroyed and restarted, or app is terminated and activity is 
+started.
+●Store user data needed to reconstruct app and activity Lifecycle changes:
+oUseBundleprovidedbyonSaveInstanceState().
+oonCreate()receives the Bundleas an argument when activity is created 
+again.
+YoushouldONLYstore a minimal amount of data in Bundle
+
+----- page 26 -----
+Fragment
+
+----- page 27 -----
+Fragment
+●Since Android 3.0 (support for tablets)
+●Breaking up the UI into fragments turns to be useful besides Tablets
+
+----- page 28 -----
+What is a Fragment?
+●Represents a behavior or portion of the UI in an activity 
+("microactivity")
+●Must be hosted in an activity
+●Lifecycle tied to host activity's lifecycle
+●Can be added or removed at runtime
+
+----- page 29 -----
+A small example of Fragments
+Using Multiple Activities Using Multiple Fragments with an Activity
+For small-screen devices, multiple activities 
+approach is acceptable For large-screen devices, multiple Fragments with an Activity is more effective and user-friendly.
+
+----- page 30 -----
+Why do you need Fragments?
+•SwitchseveralUIviewsinasingle 
+Activity(e.g., multiple tabs swap)
+•Reuse the same Fragment across several 
+Activities(e.g., shopping app)
+•Make better use of larger screen space on 
+tablets
+•Support different layouts on portrait and 
+landscape modes
+SearchResultactivity
+ProductDetailactivity
+ProductViews
+Fragment
+
+----- page 31 -----
+Use of Fragments
+•Flexible UI across different screen sizes
+•Fixed/Scrolling/Swipe tab displays
+•Dialog boxes
+
+----- page 32 -----
+How to make a Fragment?
+•Extend Fragment class
+•Provide appearance in XML
+•Override onCreateView to link the appearance
+•Use the Fragment in XML
+
+----- page 33 -----
+Adding Fragment to Activity
+Two general ways to add Fragments to an Activity’s layout
+■Declare it statically in the Activity’s layout file (XML)
+■Add it programmatically using the fragmentManager in Java 
+Class file
+12
+
+----- page 34 -----
+Creating Fragments in XML
+•Create a class that extends Fragment
+•Create a separate layout file thatcontains the appearance
+•Use the onCreateView method to link its appearance
+•Attach the fragment inside the Activity through XML (using<fragment>) orin
+runtime Java/Kotlincode
+•Multiple fragments can be attached to an Activity
+
+----- page 35 -----
+Fragment Static Layout Example
+14
+
+----- page 36 -----
+actvity_main.xml
+15
+<?xml version="1.0"encoding="utf-8"?>
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="horizontal">
+<!--LeftsideFragment(List View)-->
+<fragment
+android:id="@+id/fragment_list"
+android:name="com.example.ItemListFragment"
+android:layout_width="0dp"
+android:layout_height="match_parent"
+android:layout_weight="1"/>
+<!–RightsideFragment (Detail View) -->
+<fragment
+android:id="@+id/fragment_detail"
+android:name="com.example.ItemDetailFragment"
+android:layout_width="0dp"
+android:layout_height="match_parent"
+android:layout_weight="2"/>
+</LinearLayout>
+Declare the fragment inside activity in XML
+
+----- page 37 -----
+item_list_fragment.xml(ListViewon the left)
+item_detail_fragment.xml(TextViewon the right)
+
+----- page 38 -----
+ItemListFragment.java
+15
+publicclassItemListFragmentextendsFragment {
+privateOnItemSelectedListenerlistener;
+publicinterfaceOnItemSelectedListener{
+voidonItemSelected(String item);
+}
+@Override
+publicvoidonAttach(Context context) {
+super.onAttach(context);
+if(context instanceofOnItemSelectedListener) {
+listener = (OnItemSelectedListener) context;
+} else{
+thrownewClassCastException(context+ " must implement OnItemSelectedListener");
+}
+}
+@Override
+publicView onCreateView(LayoutInflaterinflater, ViewGroupcontainer, Bundle savedInstanceState) {
+View view= inflater.inflate(R.layout.item_list_fragment, container, false);
+view.findViewById(R.id.item1).setOnClickListener(v -> listener.onItemSelected("Item 1 Details"));
+view.findViewById(R.id.item2).setOnClickListener(v -> listener.onItemSelected("Item 2 Details"));
+returnview;
+}
+}
+Think: whyinterface here?
+
+----- page 39 -----
+ItemDetailFragment.java
+15
+publicclassItemDetailFragmentextendsFragment {
+privateTextViewdetailTextView;
+@Override
+publicView onCreateView(LayoutInflaterinflater, ViewGroupcontainer, Bundle savedInstanceState) {
+View view= inflater.inflate(R.layout.item_detail_fragment, container, false);
+detailTextView= view.findViewById(R.id.item_detail_text);
+returnview;
+}
+publicvoidupdateDetail(String detail) {
+if(detailTextView!= null) {
+detailTextView.setText(detail);
+}
+}
+}
+
+----- page 40 -----
+MainActivity.java
+15
+publicclassMainActivityextendsAppCompatActivityimplementsItemListFragment.OnItemSelectedListener{
+@Override
+protectedvoidonCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+}
+// Process with the Click events
+@Override
+publicvoidonItemSelected(String item) {
+// Get the ref of the DetailFragment, and update the content
+ItemDetailFragmentdetailFragment= (ItemDetailFragment) getSupportFragmentManager()
+.findFragmentById(R.id.fragment_detail);
+if(detailFragment!= null) {
+detailFragment.updateDetail(item);
+}
+}
+}
+
+----- page 41 -----
+Fragment Dynamic Layout Example
+14
+
+----- page 42 -----
+Adding Fragments Programmatically
+•While an Activity’s running you can add a Fragment to it’s layout
+■Get reference to the FragmentManager
+■Begin a FragmentTransaction
+■Add, remove, replace Fragments
+■Commit the FragmentTransaction
+20
+
+----- page 43 -----
+Fragment Transactions
+1.Changes to the UI in terms of 
+adding, removing and replacing 
+Fragments are conducted as 
+FragmentTransactions
+2.Begin a transaction
+3.Add, remove, replace 
+whatever fragment you want
+4.Commit the transactions
+
+----- page 44 -----
+How to make a Fragment Programmatically?
+•Create a class that extends Fragment
+•Create a separate layout file that contain the appearance
+•Use the onCreateView method to link its appearance
+•Get a reference to FragmentManager
+•Begin a transaction by calling beginTransaction()
+
+----- page 45 -----
+actvity_main.xml
+15
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="horizontal">
+<!–Left side:Item List Fragment -->
+<FrameLayout
+android:id="@+id/fragment_container_list"
+android:layout_width="0dp"
+android:layout_height="match_parent"
+android:layout_weight="1"
+android:background="@android:color/holo_blue_light"/>
+<!–Rightside:Item Detail Fragment -->
+<FrameLayout
+android:id="@+id/fragment_container_detail"
+android:layout_width="0dp"
+android:layout_height="match_parent"
+android:layout_weight="2"
+android:background="@android:color/holo_green_light"/>
+</LinearLayout>
+Hereisnot
+“fragment”tag
+
+----- page 46 -----
+MainActivity.java
+15
+publicclassMainActivityextendsAppCompatActivityimplementsItemListFragment.OnItemSelectedListener{
+privateItemDetailFragmentdetailFragment;
+@Override
+protectedvoidonCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+getSupportFragmentManager().beginTransaction()
+.replace(R.id.fragment_container_list, newItemListFragment())
+.commit();
+detailFragment= newItemDetailFragment();
+getSupportFragmentManager().beginTransaction()
+.replace(R.id.fragment_container_detail, detailFragment)
+.commit();
+}
+@Override
+publicvoidonItemSelected(String item) {
+detailFragment.updateDetail(item);
+}
+}
+FragmentTransactionis the key class in 
+Android’s Fragment management system. 
+Dynamically add, replace, remove, or 
+manipulateFragmentsin an Activity.
+
+----- page 47 -----
+Dynamic Layout
+•Fragment transactions allow you to dynamically change your app’s 
+user interface
+•Can make the interface more fluid & take better advantage of 
+available screen space
+Using Dynamic Layout, the right side could be of 
+different view types.
+E.g.,: Hang Seng Bank àTextView
+HSBC àImageView
+
+----- page 48 -----
+FragmentLifecycle
+
+----- page 49 -----
+Fragment states
+Fragment is running
+CREATED
+STARTED
+RESUMED
+PAUSED
+STOPPED
+DESTROYED
+
+----- page 50 -----
+Fragment lifecycle diagram
+Fragment 
+is added
+Fragment is 
+destroyed
+onAttach() onCreate() onCreateView() onViewCreated() onStart() onResume()
+Fragment 
+is active onPause() onStop() onDestroyView() onDestroy() onDetach()
+
+----- page 51 -----
+onAttach()
+●Called when a fragment is attached to a context/Activity
+●Immediately precedes onCreate()
+●onAttach()is called before the fragment has access to its layout, 
+so you won’t be overriding this method very often.
+
+----- page 52 -----
+onCreateView()
+●Called to create the view hierarchy associated with the fragment
+●Inflate the fragment layout here and return the root view
+Werecommend only inflating the layout in this method
+
+----- page 53 -----
+onViewCreated()
+●Called when view hierarchy has already been created
+●Perform any remaining initialization here (for example, restore state 
+from Bundle)
+
+----- page 54 -----
+onDestroyView() and onDetach()
+●onDestroyView()is called when view hierarchy of fragment is 
+removed.
+●onDetach()is called when fragment is no longer attached to the 
+host.
+
+----- page 55 -----
+Summary of fragment states
+State Callbacks Description
+Initialized onAttach() Fragment is attached to host.
+Created onCreate(), onCreateView(), 
+onViewCreated()
+Fragment is created and layout is being 
+initialized.
+Started onStart() Fragment is started and visible.
+Resumed onResume() Fragment has input focus.
+Paused onPause() Fragment no longer has input focus.
+Stopped onStop() Fragment is not visible.
+Destroyed onDestroyView(), onDestroy(), 
+onDetach()
+Fragment is removed from host.
+
+----- page 56 -----
+Save fragment state across config changes
+Preserve UI state in fragments by storing state in Bundle:
+●onSaveInstanceState(outState: Bundle)
+Retrieve that data by receiving the Bundle in these fragment 
+callbacks:
+●onCreate()
+●onCreateView()
+●onViewCreated()
+
+----- page 57 -----
+Fragment Lifecycle (1)
+
+----- page 58 -----
+Fragment Lifecycle (2)
+
+----- page 59 -----
+Lifecycle-aware 
+components
+classAct1 {
+@Override
+onPause() {logic_A}
+}
+classAct2 {
+@Override
+onPause() {logic_A}
+}
+classOurComponentimplementsLifecycleObserver{
+@OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+publicvoiddoSomething() {
+logic_A
+}
+}
+
+----- page 60 -----
+Lifecycle-aware components
+Adjust their behaviorbased on activity or fragment lifecycle
+●Use the androidx.lifecyclelibrary
+●Lifecycletracks the lifecycle state of an activity or fragment
+○Holds current lifecycle state 
+○Dispatches lifecycle events (when there are state changes)
+
+----- page 61 -----
+LifecycleOwner
+●Interface that says this class has a lifecycle
+●Implementers must implement getLifecycle()method
+Examples: Fragmentand AppCompatActivityare 
+implementations of LifecycleOwner
+
+----- page 62 -----
+LifecycleObserver
+Implement LifecycleObserverinterface:
+classMyObserver: LifecycleObserver{
+@OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+funconnectListener() {
+...
+}
+Add the observer to the lifecycle:
+myLifecycleOwner.getLifecycle().addObserver(MyObserver())
+Examples: LiveDataimplements the `LifecycleObserver`
+interface, so it is lifecycle-aware.
+
+----- page 63 -----
+Mapappexample
+publicclassMyLocationListenerimplementsLifecycleObserver{
+@OnLifecycleEvent(Lifecycle.Event.ON_START)
+publicvoidstartLocationUpdates() {
+// start update location 
+}
+@OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+publicvoidstopLocationUpdates() {
+// when the activity is in stopped state,
+//stop location updates to save resources
+}
+}
+@Override
+protectedvoidonCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+MyLocationListenerlocationListener= newMyLocationListener();
+getLifecycle().addObserver(locationListener);
+}
+Registerthelistenerin the Activity
+Define our lifecycle observer
+
+----- page 64 -----
+Tasks and back stack
+
+----- page 65 -----
+Back stack of activities
+Back stack
+EmailActivity
+
+----- page 66 -----
+Add to the back stack
+Back stack
+EmailActivity
+ComposeActivity
+
+----- page 67 -----
+Add to the back stack again
+Back stack
+EmailActivity
+ComposeActivity
+Back stack
+EmailActivity
+ComposeActivity
+AttachFileActivity
+
+----- page 68 -----
+Tap Back button
+Back stack
+EmailActivity
+ComposeActivity
+AttachFileActivity
+popped off the stack
+
+----- page 69 -----
+Tap Back button again
+Back stack
+EmailActivity
+ComposeActivity
+popped off the stack
+
+----- page 70 -----
+First destination in the back stack
+First
+fragment
+Back stack
+FirstFragment
+
+----- page 71 -----
+Add a destination to the back stack
+Second
+fragment SecondFragment
+Back stack
+FirstFragment
+
+----- page 72 -----
+Tap Back button
+First
+fragment
+SecondFragment
+popped off the stack
+Back stack
+FirstFragment
+
+----- page 73 -----
+Another back stack example
+Result
+fragment
+WelcomeFragment
+Question1Fragment
+Question2Fragment
+Question3Fragment
+ResultFragment
+Back stack
+
+----- page 74 -----
+Modify Back button behavior
+Welcome
+fragment
+WelcomeFragment
+Question1Fragment
+Question2Fragment
+Question3Fragment
+ResultFragment
+Back stack
+pop additional destinations
+off the back stack
+Override the `onBackPressed`Method
+
+----- page 75 -----
+Appnavigation (self-learn)
+○Navigation graph 
+○Navigation Host (NavHost)
+○Navigation Controller (NavController) 
+Navigation Editor in Android Studio
