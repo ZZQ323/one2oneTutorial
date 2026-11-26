@@ -1,0 +1,64 @@
+===== ppt/slides/slide1.xml =====
+
+
+Large-Scale IoT Deployment: The Need
+Since 2010s, three scenarios drive large-scale IoT deployment:
+Wildfire Detection
+2023 Maui wildfire: 101 deaths, 3,000 structures destroyed
+Need: thousands of temperature/humidity sensors
+Structural Health Monitoring
+Bridges, dams, buildings
+Need: thousands of stress/tilt/crack sensors
+Precision Agriculture
+Large farmlands
+Need: thousands of soil moisture/pH sensors
+Common Requirements:
+Large scale: thousands to tens of thousands of nodes
+Remote deployment: no power grid, battery-powered
+Long lifetime: months to years
+Reference: SenSys '24 Paper, Section 1 - Introduction
+===== ppt/slides/slide2.xml =====
+
+
+Traditional Approach: One-Size-Fits-All
+Traditional sensor node = Full embedded computerComponents:• Processor (STM32): $3.3• LoRa module: $5.2• Sensor: $0.25• Battery• Total: $8.75 per nodeAnalogy:"Everyone has a smartphone + SIM card, can make calls directly"Deployment:• Each node connects to gateway independently• 10,000 nodes = 10,000 independent connections
+Reference: SenSys '24 Paper, Table 3 - Manufacturing Cost
+===== ppt/slides/slide3.xml =====
+
+
+The Problem: Three Unaffordable Costs
+1. Manufacturing Cost Unaffordable   • $8.75/node × 10,000 = $87,500   • Too expensive for "just sensing temperature"2. Maintenance Cost Unaffordable   • LoRa TX power: 50 mW   • Battery: 2000 mAh × 3.7V = 7.4 Wh   • Send once per minute, 10ms each time   • Battery lifetime: 37 days   • 10,000 nodes → change battery every month → impossible3. Gateway Load Unaffordable   • 10,000 nodes connect simultaneously   • LoRa gateway capacity: 1,000-5,000 nodes   • Need 2-10 gateways → cost increases
+Reference: SenSys '24 Paper, Section 1 - Introduction
+===== ppt/slides/slide4.xml =====
+
+
+Academic Attempts: Two Directions
+Direction A: BackscatterIdea:• No transmitter needed• Only reflect ambient signals• Power: μW levelRepresentative Works:• Ambient Backscatter (SIGCOMM 2013)  - Use ambient TV/WiFi signals  - Distance: 0.76m (outdoor)  - Rate: 1 kbps  - Power: TX 0.25μW, RX 0.54μW• Internet-of-Microchips (MobiCom 2020)  - SPI backscatter  - Processor-free design  - Power reduced 4.5×Problem:• Distance < 30m• Need dense gateway deployment• Gateway cost > savings
+Both directions compromise: cannot solve cost + distance + energy together
+References: SIGCOMM'13 (Ambient Backscatter), MobiCom'20 (Internet-of-Microchips)
+===== ppt/slides/slide5.xml =====
+
+
+Academic Attempts: Two Directions
+Direction B: Computation OffloadIdea:• Nodes only collect data• Processing at gateway• Reduce node complexityRepresentative Works:• ChipNet (ACM TSN 2022)  - Large-scale backscatter network  • LEGO (ASPLOS 2023)  - Chip-level plug-and-playProblem:• Communication overhead too high• Only works with short-range (<30m)• Communication energy > computation energy• Poor scalability: need dense gateways
+Both directions compromise: cannot solve cost + distance + energy together
+References: SIGCOMM'13 (Ambient Backscatter), MobiCom'20 (Internet-of-Microchips)
+===== ppt/slides/slide6.xml =====
+
+
+Why Both Directions Fail
+Backscatter Problems:• Distance too short (< 30m)• Need dense gateway deployment• Gateway cost > savingsComputation Offload Problems:• Communication overhead too high• Only works with short-range (< 30m)• Poor scalabilityCommon Problem:• Both try to "make nodes simpler"• But ignore distance and scalability• No solution can solve cost + distance + energy togetherKey Insight:We need a NEW approach that maintains long-range communicationwhile reducing node cost and energy.
+Reference: SenSys '24 Paper, Section 8 - Related Work
+===== ppt/slides/slide7.xml =====
+
+
+Our Approach: Processor-Sharing Architecture
+Authors:• UESTC (Qianhe Meng, Han Wang, Chong Zhang, et al.)  - Expertise: Hardware design, embedded systems• HKUST (Li Lu, Songfan Li)  - Expertise: IoT systems, wireless communication• SJTU (Hongzi Zhu)  - Collaborative guidance• Published at: ACM SenSys 2024 (Top IoT conference)Key Observation:"Why does every node need a processor? Most of the time it's idle.""Can we let a few nodes share one processor?"Core Idea:NOT "make each node more power-efficient"BUT "let few nodes share processor"
+Reference: SenSys '24 Paper - Authors & Abstract
+Solution: Processor-Sharing IoT Architecture• 90% nodes (lite node): only sensor + 5-logic RF interface• 10% nodes (processor node): processor + LoRa/WiFi• RFBus: wireless I2C bus, remote sensor access
+===== ppt/slides/slide8.xml =====
+
+
+RFBus Performance: Numbers Speak
+Cost Reduction:• Traditional: $8.75/node × 10 = $87.5• RFBus: 1 processor ($12.36) + 9 lite ($5.19×9) = $59.07• Save 33.5% (outdoor LoRa scenario)Energy Saving:• RFBus interface: 0.12 mJ (transmit 2 bytes)• LoRa: 0.5 mJ (transmit 2 bytes)• Energy reduced 6.69× (outdoor)Response Time:• Traditional: 1029ms (LoRa)• RFBus: 300ms• 3.43× fasterSummary:✓ Lower cost: -33.5%✓ Lower energy: -6.69×✓ Faster response: 3.43×
+Reference: SenSys '24 Paper, Table 2 & Table 3 & Section 7.2

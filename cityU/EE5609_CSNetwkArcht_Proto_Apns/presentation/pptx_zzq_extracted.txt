@@ -1,0 +1,633 @@
+===== ppt/slides/slide1.xml =====
+
+
+===== ppt/slides/slide2.xml =====
+
+
+===== ppt/slides/slide3.xml =====
+
+
+Large-Scale IoT Deployment: The Need
+Three applications for distributed sensing:
+Wildfire Detection
+Monitor changes in remote forests
+Measure temperature/humidity sensors
+Structural Health Monitoring
+Bridges, dams, buildings
+Monitor strain, tilt and cracks
+Precision Agriculture
+Large farmlands
+Measure soil moisture and pH
+Common Requirements:
+Many sensing locations
+Often remote and battery-powered
+Long intervals between maintenance visits
+Reference: SenSys '24 Paper, Section 1 - Introduction
+03
+===== ppt/slides/slide4.xml =====
+
+
+A Conventional Sensor Node
+Each node has its own processor and radioComponents:• Processor (STM32): $3.3• LoRa module: $5.2• Sensor: $0.25• Battery (excluded from estimate)• Listed parts: $8.75 per nodeAnalogy:"Everyone has a smartphone + SIM card, can make calls directly"Deployment:• Each node connects to gateway independently• Each uplink carries one node’s readings
+Reference: SenSys '24 Paper, Table 3 - Manufacturing Cost
+04
+===== ppt/slides/slide5.xml =====
+
+
+
+RESEARCH PROBLEM
+Can nearby sensors share the same hardware?
+The design goal is to keep a sensing point at every location while sharing the uplink.
+
+Meng et al. (2024), §1 and Fig. 1. Simplified comparison.
+5
+
+Conventional nodes
+Each sensing location has its own processor and gateway radio.
+
+Sensor
+
+Sensor
+
+Sensor
+
+
+MCU + radio
+
+
+
+MCU + radio
+
+
+
+MCU + radio
+
+
+Gateway
+
+RFBus cluster
+Nearby lite nodes share one processor and gateway radio.
+
+Sensor
+
+Sensor
+
+Sensor
+
+
+
+
+
+
+Shared MCU + radio
+
+
+Gateway
+The next question is where to place the shared processing.
+===== ppt/slides/slide6.xml =====
+
+
+Backscatter Changes How Devices Send
+06
+An existing radio signal
+In the 2013 ambient prototype, a TV signal was already present.
+A change in reflection
+The sender changes how it reflects the signal. A receiver reads those changes as data.
+Range depends on the setup
+The signal source and receiver placement matter.
+Liu et al. (2013), Fig. 1
+Sending data is one job. Who reads and controls the sensor chip?
+Liu et al. (2013), ACM SIGCOMM, Fig. 1
+===== ppt/slides/slide7.xml =====
+
+
+Offloading Moves Work to the Gateway
+07
+Internet-of-Microchips, 2020
+The gateway uses a radio link to access a sensor chip through SPI. The device can omit a general-purpose processor.
+LEGO, 2023
+The gateway handles chip control, allowing a device to accept different functional chips.
+Li et al. (2020), Fig. 1(b)
+Zhang et al. (2023), Fig. 1
+What if the processor doing that work were closer to the sensors?
+Li et al. (2020), MobiCom. Zhang et al. (2023), ASPLOS.
+===== ppt/slides/slide8.xml =====
+
+
+RFBus Places Processing Near the Sensors
+08
+Meng et al. (2024), Fig. 1
+Within the cluster
+RFBus lets the processor read nearby I²C sensor chips wirelessly.
+From cluster to gateway
+The processor combines the readings and uploads them via WiFi or LoRa.
+How does one temperature reading travel through these two links?
+Meng et al. (2024), ACM SenSys, §1, Fig. 1, and §5
+===== ppt/slides/slide9.xml =====
+
+
+
+RELATED WORK & ARCHITECTURE
+From temperature sensor to gateway
+One nearby processor collects readings and sends a single upload.
+
+Meng et al. (2024), Fig. 9 and §§5, 7.2. Board photos cropped from Fig. 9.
+9
+
+1
+Request
+The processor asks a lite node for its temperature over RFBus.
+
+2
+Collect
+The lite node replies. The processor repeats the request for the other nodes.
+
+3
+Upload
+The processor sends the complete batch over WiFi or LoRa.
+
+THE TWO PROTOTYPE BOARDS
+
+Processor node
+Polls and uploads
+
+Lite node
+Returns the reading
+===== ppt/slides/slide10.xml =====
+
+
+The Problem: Removing the MCU Without Losing I2C
+
+Reference: SenSys '24 Paper, Sections 1-2 (architecture and motivation)
+Now: every sensor node carries its own MCU, radio and firmware — cost and code size scale with the node count
+Proposal: share a few processors, reduce the rest to RF peripherals
+Lite node = sensor chips + RF front-end + 5 logic components — no MCU, no firmware
+Three things break once the MCU is gone:
+PHY — who encodes and decodes I2C bytes over the air?
+Duplex — is this LOW the master's, or my own echo?
+Addressing — who is being addressed, without an address parser?
+One design move per blocker — the next three slides
+10
+===== ppt/slides/slide11.xml =====
+
+
+Problem 1 → Solution: An Open-Drain Radio
+
+Reference: SenSys '24 Paper, Sections 3.1-3.2, Figures 3-4
+Problem: no firmware — a lite node cannot run framing, encoding or bit sync
+Problem: it must still listen around the clock, so the receiver has to be passive
+Solution: exploit I2C's own asymmetry — only LOW is ever driven, HIGH is the pull-up
+Carrier ON = pull LOW, silence = release: no bit encoding needed at all
+Any carrier pulls every node low — I2C's wired-AND survives as 'wireless-NOR'
+Envelope detector (SAW + Schottky) listens at near-zero power, both ends symmetric
+11
+===== ppt/slides/slide12.xml =====
+
+
+Problem 2 → Solution: A Half-Duplex Deadlock Fix
+
+Reference: SenSys '24 Paper, Section 4.1, Figure 5
+Problem: a lite node cannot tell whether a LOW came from the master or from itself
+Problem: a naive echo clamps both buses LOW forever — the link deadlocks
+Solution: let the only side that has a processor resolve the ambiguity
+An SPDT switch on the processor, driven by the I2C phase it already generates
+Two carrier frequencies keep the two directions apart
+The lite node gains zero parts — complexity moves up to the cluster head
+12
+===== ppt/slides/slide13.xml =====
+
+
+Problem 3 → Solution: Addressing Without a Stack
+
+Reference: SenSys '24 Paper, Section 4.2, Figures 7-8
+Problem: thousands of chips share one medium, and parsing an I2C address needs an FSM — i.e. firmware
+Solution: put the address before START, where the sensor chips cannot see it
+2-byte header: session length + interface address
+I2C ignores everything before START — the frame stays standard
+Decoder = 5 logic components: shift register, counter, 2×XNOR, D-latch (+ DIP switch)
+2,048-chip address space; ~24,780 chips/s at 1 Hz polling
+No address parser, no START/STOP state machine — just 'is it my address?' and a countdown.
+13
+===== ppt/slides/slide14.xml =====
+
+
+Outcome: What It Buys and What It Costs
+
+Reference: SenSys '24 Paper, Sections 3-7 and Section 9 (Discussion)
+Gain: 120 µJ per 2-byte transfer (1/160 of LoRa), 6.1-6.7× system energy, −33.5% node price
+Gain: 96 m LOS range at 50 kbps; 3.4× faster response via one aggregated uplink
+Cost: range collapses with rate — 23 m at 200 kbps, 5 m NLOS
+Cost: 95% of a lite node is its RFBus interface → saving caps at ~41%
+Cost: single point of failure, 3 RF chains, I2C-only (73% of digital sensors)
+It doesn't make nodes cheaper by making them smarter —
+it moves the cost to a few cluster heads.
+14
+===== ppt/slides/slide15.xml =====
+
+
+
+EXPERIMENTAL EVIDENCE
+How the field trials compared the designs
+The same ten temperature readings were collected in each comparison.
+
+Meng et al. (2024), §7.2 and Figs. 11–12
+15
+
+Indoor WiFi
+
+Outdoor LoRa
+
+TWO HARDWARE CONFIGURATIONS
+10 conventional nodes
+Each node sends its own reading.
+
+1 processor node
++ 9 lite nodes
+The processor uploads the readings as one batch.
+===== ppt/slides/slide16.xml =====
+
+
+
+EXPERIMENTAL EVIDENCE
+RFBus cuts energy use per collection round
+Energy to collect and deliver 10 temperature readings. Conventional energy is 100% in each setting.
+
+Meng et al. (2024), §7.2 and Fig. 16. RFBus shares are calculated from the reported energy ratios.
+16
+
+Conventional
+
+RFBus
+
+
+Conventional ÷ RFBus
+Indoor WiFi
+
+100%
+
+16.4%
+Outdoor LoRa
+
+100%
+
+14.9%
+
+6.09×
+Indosor WiFi
+6.69×
+Outdoor LoRa
+One processor sends the batch over WiFi or LoRa.
+===== ppt/slides/slide17.xml =====
+
+
+
+EXPERIMENTAL EVIDENCE
+All 10 readings reached the gateway sooner
+Elapsed time from the start of the collection task to receipt of the complete batch.
+
+Meng et al. (2024), Table 2. Percentage reductions use the conventional time as the baseline.
+17
+
+Conventional
+
+RFBus
+
+
+Less time to finish
+Indoor WiFi
+
+364 ms
+
+241 ms
+Outdoor LoRa
+
+1,029 ms
+
+300 ms
+
+34%
+Indoor WiFi
+71%
+Outdoor LoRa
+The outdoor LoRa round finished 729 ms sooner.
+===== ppt/slides/slide18.xml =====
+
+
+EXPERIMENTAL EVIDENCE
+Sharing reduced average parts cost
+
+Meng et al., Sec. 7.2, Fig. 17 and Table 3. Table prices imply 22.5% indoors and 32.5% outdoors.
+18
+
+23.5% lower indoors, as reported
+
+33.5% lower outdoors, as reported
+===== ppt/slides/slide19.xml =====
+
+
+
+EXPERIMENTAL EVIDENCE
+Faster bus speeds reduced RFBus range
+Measured at a bit error rate below 1%. Values are approximate.
+
+Meng et al. (2024), §7.1, Figs. 10 and 14. Selected values read from Fig. 14.
+19
+
+Clear path
+
+Obstructed path
+50 kbps
+
+≈96 m
+
+≈42 m
+200 kbps
+
+≈23 m
+
+≈5 m
+
+
+FIELD TEST LAYOUTS
+Clear sidewalk
+Obstructed hallway
+Choose bus speed after checking the site layout.
+===== ppt/slides/slide20.xml =====
+
+
+
+CRITICAL EVALUATION
+The benefits depend on how readings arrive
+The architecture trades independent uploads for a shared collection round.
+
+Group 14 interpretation based on Meng et al. (2024), §§5, 7.1–7.2
+20
+
+
+Why batching helps
+Several small readings share one uplink transmission.
+The measured benefit comes from a full collection round.
+
+
+What can limit it
+Each lite node depends on the processor to request its reading.
+Bursts or urgent readings may change waiting time.
+===== ppt/slides/slide21.xml =====
+
+
+
+CRITICAL EVALUATION
+What the field trials establish
+The two case studies show where the evidence is strongest.
+
+Group 14 assessment based on Meng et al. (2024), §§7.1–7.2
+21
+Dimension
+Tested in the trials
+Open question
+Workload
+Temperature readings at 10 locations
+How does delay change during a traffic burst?
+Topology
+One cluster of fixed nodes per setup
+How do several clusters operate together?
+Uplink
+Indoor WiFi and outdoor LoRa
+How sensitive are benefits to site conditions?
+The strongest case is periodic sensing within one fixed cluster.
+===== ppt/slides/slide22.xml =====
+
+
+
+CRITICAL EVALUATION
+Where sharing can break down
+Local coverage, processor availability and installation costs shape the rollout.
+
+Meng et al. (2024), Fig. 14, Table 3 and §§7.1, 9; group assessment
+22
+
+Local RFBus range at 200 kbps
+Farthest tested link with bit error rate below 1%
+Clear path
+
+≈23 m
+Blocked path
+
+≈5 m
+AVAILABILITY
+One processor serves a cluster
+If that processor fails, its lite nodes can lose their path to the gateway.
+COST
+Installation changes the bill
+Gateway placement, site visits and maintenance add costs beyond the parts list.
+
+===== ppt/slides/slide23.xml =====
+
+
+
+CRITICAL EVALUATION
+A follow-up field test
+Run both polling policies on the same multi-cluster layout and workload.
+
+Proposed experiment by Group 14
+23
+
+A  /  Fixed polling at regular intervals
+B  /  Adaptive polling for urgent readings
+
+Field condition
+
+Test procedure
+
+Primary metric
+
+Traffic burst
+
+Trigger readings at several sensors at once.
+
+95th-percentile delivery delay
+
+
+Obstructed link
+
+Insert a barrier on a selected RFBus path.
+
+Delivery rate and energy per reading
+
+
+Processor outage
+
+Disable and restore a shared processor.
+
+Time until readings resume
+
+Record a normal-operation baseline before introducing each stress condition.
+===== ppt/slides/slide24.xml =====
+
+
+CRITICAL EVALUATION
+Pilot one cluster before expanding
+Best fit: fixed sensors sending small, periodic readings.
+
+Group 14 recommendation based on Meng et al. (2024), §§7–9
+24
+
+Check coverage
+Verify the weakest local links at the intended bus speed.
+
+Check collection delay
+Measure time to deliver a full round of readings.
+
+Check recovery
+Confirm readings resume after a processor outage.
+Expand only after the pilot meets the site’s requirements.
+===== ppt/slides/slide25.xml =====
+
+
+
+REFERENCES
+References
+
+EE5609  /  GROUP 14 GGBOB
+25
+
+MAIN PAPER   /   ACM SENSYS 2024
+Processor-Sharing Internet of Things Architecture for Large-scale Deployment
+Meng et al.   ·   DOI 10.1145/3666025.3699333
+PRIOR WORK
+
+Liu et al.
+SIGCOMM 2013
+Ambient Backscatter: Wireless Communication Out of Thin Air
+10.1145/2486001.2486015
+
+Li et al.
+MobiCom 2020
+Internet-of-Microchips: Direct Radio-to-Bus Communication with SPI Backscatter
+10.1145/3372224.3419182
+
+Zhang et al.
+ASPLOS 2023
+LEGO: Empowering Chip-Level Functionality Plug-and-Play for Next-Generation IoT Devices
+10.1145/3582016.3582050
+===== NOTES ppt/notesSlides/notesSlide1.xml =====
+
+
+Zhanquan Zhuang
+
+Today we are presenting RFBus, a design by Meng and colleagues. It asks whether nearby sensors can share one processor. We will explain the design, show the results, and discuss where it could work in practice.
+
+Source  Meng et al. (2024), DOI 10.1145/3666025.3699333
+
+===== NOTES ppt/notesSlides/notesSlide2.xml =====
+
+
+Speaker 1
+We will start with the cost of a conventional sensing node and look at earlier designs. Then we will explain how RFBus works and review the experiments and deployment limits.
+
+===== NOTES ppt/notesSlides/notesSlide3.xml =====
+
+
+Speaker 1
+Point to the three images. A forest, a bridge and a farm all benefit from measurements at many locations. Each location needs power and hardware, so the setup is harder to maintain as it grows.
+
+===== NOTES ppt/notesSlides/notesSlide4.xml =====
+
+
+Speaker 1
+The sensor in this LoRa example is just 25 cents. The processor and radio make up most of the $8.75 parts estimate. Every conventional node repeats those parts. That leads to our research question.
+
+===== NOTES ppt/notesSlides/notesSlide5.xml =====
+
+
+Speaker 1
+Compare the diagrams. On the left, every sensing point needs a processor and a radio of its own. In RFBus, the sensing points stay in place, while nearby lite nodes share a processor with a single gateway radio. Yingruo will explain how earlier designs handled this work and where RFBus puts the shared processor.
+
+===== NOTES ppt/notesSlides/notesSlide6.xml =====
+
+
+Speaker 2 · Yingruo Ma
+Earlier designs tried to simplify sensor nodes in different ways. Look at the TV tower in the diagram. It already sends a signal. The small device changes how it reflects that signal, and the receiver reads the changes. That is backscatter. Next, let’s look at where the work of controlling the sensor happens.
+
+===== NOTES ppt/notesSlides/notesSlide7.xml =====
+
+
+Speaker 2 · Yingruo Ma
+Point to the two diagrams. Internet-of-Microchips lets a gateway access a sensor chip over a radio link. LEGO puts chip control at the gateway so devices can use different chips. RFBus places a shared processor close to the sensors.
+
+===== NOTES ppt/notesSlides/notesSlide8.xml =====
+
+
+Speaker 2 · Yingruo Ma
+Start on the right at the lite nodes, then trace the RFBus link to the nearby processor. Several lite nodes share it. The processor reads their sensors and puts the readings together. Follow the second link to the gateway. That link uses WiFi or LoRa.
+
+===== NOTES ppt/notesSlides/notesSlide9.xml =====
+
+
+Speaker 2 · Yingruo Ma
+The processor board asks the lite node for its temperature over RFBus. The lite node replies. The processor repeats that exchange at the other sensing locations and sends all the readings to the gateway in one batch. Point to each board as you name it. The next section shows how RFBus carries the I²C exchange over the air.
+
+===== NOTES ppt/notesSlides/notesSlide10.xml =====
+
+
+Speaker 4
+Point to the two photographs. The paper tested indoor WiFi and outdoor LoRa. Within each setting, both designs collected ten temperature readings. The conventional design used ten full nodes. RFBus used one processor and nine lite nodes and uploaded the readings together.
+
+===== NOTES ppt/notesSlides/notesSlide11.xml =====
+
+
+Speaker 4
+Both configurations delivered ten readings in each setting. Set conventional energy to 100 percent separately for indoor WiFi and outdoor LoRa. RFBus used about 16.4 percent of the indoor baseline and 14.9 percent of the outdoor baseline. The paper links the savings to one gateway radio sending the batch, with sensor readings collected over the local RFBus link.
+
+===== NOTES ppt/notesSlides/notesSlide12.xml =====
+
+
+Speaker 4
+This measure is the time until the gateway has all ten readings. Indoor WiFi went from 364 to 241 milliseconds, a reduction of about 34 percent. Outdoor LoRa went from 1,029 to 300 milliseconds, a reduction of about 71 percent. Next, we look at the component cost of the two architectures.
+
+===== NOTES ppt/notesSlides/notesSlide13.xml =====
+
+
+Speaker 4
+Section 7.2 reports 23.5% lower parts cost indoors and 33.5% outdoors. The listed Table 3 prices yield about 22.5% and 32.5%, respectively, for the same 1+9 configuration. Both calculations show that sharing reduces the average parts cost.
+
+===== NOTES ppt/notesSlides/notesSlide14.xml =====
+
+
+Speaker 4
+Compare the two speeds in each setting. Higher speeds shortened the usable local link. At 200 kilobits per second the clear path reached about 23 meters and the obstructed path about 5 meters. The original test layouts are on the right. That makes coverage a deployment question, not just a radio specification.
+
+===== NOTES ppt/notesSlides/notesSlide15.xml =====
+
+
+Speaker 5
+After reviewing the results, ask why this design suits periodic sensing. Batching spreads the overhead across several readings. At the same time, every lite node waits for the shared processor to request its reading. The trials show the results for two periodic sampling setups; the effect of bursts is a follow-up question.
+
+===== NOTES ppt/notesSlides/notesSlide16.xml =====
+
+
+Speaker 5
+Use this table to distinguish what was tested from what still needs evaluation. The field cases used fixed locations and one cluster per RFBus setup. That supports the proposed use for small, periodic readings. Bursty traffic and multi-cluster operation are open questions.
+
+===== NOTES ppt/notesSlides/notesSlide17.xml =====
+
+
+Speaker 5
+At the same 200 kbps bus speed, the measured range dropped from about 23 meters on a clear path to about 5 meters on a blocked path. The shared processor is another dependency. Parts savings are encouraging, while installation and maintenance are separate costs to measure.
+
+===== NOTES ppt/notesSlides/notesSlide18.xml =====
+
+
+Speaker 5
+This is our proposed experiment. Keep the sensor locations, hardware and requested measurements the same for both polling policies. Start with a normal baseline, then introduce a traffic burst, an obstruction and a processor outage one at a time. Check high-percentile delay, delivery and energy, and how quickly readings resume.
+
+===== NOTES ppt/notesSlides/notesSlide19.xml =====
+
+
+Speaker 5
+Our recommendation is to pilot one cluster first. Check the weakest links, confirm a full collection round takes an acceptable amount of time and test recovery if the processor goes down. If the pilot meets the site requirements, then consider a larger deployment.
+
+===== NOTES ppt/notesSlides/notesSlide20.xml =====
+
+
+References for the paper and prior work.

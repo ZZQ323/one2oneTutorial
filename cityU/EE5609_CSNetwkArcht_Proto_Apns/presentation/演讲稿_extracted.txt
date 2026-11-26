@@ -1,0 +1,106 @@
+
+
+EE5609 RFBus Presentation Script
+Group 14  ·  English speaker notes for the final 25-slide deck
+Order
+Speaker
+Slides
+Section
+1
+Zhanquan Zhuang
+1–5
+Research problem
+2
+Ma Yingruo
+6–9
+Related work and architecture
+3
+Siyuan Chen
+10–14
+How RFBus works
+4
+ZhongYeQuan Liu
+15–19
+Experimental evidence
+5
+Shuai Niu
+20–25
+Evaluation and conclusion
+
+
+1  Zhanquan Zhuang
+Slides 1–5  ·  Research problem
+Slide 1  Introduction
+Good morning, everyone. We are Group 14. Today we are presenting a paper by Meng and colleagues. The paper introduces RFBus, a way for nearby sensors to share a processor.
+Slide 2  Presentation outline
+We will start with the problem. Then we will explain the design and how it works. After that, we will look at the test results and discuss where the design could be useful. The final part looks at what we would check before using RFBus at a larger site.
+Slide 3  Why we need many sensors
+Think about a forest, a bridge, and a farm. In each case, one sensor can only tell us about one place. We need sensors at many locations to see what is happening across the site. For example, a temperature sensor in one part of a forest may miss a change in another part. More sensing points help us see where a change starts.
+Slide 4  A conventional sensor node
+In a conventional setup, every node has its own sensor, processor, and radio. In this example, the sensor costs just 25 cents. The processor and radio make up most of the 8 dollars and 75 cents in listed parts. This cost adds up as we add more nodes. The example on this slide uses a LoRa radio. The listed price does not include the battery.
+Slide 5  The research question
+Can we keep a sensor at each location and share the more expensive parts? The diagram shows the idea. Several nearby sensors can use one processor and one radio to reach the gateway. Look at the left side first. There is one processor and radio at each spot. On the right, the nearby sensors use the same processor and radio.
+Handoff
+Next, let’s look at two earlier ways to simplify sensor nodes and see where RFBus puts the shared processor.
+
+
+2  Ma Yingruo
+Slides 6–9  ·  Related work and architecture
+Slide 6  Backscatter
+Let’s start with backscatter. Look at the TV tower in the picture. It already sends a radio signal. The small device changes how it reflects that signal. A receiver reads those changes as data. The device needs a signal to reflect. That means the positions of the signal source and receiver both matter.
+Slide 7  Moving work to the gateway
+These two designs move some work to the gateway. In the top diagram, the gateway reads a sensor chip over a radio link. In the bottom diagram, LEGO lets the gateway control different chips. RFBus puts the shared processor close to the sensors. The main question on this slide is where the work happens. In these examples, it happens at the gateway. The next slide shows where RFBus does the work.
+Slide 8  The RFBus cluster
+Start on the right with the lite nodes. Each lite node has a sensor. They use RFBus to talk to the same nearby processor. The processor gathers the readings. It sends them to the gateway over WiFi or LoRa. Follow the arrows from right to left. RFBus covers the short link inside the group. WiFi or LoRa covers the link from the group to the gateway.
+Slide 9  A temperature reading in practice
+Here are the two boards. The processor board asks the lite node for its temperature. The lite node sends back the reading. The processor repeats this with the other nodes. Then it sends all the readings to the gateway together. The processor board is on the left of the photo panel. The lite board is on the right. Each does a different job in the same round.
+Handoff
+We’ve followed a reading from sensor to gateway. Next, let’s see how RFBus carries the signal over the air.
+
+
+3  Siyuan Chen
+Slides 10–14  ·  How RFBus works
+Slide 10  The I²C data line
+I squared C is a way for a processor and a chip to talk. A device can pull the data line low. It can also let go. When every device lets go, the line goes high. The table shows that logic one and an idle line can both look high. The chip uses the timing of the exchange to tell what is happening.
+Slide 11  Sending the line state by radio
+RFBus uses a radio signal to pass that low state to the other side. When one side pulls the line low, its radio sends a signal. The receiver detects the signal and pulls its own line low. If both sides let go, the lines can return high.
+Slide 12  The open-drain radio
+Follow the arrows in the diagram. The receiver first checks if the radio signal is present. It then uses that information to set the local line. This lets the chip read the line as it normally would. The receiver can keep listening with low power. The trade-off is that weak signals are harder to pick up.
+Slide 13  Preventing feedback
+There is one problem. A low signal can be sent back and repeated, so both lines stay low. To stop this, the processor controls which direction the signal can travel. The two directions also use different radio frequencies. The processor uses I squared C timing to decide when to change direction. This lets the sensor send its reply.
+Slide 14  Selecting a lite node
+The processor sends two extra bytes before the normal I squared C message. One gives the session length. The other identifies the lite node interface. The matching interface can reply for that session. Point to the two boxes at the top. These are the two added bytes. After them, the chip gets the usual I squared C exchange.
+Handoff
+Now that we know how RFBus works, let’s look at how the researchers tested it and what they found.
+
+
+4  ZhongYeQuan Liu
+Slides 15–19  ·  Experimental evidence
+Slide 15  The field trials
+The paper tested indoor WiFi and outdoor LoRa. Within each setting, both designs collected ten temperature readings. The conventional setup used ten full nodes. RFBus used one processor node and nine lite nodes. The task stayed the same within each setting. The researchers changed how the nodes collected and sent the data.
+Slide 16  Energy use
+Take the conventional setup as 100 percent in each test. RFBus used about 16 percent of that energy indoors and about 15 percent outdoors. With RFBus, one radio sends the readings together to the gateway. The two gray bars are separate baselines. Read the green bars against the gray bar from the same setting.
+Slide 17  Time to collect all ten readings
+The gateway received the full set sooner in both tests. Indoors, the time fell from 364 to 241 milliseconds. Outdoors, it fell from 1,029 to 300 milliseconds. The timer stopped when all ten readings arrived. The larger drop was in the outdoor LoRa test.
+Slide 18  Average parts cost
+The paper reports about 24 percent lower average parts cost indoors and about 34 percent outdoors. A calculation from the listed part prices gives slightly different numbers. Both show lower average parts cost with sharing.
+Slide 19  Local radio range
+Higher bus speeds reduced the local range. At 200 kilobits per second, the range was about 23 meters with a clear path. It was about 5 meters with an obstruction. The pictures on the right show the two test layouts. The two speeds also show a clear trade-off. A faster bus can cover less distance, so the site layout matters when choosing the speed.
+Handoff
+The field trials show both gains and limits. Next, let’s look at what those results mean for a real site.
+
+
+5  Shuai Niu
+Slides 20–25  ·  Evaluation and conclusion
+Slide 20  Why batching helps
+Sending several readings together saves repeated radio work. Each lite node also has to wait for the processor to ask for its reading. That wait may matter when many readings come at once.
+Slide 21  What the trials establish
+The trials give us the clearest evidence for small readings from fixed sensors in one cluster. We still need to see how the design works when several clusters share a site or when many readings arrive at once. Both indoor and outdoor tests used one RFBus cluster. A larger site may have several groups running at the same time.
+Slide 22  Limits in a larger installation
+Walls can shorten local links. If the shared processor fails, its group can lose contact with the gateway. We also have to consider the cost of installing and maintaining the system. The parts cost is only one part of the budget. We would also check where the gateways can go and how often the site needs a visit.
+Slide 23  A follow-up test
+We would test two ways to collect readings. The first asks each sensor at regular times. The second can ask for urgent readings sooner. We would compare the two during a rush of readings, with a blocked link, and after a processor goes offline. We would keep the hardware and sensor locations the same. Then we could compare how long readings take and how quickly they come back after a failure.
+Slide 24  Our recommendation
+We would start with one group of sensors. We would check radio coverage, the time to collect a full set of readings, and whether the system recovers after a failure. Then we can decide if it makes sense to expand. We would also check the weakest link in the group. A pilot gives the team a way to find these problems on the actual site.
+Slide 25  References and questions
+These are the papers we used. Thank you for listening. We are happy to take questions.
